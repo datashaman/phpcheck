@@ -1,0 +1,48 @@
+{
+    "name": "datashaman/hypothesis",
+    "description": "PHP implementation of hypothesis testing.",
+    "type": "library",
+    "keywords": [
+        "testing"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marlin Forbes",
+            "email": "marlinf@datashaman.com"
+        }
+    ],
+    "prefer-stable": true,
+    "require": {
+        "php": "^7.2",
+        "symfony/console": "^4.2",
+        "symfony/finder": "^4.2",
+        "symfony/property-info": "^4.2",
+        "symfony/stopwatch": "^4.2",
+        "phpdocumentor/reflection-docblock": "^4.3",
+        "phpunit/phpunit": "^8.0"
+    },
+    "require-dev": {
+        "nunomaduro/collision": "^3.0"
+    },
+    "config": {
+        "platform": {
+            "php": "7.2.0"
+        },
+        "optimize-autoloader": true,
+        "sort-packages": true
+    },
+    "bin": [
+        "hypothesis"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Datashaman\\Hypothesis\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Datashaman\\Hypothesis\\Tests\\": "tests/"
+        }
+    }
+}
