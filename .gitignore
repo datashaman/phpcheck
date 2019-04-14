@@ -1,2 +1,6 @@
 /composer.lock
+/.phpcheck/
+/php_errors.log
+/.phpunit.result.cache
 /vendor/
+/.vscode/

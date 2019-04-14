@@ -1,0 +1,31 @@
+#!/usr/bin/env php
+<?php
+
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
+}
+
+$autoloaders = [
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php'
+];
+
+foreach ($autoloaders as $file) {
+    if (file_exists($file)) {
+        require $file;
+
+        break;
+    }
+}
+
+unset($file);
+
+use Datashaman\PHPCheck\CheckCommand;
+use Symfony\Component\Console\Application;
+
+$application = new Application('phpcheck', CheckCommand::VERSION);
+$command = new CheckCommand();
+$application->add($command);
+$application->setDefaultCommand($command->getName(), true);
+$application->run();
