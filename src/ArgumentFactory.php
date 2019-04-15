@@ -27,6 +27,11 @@ class ArgumentFactory
     ];
 
     /**
+     * @var Runner
+     */
+    protected $runner;
+
+    /**
      * @var FakerGenerator
      */
     protected $faker;
@@ -36,10 +41,16 @@ class ArgumentFactory
      */
     protected $gen;
 
-    public function __construct(Gen $gen)
+    public function __construct(Runner $runner)
     {
         $this->faker = Factory::create();
-        $this->gen = $gen;
+        $this->gen = new Gen($runner);
+        $this->runner = $runner;
+    }
+
+    public function getGen()
+    {
+        return $this->gen;
     }
 
     public function getParamAnnotations($reflectionCallable): array

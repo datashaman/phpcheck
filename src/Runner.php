@@ -29,19 +29,15 @@ class Runner implements EventSubscriberInterface
     protected $argumentFactory;
     protected $command;
     protected $dispatcher;
-    protected $gen;
     protected $input;
     protected $output;
     protected $totalIterations;
 
     public function __construct(CheckCommand $command)
     {
-        $gen = new Gen($this);
-
-        $this->argumentFactory = new ArgumentFactory($gen);
+        $this->argumentFactory = new ArgumentFactory($this);
         $this->command = $command;
         $this->dispatcher = new EventDispatcher();
-        $this->gen = $gen;
         $this->state = new RunState();
 
         $this->dispatcher->addSubscriber($this->state);
@@ -62,7 +58,7 @@ class Runner implements EventSubscriberInterface
 
     public function getGen()
     {
-        return $this->gen;
+        return $this->argumentFactory->getGen();
     }
 
     public function getInput()
