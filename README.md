@@ -11,12 +11,19 @@ Table of Contents
 =================
 
    * [phpcheck](#phpcheck)
+      * [installation](#installation)
       * [type declarations](#type-declarations)
       * [annotations](#annotations)
       * [generators](#generators)
       * [examples](#examples)
       * [command line arguments](#command-line-arguments)
       * [storage of results](#storage-of-results)
+
+## installation
+
+Install the composer package into your project. You will require `PHP7.2` or higher:
+
+    composer require --dev datashaman/phpcheck
 
 ## type declarations
 
