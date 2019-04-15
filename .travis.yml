@@ -3,7 +3,6 @@ language: php
 sudo: false
 
 php:
-  - 7.1
   - 7.2
   - 7.3
 
@@ -19,8 +18,6 @@ env:
 
 git:
   depth: 3
-
-before_install: echo "extension = mbstring.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
   - if [[ "$DEPENDENCIES" = "high" ]]; then travis_retry composer update $DEFAULT_COMPOSER_FLAGS; fi
