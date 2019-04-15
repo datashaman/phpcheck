@@ -43,10 +43,10 @@ class ArgumentFactory
      */
     protected $gen;
 
-    public function __construct(Runner $runner)
+    public function __construct(Runner $runner, int $seed = null)
     {
         $this->faker  = Factory::create();
-        $this->gen    = new Gen($runner);
+        $this->gen    = new Gen($runner, $seed);
         $this->runner = $runner;
     }
 

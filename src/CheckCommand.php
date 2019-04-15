@@ -36,13 +36,16 @@ class CheckCommand extends Command
             ->addArgument('path', InputArgument::OPTIONAL, 'File or folder with checks', 'checks');
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
         $seed = $input->getOption('seed');
 
         if ($seed) {
             $seed = (int) $seed;
         }
+
         (new Runner($seed))->execute($input, $output);
+
+        return null;
     }
 }

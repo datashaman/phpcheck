@@ -317,18 +317,18 @@ class Runner implements EventSubscriberInterface
 
     protected function gatherPaths($path): array
     {
+        if (\is_file($path)) {
+            return [$path];
+        }
+
         $paths = [];
 
-        if (\is_file($path)) {
-            $paths[] = $path;
-        } else {
-            $finder = new Finder();
-            $finder->files()->in($path)->name('*Check.php');
+        $finder = new Finder();
+        $finder->files()->in($path)->name('*Check.php');
 
-            if ($finder->hasResults()) {
-                foreach ($finder as $file) {
-                    $paths[] = $file->getRealPath();
-                }
+        if ($finder->hasResults()) {
+            foreach ($finder as $file) {
+                $paths[] = $file->getRealPath();
             }
         }
 

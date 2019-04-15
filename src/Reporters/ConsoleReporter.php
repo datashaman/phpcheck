@@ -84,11 +84,13 @@ class ConsoleReporter extends Reporter
         if ($this->output->isDebug()) {
             $signature = $this->getMethodSignature($event->method);
             $this->output->writeln("Check '$signature' ended");
-        } else {
-            $char   = self::STATUS_CHARACTERS[$event->status];
-            $format = self::STATUS_FORMATS[$event->status];
-            $this->output->write("<$format>$char</$format>");
+
+            return;
         }
+
+        $char   = self::STATUS_CHARACTERS[$event->status];
+        $format = self::STATUS_FORMATS[$event->status];
+        $this->output->write("<$format>$char</$format>");
     }
 
     public function onEndAll(Events\EndAllEvent $event): void
