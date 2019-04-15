@@ -45,7 +45,13 @@ class TextCoverageReporter extends Reporter
             return;
         }
 
-        print $writer->process($this->coverage, true);
+        $color = true;
+
+        if ($this->input->getOption('no-ansi') !== false) {
+            $color = false;
+        }
+
+        print $writer->process($this->coverage, $color);
     }
 
     public function onStart(Events\StartEvent $event): void

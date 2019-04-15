@@ -109,19 +109,21 @@ The `phpcheck` program accept a number of arguments and options:
         path                           File or folder with checks [default: "checks"]
 
     Options:
-        --bootstrap[=BOOTSTRAP]        A PHP script that is included before the checks run
-        -f, --filter[=FILTER]          Filter the checks that will be run
-        -i, --iterations=ITERATIONS    How many times each check will be run [default: 100]
-        -j, --log-junit[=LOG-JUNIT]    Log check execution in JUnit XML format to file
-        -d, --no-defects[=NO-DEFECTS]  Ignore previous defects [default: false]
-        -h, --help                     Display this help message
-        -q, --quiet                    Do not output any message
-        -s, --seed[=SEED]              Seed the random number generator to get repeatable runs
-        -V, --version                  Display this application version
-        --ansi                         Force ANSI output
-        --no-ansi                      Disable ANSI output
-        -n, --no-interaction           Do not ask any interactive question
-        -v|vv|vvv, --verbose           Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
+            --bootstrap[=BOOTSTRAP]         A PHP script that is included before the checks run
+            --coverage-html[=COVERAGE-HTML] Generate code coverage report in HTML [default: false]
+            --coverage-text[=COVERAGE-TEXT] Generate code coverage report in text [default: false]
+        -f, --filter[=FILTER]               Filter the checks that will be run
+        -i, --iterations=ITERATIONS         How many times each check will be run [default: 100]
+        -j, --log-junit[=LOG-JUNIT]         Log check execution in JUnit XML format to file
+        -d, --no-defects[=NO-DEFECTS]       Ignore previous defects [default: false]
+        -h, --help                          Display this help message
+        -q, --quiet                         Do not output any message
+        -s, --seed[=SEED]                   Seed the random number generator to get repeatable runs
+        -V, --version                       Display this application version
+        --ansi                              Force ANSI output
+        --no-ansi                           Disable ANSI output
+        -n, --no-interaction                Do not ask any interactive question
+        -v|vv|vvv, --verbose                Increase the verbosity of messages: 1 for normal output, 2 for more verbose output and 3 for debug
 
 The `--bootstrap` parameter can be included in a _phpcheck.xml_ or _phpcheck.xml.dist_ file. See [ours](phpcheck.xml.dist) for an example.
 
