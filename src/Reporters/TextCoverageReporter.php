@@ -36,6 +36,15 @@ class TextCoverageReporter extends Reporter
     public function onEndAll(Events\EndAllEvent $event): void
     {
         $writer = new Text();
+
+
+        if ($this->input->getOption('coverage-text')) {
+            $output = $writer->process($this->coverage, false);
+            file_put_contents($this->input->getOption('coverage-text'), $output);
+
+            return;
+        }
+
         print $writer->process($this->coverage, true);
     }
 
