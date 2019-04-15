@@ -21,7 +21,7 @@ use ReflectionParameter;
 
 class ArgumentFactory
 {
-    public const TYPE_GENERATORS = [
+    protected const TYPE_GENERATORS = [
         'bool'   => 'booleans',
         'float'  => 'floats',
         'int'    => 'integers',
@@ -53,20 +53,6 @@ class ArgumentFactory
     public function getGen()
     {
         return $this->gen;
-    }
-
-    public function getParamAnnotations($reflectionCallable): array
-    {
-        $factory    = DocBlockFactory::createInstance();
-        $docComment = $reflectionCallable->getDocComment();
-
-        if ($docComment === false) {
-            return [];
-        }
-
-        $docBlock = $factory->create($docComment);
-
-        return $docBlock->getTagsByName('param');
     }
 
     public function make($function): Generator
@@ -111,6 +97,20 @@ class ArgumentFactory
 
             yield $arguments;
         }
+    }
+
+    protected function getParamAnnotations($reflectionCallable): array
+    {
+        $factory    = DocBlockFactory::createInstance();
+        $docComment = $reflectionCallable->getDocComment();
+
+        if ($docComment === false) {
+            return [];
+        }
+
+        $docBlock = $factory->create($docComment);
+
+        return $docBlock->getTagsByName('param');
     }
 
     protected function getParamAnnotation(ReflectionParameter $param): ?Param

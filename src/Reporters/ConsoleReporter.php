@@ -20,15 +20,15 @@ use Whoops\Exception\Inspector;
 
 class ConsoleReporter extends Reporter
 {
-    public const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
+    protected const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
 
-    public const STATUS_CHARACTERS = [
+    protected const STATUS_CHARACTERS = [
         'FAILURE' => 'F',
         'ERROR'   => 'E',
         'SUCCESS' => '.',
     ];
 
-    public const STATUS_FORMATS = [
+    protected const STATUS_FORMATS = [
         'FAILURE' => 'error',
         'ERROR'   => 'error',
         'SUCCESS' => 'info',
@@ -95,18 +95,25 @@ class ConsoleReporter extends Reporter
 
     public function onEndAll(Events\EndAllEvent $event): void
     {
-        $successes = \count($this->state->successes);
-        $total     = $successes + \count($this->state->failures);
+        $errors = $this->state->getErrors();
+        $failures = $this->state->getFailures();
+        $successes = $this->state->getSuccesses();
+
+        $successCount = \count($successes);
+        $errorCount = \count($errors);
+        $failureCount = \count($failures);
+
+        $totalCount = $successCount + $errorCount + $failureCount;
 
         if (!$this->output->isDebug()) {
-            $percentage = $total ? (int) ($successes / $total * 100) : 0;
+            $percentage = $totalCount ? (int) ($successCount / $totalCount * 100) : 0;
 
             $this->output->writeln('');
             $this->output->writeln('');
-            $this->output->writeln("$successes / $total ($percentage%)");
+            $this->output->writeln("$successCount / $totalCount ($percentage%)");
         }
 
-        $seconds = $event->time - $this->state->startTime;
+        $seconds = $event->time - $this->state->getStartTime();
 
         if ($seconds < 1) {
             $time = (int) ($seconds * 1000) . ' ms';
@@ -119,16 +126,16 @@ class ConsoleReporter extends Reporter
         $this->output->writeln('');
         $this->output->writeln("Time: $time, Memory: $memory");
 
-        if ($failures = \count($this->state->failures)) {
+        if ($failureCount) {
             $this->writer->setOutput($this->output);
 
-            $message = $failures === 1 ? 'There was 1 failure:' : "There were $failures failures:";
+            $message = $failureCount === 1 ? 'There was 1 failure:' : "There were $failureCount failures:";
 
             $this->output->writeln('');
             $this->output->writeln($message);
             $this->output->writeln('');
 
-            foreach ($this->state->failures as $index => $failure) {
+            foreach ($failures as $index => $failure) {
                 $number    = $index + 1;
                 $signature = $this->getMethodSignature($failure->method);
                 $this->output->writeln("$number) $signature");
@@ -139,16 +146,16 @@ class ConsoleReporter extends Reporter
             }
         }
 
-        if ($errors = \count($this->state->errors)) {
+        if ($errorCount) {
             $this->writer->setOutput($this->output);
 
-            $message = $errors === 1 ? 'There was 1 error:' : "There were $errors errors:";
+            $message = $errorCount === 1 ? 'There was 1 error:' : "There were $errorCount errors:";
 
             $this->output->writeln('');
             $this->output->writeln($message);
             $this->output->writeln('');
 
-            foreach ($this->state->errors as $index => $error) {
+            foreach ($errors as $index => $error) {
                 $number    = $index + 1;
                 $signature = $this->getMethodSignature($error->method);
                 $this->output->writeln("$number) $signature");
@@ -161,7 +168,11 @@ class ConsoleReporter extends Reporter
 
         $this->output->writeln('');
 
-        $stats = "(Checks: $total, Iterations: {$this->runner->getTotalIterations()}, Failures: $failures, Errors: $errors)";
-        $this->output->writeln($failures ? "<error>FAILURES $stats</error>" : "<info>OK $stats</info>");
+        $stats = "(Checks: $totalCount, Iterations: {$this->runner->getTotalIterations()}, Failures: $failureCount, Errors: $errorCount)";
+        $this->output->writeln(
+            ($failureCount || $errorCount)
+                ? "<error>DEFECTS $stats</error>"
+                : "<info>OK $stats</info>"
+        );
     }
 }

@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
@@ -16,9 +14,9 @@ use Throwable;
 
 class ExecutionError extends Exception
 {
-    public $args;
+    protected $args;
 
-    public $cause;
+    protected $cause;
 
     public function __construct(
         array $args,
@@ -34,5 +32,15 @@ class ExecutionError extends Exception
 
         $this->args  = $args;
         $this->cause = $cause;
+    }
+
+    public function getArgs()
+    {
+        return $this->args;
+    }
+
+    public function getCause()
+    {
+        return $this->cause;
     }
 }

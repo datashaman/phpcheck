@@ -27,13 +27,13 @@ use Webmozart\Assert\Assert;
 
 class Runner implements EventSubscriberInterface
 {
-    public const CONFIG_FILE = 'phpcheck.xml';
+    protected const CONFIG_FILE = 'phpcheck.xml';
 
     public const MAX_ITERATIONS = 100;
 
-    public $maxIterations = self::MAX_ITERATIONS;
+    protected $maxIterations = self::MAX_ITERATIONS;
 
-    public $state;
+    protected $state;
 
     protected $argumentFactory;
 
@@ -44,6 +44,15 @@ class Runner implements EventSubscriberInterface
     protected $output;
 
     protected $totalIterations;
+
+    public function __construct(int $seed = null)
+    {
+        $this->argumentFactory = new ArgumentFactory($this, $seed);
+        $this->dispatcher      = new EventDispatcher();
+        $this->state           = new RunState();
+
+        $this->dispatcher->addSubscriber($this->state);
+    }
 
     public static function getSubscribedEvents(): array
     {
@@ -58,15 +67,6 @@ class Runner implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(int $seed = null)
-    {
-        $this->argumentFactory = new ArgumentFactory($this, $seed);
-        $this->dispatcher      = new EventDispatcher();
-        $this->state           = new RunState();
-
-        $this->dispatcher->addSubscriber($this->state);
-    }
-
     public function getGen()
     {
         return $this->argumentFactory->getGen();
@@ -75,6 +75,11 @@ class Runner implements EventSubscriberInterface
     public function getInput()
     {
         return $this->input;
+    }
+
+    public function getMaxIterations()
+    {
+        return $this->maxIterations;
     }
 
     public function getOutput()

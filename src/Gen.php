@@ -18,7 +18,7 @@ use Webmozart\Assert\Assert;
 
 class Gen
 {
-    public const DEFAULT_SIZE = 30;
+    protected const DEFAULT_SIZE = 30;
 
     public const MIN_UNICODE = 0;
 
@@ -81,7 +81,7 @@ class Gen
             $f = \max(
                 $min,
                 \min(
-                    \round($min + \mt_rand() / \mt_getrandmax() * $iteration / ($this->runner->maxIterations - 1) * ($max - $min), $decimal),
+                    \round($min + \mt_rand() / \mt_getrandmax() * $iteration / ($this->runner->getMaxIterations() - 1) * ($max - $min), $decimal),
                     $max
                 )
             );
@@ -105,7 +105,7 @@ class Gen
             $currentMax = \max(
                 $min,
                 \min(
-                    (int) ($iteration / ($this->runner->maxIterations - 1) * ($max - $min) + $min),
+                    (int) ($iteration / ($this->runner->getMaxIterations() - 1) * ($max - $min) + $min),
                     $max
                 )
             );

@@ -33,7 +33,7 @@ abstract class Reporter implements EventSubscriberInterface
         $this->state  = $runner->getState();
     }
 
-    public function getMethodSignature(ReflectionMethod $method): string
+    protected function getMethodSignature(ReflectionMethod $method): string
     {
         return $method->getDeclaringClass()->getName() . '::' . $method->getName();
     }

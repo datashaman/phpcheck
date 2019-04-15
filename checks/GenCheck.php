@@ -17,8 +17,6 @@ use Webmozart\Assert\Assert;
 
 class GenCheck extends Check
 {
-    public const ITERATIONS = 100;
-
     /**
      * @param string $c {@gen characters}
      */

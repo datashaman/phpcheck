@@ -13,8 +13,6 @@ namespace Datashaman\PHPCheck;
 
 class Check
 {
-    public const ITERATIONS = 100;
-
     /**
      * @var Runner
      */
