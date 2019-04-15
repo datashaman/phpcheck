@@ -1,11 +1,17 @@
 <?php declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * ©Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck\Reporters;
 
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Report\Clover;
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlFacade;
 
 class HtmlCoverageReporter extends Reporter
@@ -15,9 +21,9 @@ class HtmlCoverageReporter extends Reporter
     public static function getSubscribedEvents(): array
     {
         return [
-            CheckEvents::END => 'onEnd',
+            CheckEvents::END       => 'onEnd',
             CheckEvents::END_ALL   => 'onEndAll',
-            CheckEvents::START => 'onStart',
+            CheckEvents::START     => 'onStart',
             CheckEvents::START_ALL => 'onStartAll',
         ];
     }

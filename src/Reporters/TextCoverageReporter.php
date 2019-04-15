@@ -1,5 +1,12 @@
 <?php declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * ©Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck\Reporters;
 
 use Datashaman\PHPCheck\CheckEvents;
@@ -14,9 +21,9 @@ class TextCoverageReporter extends Reporter
     public static function getSubscribedEvents(): array
     {
         return [
-            CheckEvents::END => 'onEnd',
+            CheckEvents::END       => 'onEnd',
             CheckEvents::END_ALL   => 'onEndAll',
-            CheckEvents::START => 'onStart',
+            CheckEvents::START     => 'onStart',
             CheckEvents::START_ALL => 'onStartAll',
         ];
     }
@@ -29,7 +36,7 @@ class TextCoverageReporter extends Reporter
     public function onEndAll(Events\EndAllEvent $event): void
     {
         $writer = new Text();
-        echo $writer->process($this->coverage, true);
+        print $writer->process($this->coverage, true);
     }
 
     public function onStart(Events\StartEvent $event): void
