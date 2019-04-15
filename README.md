@@ -83,7 +83,7 @@ This should be switchable soon.
 
 ## exceptions
 
-We have chosen to use [Nuno Maduro's Collision] for reporting exceptions to the console.
+We have chosen to use [Nuno Maduro's Collision](https://github.com/nunomaduro/collision) for reporting exceptions to the console.
 
 This should be switchable soon.
 

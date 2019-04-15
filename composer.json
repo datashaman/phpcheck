@@ -32,7 +32,8 @@
         "webmozart/assert": "^1.4"
     },
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^2.14"
+        "friendsofphp/php-cs-fixer": "^2.14",
+        "phpmd/phpmd": "^2.6"
     },
     "config": {
         "platform": {
