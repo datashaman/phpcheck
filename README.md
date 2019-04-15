@@ -15,9 +15,11 @@ Table of Contents
       * [type declarations](#type-declarations)
       * [annotations](#annotations)
       * [generators](#generators)
+      * [assertions](#assertions)
       * [examples](#examples)
       * [command line arguments](#command-line-arguments)
       * [storage of results](#storage-of-results)
+      * [todo](#todo)
 
 ## installation
 
@@ -65,6 +67,25 @@ are generated from the complete range of Unicode characters excluding control ch
 
 The `faker` generator takes a variable number of arguments. If you supply one argument, it's assumed to be a property on the `Faker`
 generator. If you supply more than one argument, the first argument is the method on the `Faker` generator and the rest are sent as parameters to that method.
+
+This opens up a lot of domain-specific generators. See [Faker](https://github.com/fzaninotto/Faker) for more details.
+
+## assertions
+
+You are free to use whatever assertions library you choose in your check classes.
+
+We have implemented ours with [Webmozart Assert](https://github.com/webmozart/assert).
+
+This package throws `InvalidArgumentException` whenever an assertion fails, which is how
+we distinguish between failures (assertion failures) and errors (unplanned exceptions).
+
+This should be switchable soon.
+
+## exceptions
+
+We have chosen to use [Nuno Maduro's Collision] for reporting exceptions to the console.
+
+This should be switchable soon.
 
 ## examples
 
@@ -159,10 +180,18 @@ Using `---verbose 3` or `-vvv` enables a list of the checks as they are run:
 
     OK (Checks: 13, Iterations: 120006, Failures: 0, Errors: 0)
 
+The above output is from _10000_ iterations per check. The heavy use of generators throughout the architecture ensures low memory usage throughout the run process despite large numbers of iterations.
+
 ## storage of results
 
-`PHPCheck` stores results of check execution in the `.phpcheck` folder of the project. You should add that to your `.gitignore` file.
+`PHPCheck` stores results of check execution in the `.phpcheck` folder of the project.
+
+You should add the folder to your `.gitignore` file.
 
 When `PHPCheck` finds an error or failure, it will retry the defective arguments first before going onto regular iterations with new arguments.
 
 If you wish to ignore the previous defects and run through new iterations only, use `--no-defects` or `-d`.
+
+## todo
+
+All todo items have been captured as [issues](https://github.com/datashaman/phpcheck/issues).
