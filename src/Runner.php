@@ -4,11 +4,12 @@ declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
- * (c) Marlin Forbes <marlinf@datashaman.com>
+ * ©Marlin Forbes <marlinf@datashaman.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Datashaman\PHPCheck;
 
 use InvalidArgumentException;
@@ -27,9 +28,9 @@ use Webmozart\Assert\Assert;
 
 class Runner implements EventSubscriberInterface
 {
-    protected const CONFIG_FILE = 'phpcheck.xml';
-
     public const MAX_ITERATIONS = 100;
+
+    protected const CONFIG_FILE = 'phpcheck.xml';
 
     protected $maxIterations = self::MAX_ITERATIONS;
 
@@ -45,15 +46,6 @@ class Runner implements EventSubscriberInterface
 
     protected $totalIterations;
 
-    public function __construct(int $seed = null)
-    {
-        $this->argumentFactory = new ArgumentFactory($this, $seed);
-        $this->dispatcher      = new EventDispatcher();
-        $this->state           = new RunState();
-
-        $this->dispatcher->addSubscriber($this->state);
-    }
-
     public static function getSubscribedEvents(): array
     {
         return [
@@ -65,6 +57,15 @@ class Runner implements EventSubscriberInterface
             CheckEvents::START_ALL => 'onStartAll',
             CheckEvents::SUCCESS   => 'onSuccess',
         ];
+    }
+
+    public function __construct(int $seed = null)
+    {
+        $this->argumentFactory = new ArgumentFactory($this, $seed);
+        $this->dispatcher      = new EventDispatcher();
+        $this->state           = new RunState();
+
+        $this->dispatcher->addSubscriber($this->state);
     }
 
     public function getGen()
@@ -145,19 +146,6 @@ class Runner implements EventSubscriberInterface
 
         $this->maxIterations = (int) $input->getOption('iterations');
 
-        $pathArgument = $input->getArgument('path');
-        $path         = \realpath($pathArgument);
-
-        if ($pathArgument && !$path) {
-            $output->writeln('Path does not exist');
-            exit(1);
-        }
-
-        if ($path && !\file_exists($path)) {
-            $output->writeln('Path does not exist');
-            exit(1);
-        }
-
         $this->dispatcher->addSubscriber(new Reporters\ConsoleReporter($this));
 
         if ($input->getOption('log-junit')) {
@@ -167,7 +155,7 @@ class Runner implements EventSubscriberInterface
 
         $bootstrap = $input->getOption('bootstrap')
             ?: $config['bootstrap']
-            ?: null;
+            ?? null;
 
         if ($bootstrap) {
             include_once $bootstrap;
@@ -176,9 +164,9 @@ class Runner implements EventSubscriberInterface
         $event = new Events\StartAllEvent();
         $this->dispatcher->dispatch(CheckEvents::START_ALL, $event);
 
-        $paths = $this->gatherPaths($path);
-
         [$classFilter, $methodFilter] = $this->getFilter($input);
+
+        $paths = $this->gatherPaths($output, $input->getArgument('path'));
 
         foreach ($paths as $path) {
             $classes = \get_declared_classes();
@@ -221,43 +209,19 @@ class Runner implements EventSubscriberInterface
                     continue;
                 }
 
-                $tags = $this->getTags($method);
-
-                // If method has an @iterates tag,
-                // it handles its own iteration internally
-                // and should be called normally with no args.
-                $iterates = false;
-
-                $iterations = $this->maxIterations;
-
-                foreach ($tags as $tag) {
-                    $tagName = $tag->getName();
-
-                    if ($tagName === 'iterates') {
-                        $iterates = true;
-
-                        break;
-                    }
-
-                    if ($tagName === 'iterations') {
-                        $iterations = (int) (string) $tag->getDescription();
-
-                        break;
-                    }
-                }
+                $tags = $this->getMethodTags($method);
 
                 $closure = $method->getClosure($test);
 
                 $event = new Events\StartEvent($method);
                 $this->dispatcher->dispatch(CheckEvents::START, $event);
 
-                $defectArgs = $this->state->getDefectArgs($method);
-
                 try {
-                    if ($iterates) {
+                    if (!empty($tags['iterates'])) {
                         \call_user_func($closure);
                     } else {
-                        $noDefects = ($input->getOption('no-defects') !== false);
+                        $noDefects  = ($input->getOption('no-defects') !== false);
+                        $defectArgs = $this->state->getDefectArgs($method);
 
                         if (!$noDefects && $defectArgs) {
                             try {
@@ -269,7 +233,7 @@ class Runner implements EventSubscriberInterface
                             }
                         }
 
-                        $this->iterate($closure, $iterations);
+                        $this->iterate($closure, $tags['iterations'] ?? $this->maxIterations);
                     }
 
                     $event = new Events\SuccessEvent($method);
@@ -320,8 +284,20 @@ class Runner implements EventSubscriberInterface
         return null;
     }
 
-    protected function gatherPaths($path): array
+    protected function gatherPaths(OutputInterface $output, string $pathArgument): array
     {
+        $path         = \realpath($pathArgument);
+
+        if ($pathArgument && !$path) {
+            $output->writeln('Path does not exist');
+            exit(1);
+        }
+
+        if ($path && !\file_exists($path)) {
+            $output->writeln('Path does not exist');
+            exit(1);
+        }
+
         if (\is_file($path)) {
             return [$path];
         }
@@ -340,7 +316,7 @@ class Runner implements EventSubscriberInterface
         return $paths;
     }
 
-    protected function getTags(ReflectionMethod $method)
+    protected function getMethodTags(ReflectionMethod $method)
     {
         $factory    = DocBlockFactory::createInstance();
         $docComment = $method->getDocComment();
@@ -351,7 +327,24 @@ class Runner implements EventSubscriberInterface
 
         $docBlock = $factory->create($docComment);
 
-        return $docBlock->getTags();
+        $tags = $docBlock->getTags();
+
+        $result = [];
+
+        foreach ($tags as $tag) {
+            $tagName = $tag->getName();
+
+            if ($tagName === 'iterates') {
+                // If a method has an @iterates tag,
+                // it handles its own iteration internally
+                // and should be called normally with no args.
+                $result['iterates'] = true;
+            } elseif ($tagName === 'iterations') {
+                $result['iterations'] = (int) (string) $tag->getDescription();
+            }
+        }
+
+        return $result;
     }
 
     protected function getFilter(InputInterface $input)

@@ -4,11 +4,12 @@ declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
- * (c) Marlin Forbes <marlinf@datashaman.com>
+ * ©Marlin Forbes <marlinf@datashaman.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Datashaman\PHPCheck\Reporters;
 
 use Datashaman\PHPCheck\CheckCommand;
@@ -95,12 +96,12 @@ class ConsoleReporter extends Reporter
 
     public function onEndAll(Events\EndAllEvent $event): void
     {
-        $errors = $this->state->getErrors();
-        $failures = $this->state->getFailures();
+        $errors    = $this->state->getErrors();
+        $failures  = $this->state->getFailures();
         $successes = $this->state->getSuccesses();
 
         $successCount = \count($successes);
-        $errorCount = \count($errors);
+        $errorCount   = \count($errors);
         $failureCount = \count($failures);
 
         $totalCount = $successCount + $errorCount + $failureCount;

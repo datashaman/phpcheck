@@ -4,11 +4,12 @@ declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
- * (c) Marlin Forbes <marlinf@datashaman.com>
+ * ©Marlin Forbes <marlinf@datashaman.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Datashaman\PHPCheck;
 
 use Faker\Factory;
@@ -18,8 +19,6 @@ use Webmozart\Assert\Assert;
 
 class Gen
 {
-    protected const DEFAULT_SIZE = 30;
-
     public const MIN_UNICODE = 0;
 
     public const MAX_UNICODE = 0x10FFFF;
@@ -31,6 +30,8 @@ class Gen
         [0x0F0000, 0x0FFFFD],
         [0x100000, 0x10FFFD],
     ];
+
+    protected const DEFAULT_SIZE = 30;
 
     /**
      * @var FakerGenerator

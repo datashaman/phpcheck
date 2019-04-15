@@ -4,11 +4,12 @@ declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
- * (c) Marlin Forbes <marlinf@datashaman.com>
+ * ©Marlin Forbes <marlinf@datashaman.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Datashaman\PHPCheck\Reporters;
 
 use Datashaman\PHPCheck\Runner;
@@ -44,9 +45,9 @@ abstract class Reporter implements EventSubscriberInterface
             return '0.00 B';
         }
 
-        $s = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
-        $e = (int) \floor(\log($bytes, 1024));
+        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $exponent = (int) \floor(\log($bytes, 1024));
 
-        return \sprintf('%.2f %s', \round($bytes / 1024 ** $e, 2), $s[$e]);
+        return \sprintf('%.2f %s', \round($bytes / 1024 ** $exponent, 2), $suffixes[$exponent]);
     }
 }

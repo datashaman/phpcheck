@@ -2,11 +2,12 @@
 /*
  * This file is part of the phpcheck package.
  *
- * (c) Marlin Forbes <marlinf@datashaman.com>
+ * ©Marlin Forbes <marlinf@datashaman.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Datashaman\PHPCheck;
 
 use ReflectionMethod;
@@ -69,11 +70,11 @@ EOT;
 
     public function getDefectArgs(ReflectionMethod $method): ?array
     {
-        $db     = $this->getResultsDatabase();
+        $database  = $this->getResultsDatabase();
 
-        $statement = $db->prepare(self::SELECT_DEFECT_SQL);
-        $statement->bindValue(':class', $method->getDeclaringClass()->getName(), SQLITE3_TEXT);
-        $statement->bindValue(':method', $method->getName(), SQLITE3_TEXT);
+        $statement = $database->prepare(self::SELECT_DEFECT_SQL);
+        $statement->bindValue(':class', $method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
+        $statement->bindValue(':method', $method->getName(), \SQLITE3_TEXT);
 
         $result = $statement->execute();
 
@@ -142,12 +143,12 @@ EOT;
     {
         $args = $event->args ? (\json_encode($event->args) ?: '') : '';
 
-        $db = $this->getResultsDatabase();
+        $database  = $this->getResultsDatabase();
 
-        $statement = $db->prepare(self::INSERT_RESULT_SQL);
-        $statement->bindValue(':class', $event->method->getDeclaringClass()->getName(), SQLITE3_TEXT);
-        $statement->bindValue(':method', $event->method->getName(), SQLITE3_TEXT);
-        $statement->bindValue(':status', $event->status, SQLITE3_TEXT);
+        $statement = $database->prepare(self::INSERT_RESULT_SQL);
+        $statement->bindValue(':class', $event->method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
+        $statement->bindValue(':method', $event->method->getName(), \SQLITE3_TEXT);
+        $statement->bindValue(':status', $event->status, \SQLITE3_TEXT);
         $statement->bindValue(':time', $this->formatMicrotime($event->time));
         $statement->bindValue(':args', $args);
 
@@ -156,11 +157,9 @@ EOT;
 
     protected function formatMicrotime(float $microtime): string
     {
-        if (\preg_match('/^[0-9]*\\.([0-9]+)$/', (string) $microtime, $reg)) {
-            $decimal = \mb_substr(\str_pad($reg[1], 6, '0'), 0, 6);
-        } else {
-            $decimal = '000000';
-        }
+        $decimal = \preg_match('/^[0-9]*\\.([0-9]+)$/', (string) $microtime, $reg)
+            ? \mb_substr(\str_pad($reg[1], 6, '0'), 0, 6)
+            : '000000';
 
         $format = \preg_replace('/(%f)/', $decimal, '%F %T.%f');
 
@@ -169,17 +168,17 @@ EOT;
 
     protected function getResultsDatabase(): SQLite3
     {
-        static $db;
+        static $database;
 
-        if (!isset($db)) {
+        if (!isset($database)) {
             if (!\is_dir(self::DATABASE_DIR)) {
                 \mkdir(self::DATABASE_DIR, 0755);
             }
 
-            $db = new SQLite3(self::DATABASE_DIR . \DIRECTORY_SEPARATOR . 'results.db');
-            $db->exec(self::CREATE_RESULTS_SQL);
+            $database = new SQLite3(self::DATABASE_DIR . \DIRECTORY_SEPARATOR . 'results.db');
+            $database->exec(self::CREATE_RESULTS_SQL);
         }
 
-        return $db;
+        return $database;
     }
 }
