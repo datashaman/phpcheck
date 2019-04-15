@@ -20,7 +20,7 @@ env:
 git:
   depth: 3
 
-before_install: echo "extension = <extension>.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+before_install: echo "extension = mbstring.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
 
 install:
   - if [[ "$DEPENDENCIES" = "high" ]]; then travis_retry composer update $DEFAULT_COMPOSER_FLAGS; fi
