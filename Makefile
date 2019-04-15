@@ -4,8 +4,11 @@ phpcheck:
 phpcheck-coverage-html:
 	@phpcheck --coverage-html build/coverage
 
-phpcheck-coverage-text:
+phpcheck-coverage-console:
 	@phpcheck --coverage-text
+
+phpcheck-coverage-text:
+	@phpcheck --coverage-text build/coverage.txt
 
 phpcheck-no-defects:
 	@phpcheck -d
