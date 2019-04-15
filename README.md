@@ -95,6 +95,7 @@ The `phpcheck` program accept a number of arguments and options:
         -d, --no-defects[=NO-DEFECTS]  Ignore previous defects [default: false]
         -h, --help                     Display this help message
         -q, --quiet                    Do not output any message
+        -s, --seed[=SEED]              Seed the random number generator to get repeatable runs
         -V, --version                  Display this application version
         --ansi                         Force ANSI output
         --no-ansi                      Disable ANSI output

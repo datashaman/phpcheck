@@ -35,10 +35,13 @@ class Gen
      */
     protected $runner;
 
-    public function __construct(Runner $runner)
+    public function __construct(Runner $runner, int $seed = null)
     {
         $this->faker = Factory::create();
         $this->runner = $runner;
+
+        $seed = $seed ?: (int) microtime() * 1000000;
+        mt_srand($seed);
     }
 
     /**

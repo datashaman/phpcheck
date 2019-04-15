@@ -25,11 +25,16 @@ class CheckCommand extends Command
             ->addOption('iterations', 'i', InputOption::VALUE_REQUIRED, 'How many times each check will be run', Runner::MAX_ITERATIONS)
             ->addOption('log-junit', 'j', InputOption::VALUE_OPTIONAL, 'Log test execution in JUnit XML format to file')
             ->addOption('no-defects', 'd', InputOption::VALUE_OPTIONAL, 'Ignore previous defects', false)
+            ->addOption('seed', 's', InputOption::VALUE_OPTIONAL, 'Seed the random number generator to get repeatable runs')
             ->addArgument('path', InputArgument::OPTIONAL, 'File or folder with checks', 'checks');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        (new Runner())->execute($input, $output);
+        $seed = $input->getOption('seed');
+        if ($seed) {
+            $seed = (int) $seed;
+        }
+        (new Runner($seed))->execute($input, $output);
     }
 }
