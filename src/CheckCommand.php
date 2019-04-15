@@ -30,6 +30,6 @@ class CheckCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        (new Runner($this))->execute($input, $output);
+        (new Runner())->execute($input, $output);
     }
 }

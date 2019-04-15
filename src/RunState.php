@@ -56,7 +56,7 @@ EOT;
         ];
     }
 
-    public function onError(Events\FailureEvent $event): void
+    public function onError(Events\ErrorEvent $event): void
     {
         $this->errors[] = $event;
         $this->saveResult($event);

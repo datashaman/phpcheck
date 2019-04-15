@@ -193,4 +193,20 @@ class GenCheck extends Check
             Assert::integer($value);
         }
     }
+
+    /**
+     * @param string $str {@gen faker:["email"]}
+     */
+    public function checkFakerWithoutArgs(string $str)
+    {
+        Assert::true(filter_var($str, FILTER_VALIDATE_EMAIL) !== false, 'should produce an email');
+    }
+
+    /**
+     * @param int $n {@gen faker:["numberBetween",5,5]}
+     */
+    public function checkFakerWithArgs(int $n)
+    {
+        Assert::eq(5, $n);
+    }
 }

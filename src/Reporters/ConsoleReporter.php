@@ -50,9 +50,7 @@ class ConsoleReporter extends Reporter
     {
         return [
             CheckEvents::END_ALL => 'onEndAll',
-            CheckEvents::FAILURE => 'onFailure',
             CheckEvents::END => 'onEnd',
-            CheckEvents::ERROR => 'onError',
             CheckEvents::START => 'onStart',
             CheckEvents::START_ALL => 'onStartAll',
         ];

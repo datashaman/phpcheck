@@ -124,6 +124,10 @@ class ArgumentFactory
                         $tag = $embeds[$arg];
                         [$generator, $args] = $this->parseGenTag($tag);
 
+                        if (!method_exists($this->gen, $generator)) {
+                            throw new Exception("Gen $generator does not exist");
+                        }
+
                         return $this->gen->$generator(...$args);
                     }
 
@@ -155,6 +159,10 @@ class ArgumentFactory
 
                 $generator = self::TYPE_GENERATORS[$type];
                 $args = [];
+            }
+
+            if (!method_exists($this->gen, $generator)) {
+                throw new Exception("Gen $generator does not exist");
             }
 
             $generators[] = $this->gen->$generator(...$args);

@@ -27,16 +27,14 @@ class Runner implements EventSubscriberInterface
     public $state;
 
     protected $argumentFactory;
-    protected $command;
     protected $dispatcher;
     protected $input;
     protected $output;
     protected $totalIterations;
 
-    public function __construct(CheckCommand $command)
+    public function __construct()
     {
         $this->argumentFactory = new ArgumentFactory($this);
-        $this->command = $command;
         $this->dispatcher = new EventDispatcher();
         $this->state = new RunState();
 

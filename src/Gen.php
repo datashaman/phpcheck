@@ -332,4 +332,23 @@ class Gen
             }
         }
     }
+
+    /**
+     * @param mixed $args,...
+     */
+    public function faker(
+        ...$args
+    ) {
+        Assert::greaterThanEq(count($args), 1);
+
+        $attr = array_shift($args);
+
+        while (true) {
+            if (count($args)) {
+                yield call_user_func([$this->faker, $attr], ...$args);
+            } else {
+                yield $this->faker->{$attr};
+            }
+        }
+    }
 }

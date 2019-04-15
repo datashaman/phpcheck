@@ -51,6 +51,7 @@ Below is the list of generators that are currently available:
 * `booleans(int $chanceOfGettingTrue = 50)`
 * `characters($minChar, $maxChar)`
 * `choose(array $arr)`
+* `faker(...$args)`
 * `floats(float $min, float $max, Generator $decimals = null)`
 * `integers(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)`
 * `intervals(array $include = [[PHP_INT_MIN, PHP_INT_MAX]], array $exclude=[])`
@@ -61,6 +62,9 @@ You have to nest the parameter tag to specify a generator argument. See [GenChec
 
 The `characters` generator accepts either characters or integer codepoints for `minChar` and `maxChar`. Characters
 are generated from the complete range of Unicode characters excluding control characters, private ranges and surrogates.
+
+The `faker` generator takes a variable number of arguments. If you supply one argument, it's assumed to be a property on the `Faker`
+generator. If you supply more than one argument, the first argument is the method on the `Faker` generator and the rest are sent as parameters to that method.
 
 ## examples
 
