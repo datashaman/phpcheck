@@ -1,15 +1,19 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * (c) Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck;
-
-use Generator;
-use ReflectionFunction;
 
 class Check
 {
-    const ITERATIONS = 100;
+    public const ITERATIONS = 100;
 
     /**
      * @var Runner
@@ -24,6 +28,6 @@ class Check
     public function __construct(Runner $runner)
     {
         $this->runner = $runner;
-        $this->gen = $runner->getGen();
+        $this->gen    = $runner->getGen();
     }
 }

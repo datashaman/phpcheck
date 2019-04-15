@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * (c) Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck;
 
 use Exception;
@@ -10,19 +17,14 @@ use Faker\Generator as FakerGenerator;
 use Generator;
 use phpDocumentor\Reflection\DocBlock\Tags\Param;
 use phpDocumentor\Reflection\DocBlockFactory;
-use phpDocumentor\Reflection\Types\Array_;
-use ReflectionClass;
-use ReflectionFunctionAbstract;
-use ReflectionMethod;
 use ReflectionParameter;
-use ReflectionProperty;
 
 class ArgumentFactory
 {
-    const TYPE_GENERATORS = [
-        'bool' => 'booleans',
-        'float' => 'floats',
-        'int' => 'integers',
+    public const TYPE_GENERATORS = [
+        'bool'   => 'booleans',
+        'float'  => 'floats',
+        'int'    => 'integers',
         'string' => 'strings',
     ];
 
@@ -43,8 +45,8 @@ class ArgumentFactory
 
     public function __construct(Runner $runner)
     {
-        $this->faker = Factory::create();
-        $this->gen = new Gen($runner);
+        $this->faker  = Factory::create();
+        $this->gen    = new Gen($runner);
         $this->runner = $runner;
     }
 
@@ -55,7 +57,7 @@ class ArgumentFactory
 
     public function getParamAnnotations($reflectionCallable): array
     {
-        $factory  = DocBlockFactory::createInstance();
+        $factory    = DocBlockFactory::createInstance();
         $docComment = $reflectionCallable->getDocComment();
 
         if ($docComment === false) {
@@ -67,9 +69,53 @@ class ArgumentFactory
         return $docBlock->getTagsByName('param');
     }
 
+    public function make($function): Generator
+    {
+        $generators = [];
+
+        foreach ($function->getParameters() as $param) {
+            $tags = $this->getParamTags($param);
+
+            if (\array_key_exists('gen', $tags)) {
+                [$generator, $args] = $this->parseGenTag($tags['gen']);
+            } else {
+                $paramType = $param->hasType() ? $param->getType() : null;
+                $type      = $paramType ? $paramType->getName() : 'mixed';
+
+                if (!\array_key_exists($type, self::TYPE_GENERATORS)) {
+                    throw new Exception("No generator found for $type");
+                }
+
+                $generator = self::TYPE_GENERATORS[$type];
+                $args      = [];
+            }
+
+            if (!\method_exists($this->gen, $generator)) {
+                throw new Exception("Gen $generator does not exist");
+            }
+
+            $generators[] = $this->gen->$generator(...$args);
+        }
+
+        while (true) {
+            $arguments = [];
+
+            foreach ($generators as $generator) {
+                while ($generator->valid()) {
+                    $arguments[] = $generator->current();
+                    $generator->next();
+
+                    break;
+                }
+            }
+
+            yield $arguments;
+        }
+    }
+
     protected function getParamAnnotation(ReflectionParameter $param): ?Param
     {
-        $method = $param->getDeclaringFunction();
+        $method      = $param->getDeclaringFunction();
         $annotations = $this->getParamAnnotations($method);
 
         foreach ($annotations as $annotation) {
@@ -102,29 +148,29 @@ class ArgumentFactory
     {
         $embeds = [];
 
-        $tag = preg_replace_callback(
+        $tag = \preg_replace_callback(
             '/{@gen\s+([^\}]*)}/',
             function ($matches) use (&$embeds) {
-                $id = uniqid('', true);
+                $id = \uniqid('', true);
                 $embeds[$id] = $matches[1];
 
-                return json_encode($id);
+                return \json_encode($id);
             },
             $tag
         );
 
-        $parts = explode(':', $tag);
+        $parts     = \explode(':', $tag);
         $generator = $parts[0];
-        $args = [];
+        $args      = [];
 
-        if (count($parts) > 1) {
-            $args = array_map(
+        if (\count($parts) > 1) {
+            $args = \array_map(
                 function ($arg) use ($embeds) {
-                    if (is_string($arg) && array_key_exists($arg, $embeds)) {
+                    if (\is_string($arg) && \array_key_exists($arg, $embeds)) {
                         $tag = $embeds[$arg];
                         [$generator, $args] = $this->parseGenTag($tag);
 
-                        if (!method_exists($this->gen, $generator)) {
+                        if (!\method_exists($this->gen, $generator)) {
                             throw new Exception("Gen $generator does not exist");
                         }
 
@@ -133,53 +179,10 @@ class ArgumentFactory
 
                     return $arg;
                 },
-                json_decode($parts[1], true)
+                \json_decode($parts[1], true)
             );
         }
 
         return [$generator, $args];
-    }
-
-    public function make($function): Generator
-    {
-        $generators = [];
-
-        foreach ($function->getParameters() as $param) {
-            $tags = $this->getParamTags($param);
-
-            if (array_key_exists('gen', $tags)) {
-                [$generator, $args] = $this->parseGenTag($tags['gen']);
-            } else {
-                $paramType = $param->hasType() ? $param->getType() : null;
-                $type = $paramType ? $paramType->getName() : 'mixed';
-
-                if (!array_key_exists($type, self::TYPE_GENERATORS)) {
-                    throw new Exception("No generator found for $type");
-                }
-
-                $generator = self::TYPE_GENERATORS[$type];
-                $args = [];
-            }
-
-            if (!method_exists($this->gen, $generator)) {
-                throw new Exception("Gen $generator does not exist");
-            }
-
-            $generators[] = $this->gen->$generator(...$args);
-        }
-
-        while (true) {
-            $arguments = [];
-
-            foreach ($generators as $generator) {
-                while ($generator->valid()) {
-                    $arguments[] = $generator->current();
-                    $generator->next();
-                    break;
-                }
-            }
-
-            yield $arguments;
-        }
     }
 }

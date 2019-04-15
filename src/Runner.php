@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * (c) Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck;
 
 use InvalidArgumentException;
@@ -20,38 +27,44 @@ use Webmozart\Assert\Assert;
 
 class Runner implements EventSubscriberInterface
 {
-    const CONFIG_FILE = 'phpcheck.xml';
-    const MAX_ITERATIONS = 100;
+    public const CONFIG_FILE = 'phpcheck.xml';
+
+    public const MAX_ITERATIONS = 100;
 
     public $maxIterations = self::MAX_ITERATIONS;
+
     public $state;
 
     protected $argumentFactory;
+
     protected $dispatcher;
+
     protected $input;
+
     protected $output;
+
     protected $totalIterations;
-
-    public function __construct(int $seed = null)
-    {
-        $this->argumentFactory = new ArgumentFactory($this, $seed);
-        $this->dispatcher = new EventDispatcher();
-        $this->state = new RunState();
-
-        $this->dispatcher->addSubscriber($this->state);
-    }
 
     public static function getSubscribedEvents(): array
     {
         return [
-            CheckEvents::END_ALL => 'onEndAll',
-            CheckEvents::FAILURE => 'onFailure',
-            CheckEvents::END => 'onEnd',
-            CheckEvents::ERROR => 'onError',
-            CheckEvents::START => 'onStart',
+            CheckEvents::END_ALL   => 'onEndAll',
+            CheckEvents::FAILURE   => 'onFailure',
+            CheckEvents::END       => 'onEnd',
+            CheckEvents::ERROR     => 'onError',
+            CheckEvents::START     => 'onStart',
             CheckEvents::START_ALL => 'onStartAll',
-            CheckEvents::SUCCESS => 'onSuccess',
+            CheckEvents::SUCCESS   => 'onSuccess',
         ];
+    }
+
+    public function __construct(int $seed = null)
+    {
+        $this->argumentFactory = new ArgumentFactory($this, $seed);
+        $this->dispatcher      = new EventDispatcher();
+        $this->state           = new RunState();
+
+        $this->dispatcher->addSubscriber($this->state);
     }
 
     public function getGen()
@@ -83,10 +96,10 @@ class Runner implements EventSubscriberInterface
         callable $callable,
         int $iterations = null
     ): void {
-        $function = new ReflectionFunction($callable);
+        $function  = new ReflectionFunction($callable);
         $arguments = $this->argumentFactory->make($function);
 
-        $maxIterations = is_null($iterations)
+        $maxIterations = null === $iterations
             ? $this->maxIterations
             : $iterations;
 
@@ -96,17 +109,15 @@ class Runner implements EventSubscriberInterface
             $args = $arguments->current();
 
             try {
-                call_user_func($callable, ...$args);
+                \call_user_func($callable, ...$args);
                 $iterations++;
-            }
-
-            catch (InvalidArgumentException $exception) {
+            } catch (InvalidArgumentException $exception) {
                 $this->totalIterations += $iterations + 1;
+
                 throw new ExecutionFailure($args, $exception);
-            }
-
-            catch (Throwable $throwable) {
+            } catch (Throwable $throwable) {
                 $this->totalIterations += $iterations + 1;
+
                 throw new ExecutionError($args, $throwable);
             }
 
@@ -120,9 +131,9 @@ class Runner implements EventSubscriberInterface
         $this->totalIterations += $iterations;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output)
+    public function execute(InputInterface $input, OutputInterface $output): void
     {
-        $this->input = $input;
+        $this->input  = $input;
         $this->output = $output;
 
         $config = $this->getConfig();
@@ -130,14 +141,14 @@ class Runner implements EventSubscriberInterface
         $this->maxIterations = (int) $input->getOption('iterations');
 
         $pathArgument = $input->getArgument('path');
-        $path = realpath($pathArgument);
+        $path         = \realpath($pathArgument);
 
         if ($pathArgument && !$path) {
             $output->writeln('Path does not exist');
             exit(1);
         }
 
-        if ($path && !file_exists($path)) {
+        if ($path && !\file_exists($path)) {
             $output->writeln('Path does not exist');
             exit(1);
         }
@@ -165,28 +176,28 @@ class Runner implements EventSubscriberInterface
         [$classFilter, $methodFilter] = $this->getFilter($input);
 
         foreach ($paths as $path) {
-            $classes = get_declared_classes();
+            $classes = \get_declared_classes();
 
             include $path;
 
-            $classes = array_diff(
-                get_declared_classes(),
+            $classes = \array_diff(
+                \get_declared_classes(),
                 $classes,
                 [
                     Check::class,
                 ]
             );
 
-            $classes = array_filter(
+            $classes = \array_filter(
                 $classes,
                 function ($class) {
-                    return preg_match('/Check$/', $class) === 1;
+                    return \preg_match('/Check$/', $class) === 1;
                 }
             );
 
-            $testClass = array_pop($classes);
+            $testClass = \array_pop($classes);
 
-            if ($classFilter && !fnmatch($classFilter, $testClass)) {
+            if ($classFilter && !\fnmatch($classFilter, $testClass)) {
                 continue;
             }
 
@@ -197,11 +208,11 @@ class Runner implements EventSubscriberInterface
             foreach ($class->getMethods() as $method) {
                 $name = $method->getName();
 
-                if ($methodFilter && !fnmatch($methodFilter, $name)) {
+                if ($methodFilter && !\fnmatch($methodFilter, $name)) {
                     continue;
                 }
 
-                if (preg_match('/^check/', $method->getName()) !== 1) {
+                if (\preg_match('/^check/', $method->getName()) !== 1) {
                     continue;
                 }
 
@@ -219,11 +230,13 @@ class Runner implements EventSubscriberInterface
 
                     if ($tagName === 'iterates') {
                         $iterates = true;
+
                         break;
                     }
 
                     if ($tagName === 'iterations') {
                         $iterations = (int) (string) $tag->getDescription();
+
                         break;
                     }
                 }
@@ -237,20 +250,16 @@ class Runner implements EventSubscriberInterface
 
                 try {
                     if ($iterates) {
-                        call_user_func($closure);
+                        \call_user_func($closure);
                     } else {
                         $noDefects = ($input->getOption('no-defects') !== false);
 
                         if (!$noDefects && $defectArgs) {
                             try {
-                                call_user_func($closure, ...$defectArgs);
-                            }
-
-                            catch (InvalidArgumentException $exception) {
+                                \call_user_func($closure, ...$defectArgs);
+                            } catch (InvalidArgumentException $exception) {
                                 throw new ExecutionFailure($defectArgs, $exception);
-                            }
-
-                            catch (Throwable $throwable) {
+                            } catch (Throwable $throwable) {
                                 throw new ExecutionError($defectArgs, $throwable);
                             }
                         }
@@ -261,9 +270,7 @@ class Runner implements EventSubscriberInterface
                     $event = new Events\SuccessEvent($method);
                     $this->dispatcher->dispatch(CheckEvents::SUCCESS, $event);
                     $status = 'SUCCESS';
-                }
-
-                catch (ExecutionFailure $failure) {
+                } catch (ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
                         $method,
                         $failure->args,
@@ -271,9 +278,7 @@ class Runner implements EventSubscriberInterface
                     );
                     $this->dispatcher->dispatch(CheckEvents::FAILURE, $event);
                     $status = 'FAILURE';
-                }
-
-                catch (ExecutionError $error) {
+                } catch (ExecutionError $error) {
                     $event = new Events\ErrorEvent(
                         $method,
                         $error->args,
@@ -302,8 +307,8 @@ class Runner implements EventSubscriberInterface
         ];
 
         foreach ($filenames as $filename) {
-            if (file_exists($filename)) {
-                return simplexml_load_file($filename) ?: null;
+            if (\file_exists($filename)) {
+                return \simplexml_load_file($filename) ?: null;
             }
         }
 
@@ -314,7 +319,7 @@ class Runner implements EventSubscriberInterface
     {
         $paths = [];
 
-        if (is_file($path)) {
+        if (\is_file($path)) {
             $paths[] = $path;
         } else {
             $finder = new Finder();
@@ -332,7 +337,7 @@ class Runner implements EventSubscriberInterface
 
     protected function getTags(ReflectionMethod $method)
     {
-        $factory = DocBlockFactory::createInstance();
+        $factory    = DocBlockFactory::createInstance();
         $docComment = $method->getDocComment();
 
         if ($docComment === false) {
@@ -352,11 +357,11 @@ class Runner implements EventSubscriberInterface
             return [null, null];
         }
 
-        $parts = explode('::', $filter);
+        $parts = \explode('::', $filter);
 
         Assert::countBetween($parts, 1, 2);
 
-        if (count($parts) === 1) {
+        if (\count($parts) === 1) {
             return [null, $parts[0]];
         }
 

@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * (c) Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck\Reporters;
 
 use Datashaman\PHPCheck\CheckCommand;
@@ -13,27 +20,37 @@ use Whoops\Exception\Inspector;
 
 class ConsoleReporter extends Reporter
 {
-    const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
+    public const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
 
-    const STATUS_CHARACTERS = [
+    public const STATUS_CHARACTERS = [
         'FAILURE' => 'F',
-        'ERROR' => 'E',
+        'ERROR'   => 'E',
         'SUCCESS' => '.',
     ];
 
-    const STATUS_FORMATS = [
+    public const STATUS_FORMATS = [
         'FAILURE' => 'error',
-        'ERROR' => 'error',
+        'ERROR'   => 'error',
         'SUCCESS' => 'info',
     ];
 
     protected $writer;
 
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            CheckEvents::END_ALL   => 'onEndAll',
+            CheckEvents::END       => 'onEnd',
+            CheckEvents::START     => 'onStart',
+            CheckEvents::START_ALL => 'onStartAll',
+        ];
+    }
+
     public function __construct(Runner $runner)
     {
         parent::__construct($runner);
 
-        $baseDir = realpath(__DIR__ . '/../');
+        $baseDir = \realpath(__DIR__ . '/../');
 
         $this->writer = new Writer();
         $this->writer->ignoreFilesIn(
@@ -46,20 +63,10 @@ class ConsoleReporter extends Reporter
         );
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            CheckEvents::END_ALL => 'onEndAll',
-            CheckEvents::END => 'onEnd',
-            CheckEvents::START => 'onStart',
-            CheckEvents::START_ALL => 'onStartAll',
-        ];
-    }
-
     public function onStartAll(Events\StartAllEvent $event): void
     {
         $this->output->writeln(
-            sprintf(self::HEADER, CheckCommand::VERSION)
+            \sprintf(self::HEADER, CheckCommand::VERSION)
         );
         $this->output->writeln('');
     }
@@ -78,7 +85,7 @@ class ConsoleReporter extends Reporter
             $signature = $this->getMethodSignature($event->method);
             $this->output->writeln("Check '$signature' ended");
         } else {
-            $char = self::STATUS_CHARACTERS[$event->status];
+            $char   = self::STATUS_CHARACTERS[$event->status];
             $format = self::STATUS_FORMATS[$event->status];
             $this->output->write("<$format>$char</$format>");
         }
@@ -86,8 +93,8 @@ class ConsoleReporter extends Reporter
 
     public function onEndAll(Events\EndAllEvent $event): void
     {
-        $successes = count($this->state->successes);
-        $total = $successes + count($this->state->failures);
+        $successes = \count($this->state->successes);
+        $total     = $successes + \count($this->state->failures);
 
         if (!$this->output->isDebug()) {
             $percentage = $total ? (int) ($successes / $total * 100) : 0;
@@ -102,15 +109,15 @@ class ConsoleReporter extends Reporter
         if ($seconds < 1) {
             $time = (int) ($seconds * 1000) . ' ms';
         } else {
-            $time = round($seconds, 2) . ' seconds';
+            $time = \round($seconds, 2) . ' seconds';
         }
 
-        $memory = $this->convertBytes(memory_get_peak_usage(true));
+        $memory = $this->convertBytes(\memory_get_peak_usage(true));
 
         $this->output->writeln('');
         $this->output->writeln("Time: $time, Memory: $memory");
 
-        if ($failures = count($this->state->failures)) {
+        if ($failures = \count($this->state->failures)) {
             $this->writer->setOutput($this->output);
 
             $message = $failures === 1 ? 'There was 1 failure:' : "There were $failures failures:";
@@ -120,7 +127,7 @@ class ConsoleReporter extends Reporter
             $this->output->writeln('');
 
             foreach ($this->state->failures as $index => $failure) {
-                $number = $index + 1;
+                $number    = $index + 1;
                 $signature = $this->getMethodSignature($failure->method);
                 $this->output->writeln("$number) $signature");
 
@@ -130,7 +137,7 @@ class ConsoleReporter extends Reporter
             }
         }
 
-        if ($errors = count($this->state->errors)) {
+        if ($errors = \count($this->state->errors)) {
             $this->writer->setOutput($this->output);
 
             $message = $errors === 1 ? 'There was 1 error:' : "There were $errors errors:";
@@ -140,7 +147,7 @@ class ConsoleReporter extends Reporter
             $this->output->writeln('');
 
             foreach ($this->state->errors as $index => $error) {
-                $number = $index + 1;
+                $number    = $index + 1;
                 $signature = $this->getMethodSignature($error->method);
                 $this->output->writeln("$number) $signature");
 

@@ -1,10 +1,16 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * (c) Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck;
 
-use Exception;
 use Faker\Factory;
 use Faker\Generator as FakerGenerator;
 use Generator;
@@ -12,12 +18,13 @@ use Webmozart\Assert\Assert;
 
 class Gen
 {
-    const DEFAULT_SIZE = 30;
+    public const DEFAULT_SIZE = 30;
 
-    const MIN_UNICODE = 0;
-    const MAX_UNICODE = 0x10FFFF;
+    public const MIN_UNICODE = 0;
 
-    const EXCLUDE_UNICODE = [
+    public const MAX_UNICODE = 0x10FFFF;
+
+    public const EXCLUDE_UNICODE = [
         [0x000000, 0x00001F],
         [0x00D800, 0x00DFFF],
         [0x00E000, 0x00F8FF],
@@ -37,71 +44,56 @@ class Gen
 
     public function __construct(Runner $runner, int $seed = null)
     {
-        $this->faker = Factory::create();
+        $this->faker  = Factory::create();
         $this->runner = $runner;
 
-        $seed = $seed ?: (int) microtime() * 1000000;
-        mt_srand($seed);
+        $seed = $seed ?: (int) \microtime() * 1000000;
+        \mt_srand($seed);
     }
 
-    /**
-     * @param int $chanceOfGettingTrue
-     */
     public function booleans(int $chanceOfGettingTrue = 50): Generator
     {
         Assert::natural($chanceOfGettingTrue);
         Assert::lessThanEq($chanceOfGettingTrue, 100);
 
         while (true) {
-            yield mt_rand(1, 100) <= $chanceOfGettingTrue;
+            yield \mt_rand(1, 100) <= $chanceOfGettingTrue;
         }
     }
 
-    /**
-     * @param float          $min
-     * @param float          $max
-     * @param Generator|null $decimals
-     *
-     * @return Generator
-     */
     public function floats(
-        float $min = PHP_FLOAT_MIN,
-        float $max = PHP_FLOAT_MAX,
+        float $min = \PHP_FLOAT_MIN,
+        float $max = \PHP_FLOAT_MAX,
         Generator $decimals = null
     ): Generator {
         Assert::lessThanEq($min, $max);
 
-        if (is_null($decimals)) {
+        if (null === $decimals) {
             $decimals = $this->integers(0, 9);
         }
 
         $iteration = 0;
 
-        /**
-         * @var int $decimal
+        /*
+         * @var int
          */
         foreach ($decimals as $decimal) {
-            $f = max(
+            $f = \max(
                 $min,
-                min(
-                    round($min + mt_rand() / mt_getrandmax() * $iteration / ($this->runner->maxIterations - 1) * ($max - $min), $decimal),
+                \min(
+                    \round($min + \mt_rand() / \mt_getrandmax() * $iteration / ($this->runner->maxIterations - 1) * ($max - $min), $decimal),
                     $max
                 )
             );
+
             yield $f;
             $iteration++;
         }
     }
 
-    /**
-     * @param int $min
-     * @param int $max
-     *
-     * @return Generator
-     */
     public function integers(
-        int $min = PHP_INT_MIN,
-        int $max = PHP_INT_MAX
+        int $min = \PHP_INT_MIN,
+        int $max = \PHP_INT_MAX
     ): Generator {
         Assert::lessThanEq($min, $max);
 
@@ -110,26 +102,21 @@ class Gen
         $iteration = 0;
 
         while (true) {
-            $currentMax = max(
+            $currentMax = \max(
                 $min,
-                min(
+                \min(
                     (int) ($iteration / ($this->runner->maxIterations - 1) * ($max - $min) + $min),
                     $max
                 )
             );
-            yield mt_rand($min, $currentMax);
+
+            yield \mt_rand($min, $currentMax);
             $iteration++;
         }
     }
 
-    /**
-     * @param array $include
-     * @param array $exclude
-     *
-     * @return Generator
-     */
     public function intervals(
-        array $include = [[PHP_INT_MIN, PHP_INT_MAX]],
+        array $include = [[\PHP_INT_MIN, \PHP_INT_MAX]],
         array $exclude = []
     ): Generator {
         Assert::isList($include);
@@ -170,7 +157,7 @@ class Gen
 
                     foreach ($exclude as $excludeInterval) {
                         $start = $excludeInterval[0];
-                        $end = $excludeInterval[1];
+                        $end   = $excludeInterval[1];
 
                         if ($value >= $start && $value <= $end) {
                             break 2;
@@ -178,6 +165,7 @@ class Gen
                     }
 
                     yield $value;
+
                     break;
                 }
             }
@@ -185,28 +173,26 @@ class Gen
     }
 
     /**
-     * @param string|int|null $minChar A character, or its codepoint or ordinal value.
-     * @param string|int|null $maxChar A character, or its codepoint or ordinal value.
-     *
-     * @return Generator
+     * @param null|int|string $minChar a character, or its codepoint or ordinal value
+     * @param null|int|string $maxChar a character, or its codepoint or ordinal value
      */
     public function characters(
         $minChar = null,
         $maxChar = null
     ): Generator {
-        if (is_null($minChar)) {
+        if (null === $minChar) {
             $minCodepoint = self::MIN_UNICODE;
-        } elseif (is_string($minChar)) {
-            $minCodepoint = $minChar === '' ? self::MIN_UNICODE : mb_ord($minChar);
+        } elseif (\is_string($minChar)) {
+            $minCodepoint = $minChar === '' ? self::MIN_UNICODE : \mb_ord($minChar);
         } else {
             Assert::integer($minChar);
             $minCodepoint = $minChar;
         }
 
-        if (is_null($maxChar)) {
+        if (null === $maxChar) {
             $maxCodepoint = self::MAX_UNICODE;
-        } elseif (is_string($maxChar)) {
-            $maxCodepoint = mb_ord($maxChar);
+        } elseif (\is_string($maxChar)) {
+            $maxCodepoint = \mb_ord($maxChar);
         } else {
             Assert::integer($minChar);
             $maxCodepoint = $maxChar;
@@ -218,31 +204,25 @@ class Gen
 
         $codepoints = $this->intervals(
             [
-                [$minCodepoint, $maxCodepoint]
+                [$minCodepoint, $maxCodepoint],
             ],
             self::EXCLUDE_UNICODE
         );
 
         foreach ($codepoints as $codepoint) {
-            yield mb_chr($codepoint);
+            yield \mb_chr($codepoint);
         }
     }
 
-    /**
-     * @param Generator|null $sizes
-     * @param Generator|null $characters
-     *
-     * @return Generator
-     */
     public function strings(
         Generator $sizes = null,
         Generator $characters = null
     ): Generator {
-        if (is_null($sizes)) {
+        if (null === $sizes) {
             $sizes = $this->integers(0, self::DEFAULT_SIZE);
         }
 
-        if (is_null($characters)) {
+        if (null === $characters) {
             $characters = $this->characters();
         }
 
@@ -256,8 +236,9 @@ class Gen
             while ($characters->valid()) {
                 $result .= (string) $characters->current();
 
-                if (mb_strlen($result) >= $size) {
+                if (\mb_strlen($result) >= $size) {
                     yield $result;
+
                     break;
                 }
 
@@ -266,15 +247,10 @@ class Gen
         }
     }
 
-    /**
-     * @param Generator|null $sizes
-     *
-     * @return Generator
-     */
     public function ascii(
         Generator $sizes = null
     ): Generator {
-        if (is_null($sizes)) {
+        if (null === $sizes) {
             $sizes = $this->integers(0, self::DEFAULT_SIZE);
         }
 
@@ -288,18 +264,13 @@ class Gen
         }
     }
 
-    /**
-     * @param array $arr
-     *
-     * @return Generator
-     */
     public function choose(
         array $arr
     ): Generator {
         Assert::notEmpty($arr);
         Assert::isList($arr);
 
-        $positions = $this->integers(0, count($arr) - 1);
+        $positions = $this->integers(0, \count($arr) - 1);
 
         foreach ($positions as $position) {
             yield $arr[$position];
@@ -307,16 +278,13 @@ class Gen
     }
 
     /**
-     * @param Generator $values
      * @param Generator $sizes
-     *
-     * @return Generator
      */
     public function listOf(
         Generator $values,
         Generator $sizes = null
     ): Generator {
-        if (is_null($sizes)) {
+        if (null === $sizes) {
             $sizes = $this->integers(0, self::DEFAULT_SIZE);
         }
 
@@ -326,8 +294,9 @@ class Gen
             while ($values->valid()) {
                 $result[] = $values->current();
 
-                if (count($result) >= $size) {
+                if (\count($result) >= $size) {
                     yield $result;
+
                     break;
                 }
 
@@ -336,19 +305,16 @@ class Gen
         }
     }
 
-    /**
-     * @param mixed $args,...
-     */
     public function faker(
         ...$args
     ) {
-        Assert::greaterThanEq(count($args), 1);
+        Assert::greaterThanEq(\count($args), 1);
 
-        $attr = array_shift($args);
+        $attr = \array_shift($args);
 
         while (true) {
-            if (count($args)) {
-                yield call_user_func([$this->faker, $attr], ...$args);
+            if (\count($args)) {
+                yield \call_user_func([$this->faker, $attr], ...$args);
             } else {
                 yield $this->faker->{$attr};
             }
