@@ -9,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Datashaman\PHPCheck;
 
 use Symfony\Component\Console\Command\Command;
@@ -27,11 +26,13 @@ class CheckCommand extends Command
     protected function configure(): void
     {
         $this
-            ->setDescription('Runs checks.')
-            ->addOption('bootstrap', null, InputOption::VALUE_OPTIONAL, 'A PHP script that is included before the tests run')
+            ->setDescription('Run checks.')
+            ->addOption('bootstrap', null, InputOption::VALUE_OPTIONAL, 'A PHP script that is included before the checks run')
+            ->addOption('coverage-html', null, InputOption::VALUE_OPTIONAL, 'Generate code coverage report in HTML', false)
+            ->addOption('coverage-text', null, InputOption::VALUE_OPTIONAL, 'Generate code coverage report in text', false)
             ->addOption('filter', 'f', InputOption::VALUE_OPTIONAL, 'Filter the checks that will be run')
             ->addOption('iterations', 'i', InputOption::VALUE_REQUIRED, 'How many times each check will be run', Runner::MAX_ITERATIONS)
-            ->addOption('log-junit', 'j', InputOption::VALUE_OPTIONAL, 'Log test execution in JUnit XML format to file')
+            ->addOption('log-junit', 'j', InputOption::VALUE_OPTIONAL, 'Log check execution in JUnit XML format to file')
             ->addOption('no-defects', 'd', InputOption::VALUE_OPTIONAL, 'Ignore previous defects', false)
             ->addOption('seed', 's', InputOption::VALUE_OPTIONAL, 'Seed the random number generator to get repeatable runs')
             ->addArgument('path', InputArgument::OPTIONAL, 'File or folder with checks', 'checks');

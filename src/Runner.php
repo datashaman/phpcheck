@@ -9,7 +9,6 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace Datashaman\PHPCheck;
 
 use InvalidArgumentException;
@@ -147,6 +146,14 @@ class Runner implements EventSubscriberInterface
         $this->maxIterations = (int) $input->getOption('iterations');
 
         $this->dispatcher->addSubscriber(new Reporters\ConsoleReporter($this));
+
+        if ($input->getOption('coverage-html') !== false) {
+            $this->dispatcher->addSubscriber(new Reporters\HtmlCoverageReporter($this));
+        }
+
+        if ($input->getOption('coverage-text') !== false) {
+            $this->dispatcher->addSubscriber(new Reporters\TextCoverageReporter($this));
+        }
 
         if ($input->getOption('log-junit')) {
             $reporter = new Reporters\JUnitReporter($this);
