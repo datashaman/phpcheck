@@ -52,6 +52,9 @@ Below is the list of generators that are currently available:
 
 You have to nest the parameter tag to specify a generator argument. See [GenCheck.php](checks/GenCheck.php) for examples.
 
+The `characters` generator accepts either characters or integer codepoints for `minChar` and `maxChar`. Characters
+are generated from the complete range of Unicode characters excluding control characters, private ranges and surrogates.
+
 ## examples
 
 There is an example check implemented in the _examples_ folder. To run it:
