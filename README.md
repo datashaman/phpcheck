@@ -50,7 +50,7 @@ Below is the list of generators that are currently available:
 * `listOf(Generator $values = null, Generator $sizes = null)`
 * `strings(Generator $sizes = null, Generator $characters = null)`
 
-You have to nest the parameter tag to specify a generator argument. See (GenCheck.php)[checks/GenCheck.php] for examples.
+You have to nest the parameter tag to specify a generator argument. See [GenCheck.php](checks/GenCheck.php) for examples.
 
 ## examples
 
