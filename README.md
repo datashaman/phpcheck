@@ -110,11 +110,12 @@ The `phpcheck` program accept a number of arguments and options:
 
     Options:
             --bootstrap[=BOOTSTRAP]         A PHP script that is included before the checks run
-            --coverage-html[=COVERAGE-HTML] Generate code coverage report in HTML [default: false]
-            --coverage-text[=COVERAGE-TEXT] Generate code coverage report in text [default: false]
+            --coverage-html[=COVERAGE-HTML] Generate HTML code coverage report [default: false]
+            --coverage-text[=COVERAGE-TEXT] Generate text code coverage report [default: false]
         -f, --filter[=FILTER]               Filter the checks that will be run
         -i, --iterations=ITERATIONS         How many times each check will be run [default: 100]
-        -j, --log-junit[=LOG-JUNIT]         Log check execution in JUnit XML format to file
+        -j, --log-junit[=LOG-JUNIT]         Log check execution to JUnit XML file [default: false]
+        -t, --log-text[=LOG-TEXT]           Log check execution to text file [default: false]
         -d, --no-defects[=NO-DEFECTS]       Ignore previous defects [default: false]
         -h, --help                          Display this help message
         -q, --quiet                         Do not output any message

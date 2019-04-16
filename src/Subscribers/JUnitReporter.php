@@ -67,7 +67,7 @@ class JUnitReporter extends Reporter
         );
     }
 
-    public function onEndAll()
+    public function onEndAll(): void
     {
         $this->testsuite->asXML($this->input->getOption('log-junit'));
     }

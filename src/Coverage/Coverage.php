@@ -9,11 +9,7 @@
  */
 namespace Datashaman\PHPCheck\Coverage;
 
-use Datashaman\PHPCheck\CheckEvents;
-use Datashaman\PHPCheck\Events;
 use Datashaman\PHPCheck\Runner;
-use SebastianBergmann\CodeCoverage\CodeCoverage;
-use SebastianBergmann\CodeCoverage\Report\Text;
 
 abstract class Coverage
 {

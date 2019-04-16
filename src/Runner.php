@@ -142,6 +142,10 @@ class Runner implements EventSubscriberInterface
         $this->output = $output;
 
         if ($input->getOption('coverage-html') !== false) {
+            if (is_null($input->getOption('coverage-html'))) {
+                $output->writeln('<error>You must specify a directory for coverage-html</error>');
+                exit(1);
+            }
             $coverage = new Coverage\HtmlCoverage($this);
         }
 
@@ -155,8 +159,21 @@ class Runner implements EventSubscriberInterface
 
         $this->dispatcher->addSubscriber(new Subscribers\ConsoleReporter($this));
 
-        if ($input->getOption('log-junit')) {
+        if ($input->getOption('log-junit') !== false) {
+            if (is_null($input->getOption('log-junit'))) {
+                $output->writeln('<error>You must specify a filename for log-junit</error>');
+                exit(1);
+            }
             $reporter = new Subscribers\JUnitReporter($this);
+            $this->dispatcher->addSubscriber($reporter);
+        }
+
+        if ($input->getOption('log-text') !== false) {
+            if (is_null($input->getOption('log-text'))) {
+                $output->writeln('<error>You must specify a filename for log-text</error>');
+                exit(1);
+            }
+            $reporter = new Subscribers\TextReporter($this);
             $this->dispatcher->addSubscriber($reporter);
         }
 
@@ -256,16 +273,16 @@ class Runner implements EventSubscriberInterface
                 } catch (ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
                         $method,
-                        $failure->args,
-                        $failure->cause
+                        $failure->getArgs(),
+                        $failure->getCause()
                     );
                     $this->dispatcher->dispatch(CheckEvents::FAILURE, $event);
                     $status = 'FAILURE';
                 } catch (ExecutionError $error) {
                     $event = new Events\ErrorEvent(
                         $method,
-                        $error->args,
-                        $error->cause
+                        $error->getArgs(),
+                        $error->getCause()
                     );
                     $this->dispatcher->dispatch(CheckEvents::ERROR, $event);
                     $status = 'ERROR';

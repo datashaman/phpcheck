@@ -23,7 +23,7 @@ class TextCoverage extends Coverage
 
         if ($this->input->getOption('coverage-text')) {
             $output = $writer->process($coverage, false);
-            file_put_contents($this->input->getOption('coverage-text'), $output);
+            \file_put_contents($this->input->getOption('coverage-text'), $output);
 
             return;
         }
