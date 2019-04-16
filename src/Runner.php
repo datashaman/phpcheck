@@ -153,10 +153,10 @@ class Runner implements EventSubscriberInterface
 
         $this->maxIterations = (int) $input->getOption('iterations');
 
-        $this->dispatcher->addSubscriber(new Reporters\ConsoleReporter($this));
+        $this->dispatcher->addSubscriber(new Subscribers\ConsoleReporter($this));
 
         if ($input->getOption('log-junit')) {
-            $reporter = new Reporters\JUnitReporter($this);
+            $reporter = new Subscribers\JUnitReporter($this);
             $this->dispatcher->addSubscriber($reporter);
         }
 
@@ -166,6 +166,13 @@ class Runner implements EventSubscriberInterface
 
         if ($bootstrap) {
             include_once $bootstrap;
+        }
+
+        if (isset($config->subscribers)) {
+            foreach ($config->subscribers->subscriber as $subscriber) {
+                $class = (string) $subscriber['class'];
+                $this->dispatcher->addSubscriber(new $class($this));
+            }
         }
 
         $event = new Events\StartAllEvent();
