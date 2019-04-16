@@ -25,9 +25,11 @@ use Datashaman\PHPCheck\CheckCommand;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use Symfony\Component\Console\Application;
 
-$coverage = new CodeCoverage();
-$coverage->filter()->addDirectoryToWhitelist('./src');
-$coverage->start('phpcheck');
+if (extension_loaded('xdebug')) {
+    $coverage = new CodeCoverage();
+    $coverage->filter()->addDirectoryToWhitelist('./src');
+    $coverage->start('phpcheck');
+}
 
 $application = new Application('phpcheck', CheckCommand::VERSION);
 $command = new CheckCommand();
