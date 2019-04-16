@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /*
  * This file is part of the phpcheck package.
  *
@@ -9,13 +7,13 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Datashaman\PHPCheck\Reporters;
+namespace Datashaman\PHPCheck\Subscribers;
 
 use Datashaman\PHPCheck\Runner;
 use ReflectionMethod;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-abstract class Reporter implements EventSubscriberInterface
+abstract class Subscriber implements EventSubscriberInterface
 {
     protected $input;
 

@@ -1,0 +1,104 @@
+<?php declare(strict_types=1);
+/*
+ * This file is part of the phpcheck package.
+ *
+ * ©Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+namespace Datashaman\PHPCheck\Subscribers;
+
+use Datashaman\PHPCheck\CheckEvents;
+use Datashaman\PHPCheck\Events;
+use ReflectionClass;
+
+class TextReporter extends Reporter
+{
+    protected $file;
+
+    public static function getSubscribedEvents(): array
+    {
+        return [
+            CheckEvents::START_ALL => 'onStartAll',
+            CheckEvents::START     => 'onStart',
+            CheckEvents::SUCCESS   => 'onSuccess',
+            CheckEvents::ERROR     => 'onError',
+            CheckEvents::FAILURE   => 'onFailure',
+            CheckEvents::END_ALL   => 'onEndAll',
+        ];
+    }
+
+    public function onStartAll(Events\StartAllEvent $event): void
+    {
+        $this->file = fopen($this->input->getOption('log-text'), 'a');
+        $this->report('onStartAll', $event);
+    }
+
+    public function onEndAll(Events\EndAllEvent $event): void
+    {
+        $this->report('onEndAll', $event);
+
+        if (is_resource($this->file)) {
+            fclose($this->file);
+        }
+    }
+
+    public function __call(string $name, array $args)
+    {
+        $this->report($name, ...$args);
+    }
+
+    protected function report(string $name, Events\Event $event)
+    {
+        $shortName = preg_replace(
+            '/Event$/',
+            '',
+            (new ReflectionClass($event))->getShortName()
+        );
+        $message = sprintf(
+            '%s [%-10s]',
+            strftime('%F %T', (int) $event->time),
+            strtoupper($shortName)
+        );
+
+        if (
+            in_array(
+                $name,
+                [
+                    'onError',
+                    'onFailure',
+                    'onStart',
+                    'onSuccess',
+                ]
+            )
+        ) {
+            $message .= ' ' . $this->getMethodSignature($event->method);
+        }
+
+        if (
+            $event instanceof Events\ResultEvent
+        ) {
+            if (!is_null($event->args)) {
+                $args = preg_replace(
+                    [
+                        '/^\[/',
+                        '/\]$/',
+                    ],
+                    '',
+                    json_encode($event->args)
+                );
+
+                $message .= '(' . $args . ')';
+            }
+
+            if ($event->cause) {
+                $message .= ' caused ' . get_class($event->cause) . '("' . $event->cause->getMessage() . '")';
+            }
+        }
+
+        $message .= "\n";
+
+        fwrite($this->file, $message);
+    }
+}

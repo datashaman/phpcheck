@@ -9,7 +9,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Datashaman\PHPCheck\Reporters;
+namespace Datashaman\PHPCheck\Subscribers;
 
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
@@ -67,7 +67,7 @@ class JUnitReporter extends Reporter
         );
     }
 
-    public function onEndAll(Events\EndAllEvent $event): void
+    public function onEndAll(): void
     {
         $this->testsuite->asXML($this->input->getOption('log-junit'));
     }

@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpcheck bootstrap="vendor/autoload.php">
+    <!-- TODO
     <suites>
         <suite name="Checks">
             <directory suffix="Check.php">./checks</directory>
         </suite>
     </suites>
+    -->
+    <!--
     <subscribers>
-        <subscriber />
+        <subscriber class="Datashaman\PHPCheck\Subscribers\TestSubscriber" />
     </subscribers>
+    -->
 </phpcheck>

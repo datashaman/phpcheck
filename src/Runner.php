@@ -141,22 +141,39 @@ class Runner implements EventSubscriberInterface
         $this->input  = $input;
         $this->output = $output;
 
+        if ($input->getOption('coverage-html') !== false) {
+            if (is_null($input->getOption('coverage-html'))) {
+                $output->writeln('<error>You must specify a directory for coverage-html</error>');
+                exit(1);
+            }
+            $coverage = new Coverage\HtmlCoverage($this);
+        }
+
+        if ($input->getOption('coverage-text') !== false) {
+            $coverage = new Coverage\TextCoverage($this);
+        }
+
         $config = $this->getConfig();
 
         $this->maxIterations = (int) $input->getOption('iterations');
 
-        $this->dispatcher->addSubscriber(new Reporters\ConsoleReporter($this));
+        $this->dispatcher->addSubscriber(new Subscribers\ConsoleReporter($this));
 
-        if ($input->getOption('coverage-html') !== false) {
-            $this->dispatcher->addSubscriber(new Reporters\HtmlCoverageReporter($this));
+        if ($input->getOption('log-junit') !== false) {
+            if (is_null($input->getOption('log-junit'))) {
+                $output->writeln('<error>You must specify a filename for log-junit</error>');
+                exit(1);
+            }
+            $reporter = new Subscribers\JUnitReporter($this);
+            $this->dispatcher->addSubscriber($reporter);
         }
 
-        if ($input->getOption('coverage-text') !== false) {
-            $this->dispatcher->addSubscriber(new Reporters\TextCoverageReporter($this));
-        }
-
-        if ($input->getOption('log-junit')) {
-            $reporter = new Reporters\JUnitReporter($this);
+        if ($input->getOption('log-text') !== false) {
+            if (is_null($input->getOption('log-text'))) {
+                $output->writeln('<error>You must specify a filename for log-text</error>');
+                exit(1);
+            }
+            $reporter = new Subscribers\TextReporter($this);
             $this->dispatcher->addSubscriber($reporter);
         }
 
@@ -166,6 +183,13 @@ class Runner implements EventSubscriberInterface
 
         if ($bootstrap) {
             include_once $bootstrap;
+        }
+
+        if (isset($config->subscribers)) {
+            foreach ($config->subscribers->subscriber as $subscriber) {
+                $class = (string) $subscriber['class'];
+                $this->dispatcher->addSubscriber(new $class($this));
+            }
         }
 
         $event = new Events\StartAllEvent();
@@ -249,16 +273,16 @@ class Runner implements EventSubscriberInterface
                 } catch (ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
                         $method,
-                        $failure->args,
-                        $failure->cause
+                        $failure->getArgs(),
+                        $failure->getCause()
                     );
                     $this->dispatcher->dispatch(CheckEvents::FAILURE, $event);
                     $status = 'FAILURE';
                 } catch (ExecutionError $error) {
                     $event = new Events\ErrorEvent(
                         $method,
-                        $error->args,
-                        $error->cause
+                        $error->getArgs(),
+                        $error->getCause()
                     );
                     $this->dispatcher->dispatch(CheckEvents::ERROR, $event);
                     $status = 'ERROR';
