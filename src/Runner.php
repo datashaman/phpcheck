@@ -141,19 +141,19 @@ class Runner implements EventSubscriberInterface
         $this->input  = $input;
         $this->output = $output;
 
+        if ($input->getOption('coverage-html') !== false) {
+            $coverage = new Coverage\HtmlCoverage($this);
+        }
+
+        if ($input->getOption('coverage-text') !== false) {
+            $coverage = new Coverage\TextCoverage($this);
+        }
+
         $config = $this->getConfig();
 
         $this->maxIterations = (int) $input->getOption('iterations');
 
         $this->dispatcher->addSubscriber(new Reporters\ConsoleReporter($this));
-
-        if ($input->getOption('coverage-html') !== false) {
-            $this->dispatcher->addSubscriber(new Reporters\HtmlCoverageReporter($this));
-        }
-
-        if ($input->getOption('coverage-text') !== false) {
-            $this->dispatcher->addSubscriber(new Reporters\TextCoverageReporter($this));
-        }
 
         if ($input->getOption('log-junit')) {
             $reporter = new Reporters\JUnitReporter($this);

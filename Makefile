@@ -3,6 +3,7 @@ phpcheck:
 
 phpcheck-coverage-html:
 	@phpcheck --coverage-html build/coverage
+	@xdg-open build/coverage/index.html
 
 phpcheck-coverage-console:
 	@phpcheck --coverage-text
