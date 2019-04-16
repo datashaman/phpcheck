@@ -9,31 +9,14 @@
  */
 namespace Datashaman\PHPCheck\Subscribers;
 
-use Datashaman\PHPCheck\Runner;
 use ReflectionMethod;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 abstract class Subscriber implements EventSubscriberInterface
 {
-    protected $input;
-
-    protected $output;
-
-    protected $runner;
-
-    protected $state;
-
-    public function __construct(Runner $runner)
-    {
-        $this->input  = $runner->getInput();
-        $this->output = $runner->getOutput();
-        $this->runner = $runner;
-        $this->state  = $runner->getState();
-    }
-
     protected function getMethodSignature(ReflectionMethod $method): string
     {
-        return $method->getDeclaringClass()->getName() . '::' . $method->getName();
+        return reflection()->getMethodSignature($method);
     }
 
     protected function convertBytes(int $bytes): string

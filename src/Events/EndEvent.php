@@ -21,14 +21,23 @@ class EndEvent extends Event
     public $method;
 
     /**
+     * @var array
+     */
+    public $tags;
+
+    /**
      * @var string
      */
     public $status;
 
-    public function __construct(ReflectionMethod $method, string $status)
-    {
+    public function __construct(
+        ReflectionMethod $method,
+        array $tags,
+        string $status
+    ) {
         parent::__construct();
         $this->method = $method;
+        $this->tags = $tags;
         $this->status = $status;
     }
 }

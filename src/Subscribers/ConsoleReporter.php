@@ -14,12 +14,15 @@ namespace Datashaman\PHPCheck\Subscribers;
 use Datashaman\PHPCheck\CheckCommand;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
-use Datashaman\PHPCheck\Runner;
+use Datashaman\PHPCheck\Traits\LogTrait;
+use Ds\Map;
 use NunoMaduro\Collision\Writer;
 use Whoops\Exception\Inspector;
 
 class ConsoleReporter extends Reporter
 {
+    use LogTrait;
+
     protected const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
 
     protected const STATUS_CHARACTERS = [
@@ -34,6 +37,7 @@ class ConsoleReporter extends Reporter
         'SUCCESS' => 'info',
     ];
 
+    protected $output;
     protected $writer;
 
     public static function getSubscribedEvents(): array
@@ -46,10 +50,8 @@ class ConsoleReporter extends Reporter
         ];
     }
 
-    public function __construct(Runner $runner)
+    public function __construct()
     {
-        parent::__construct($runner);
-
         $baseDir = \realpath(__DIR__ . '/../');
 
         $this->writer = new Writer();
@@ -65,6 +67,8 @@ class ConsoleReporter extends Reporter
 
     public function onStartAll(Events\StartAllEvent $event): void
     {
+        $this->output = app('runner')->getOutput();
+
         $this->output->writeln(
             \sprintf(self::HEADER, CheckCommand::VERSION)
         );
@@ -95,9 +99,11 @@ class ConsoleReporter extends Reporter
 
     public function onEndAll(Events\EndAllEvent $event): void
     {
-        $errors    = $this->state->getErrors();
-        $failures  = $this->state->getFailures();
-        $successes = $this->state->getSuccesses();
+        $state = app('state');
+
+        $errors    = $state->getErrors();
+        $failures  = $state->getFailures();
+        $successes = $state->getSuccesses();
 
         $successCount = \count($successes);
         $errorCount   = \count($errors);
@@ -113,7 +119,7 @@ class ConsoleReporter extends Reporter
             $this->output->writeln("$successCount / $totalCount ($percentage%)");
         }
 
-        $seconds = $event->time - $this->state->getStartTime();
+        $seconds = $event->time - $state->getStartTime();
 
         if ($seconds < 1) {
             $time = (int) ($seconds * 1000) . ' ms';
@@ -140,9 +146,13 @@ class ConsoleReporter extends Reporter
                 $signature = $this->getMethodSignature($failure->method);
                 $this->output->writeln("$number) $signature");
 
-                $inspector = new Inspector($failure->cause);
-                $this->writer->write($inspector);
                 $this->output->writeln('');
+                $this->output->writeln('ARGS: ' . $this->repr($failure->args));
+                $this->output->writeln('');
+
+                // $inspector = new Inspector($failure->cause);
+                // $this->writer->write($inspector);
+                // $this->output->writeln('');
             }
         }
 
@@ -168,7 +178,9 @@ class ConsoleReporter extends Reporter
 
         $this->output->writeln('');
 
-        $stats = "(Checks: $totalCount, Iterations: {$this->runner->getTotalIterations()}, Failures: $failureCount, Errors: $errorCount)";
+        $iterations = app('runner')->getTotalIterations();
+
+        $stats = "(Checks: $totalCount, Iterations: $iterations, Failures: $failureCount, Errors: $errorCount)";
         $this->output->writeln(
             ($failureCount || $errorCount)
                 ? "<error>DEFECTS $stats</error>"

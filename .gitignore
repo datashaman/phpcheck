@@ -1,7 +1,11 @@
 /build/
 /composer.lock
+/.env
 /.phpcheck/
+/.php_cs.cache
 /php_errors.log
+/phpcheck.log
 /.phpunit.result.cache
+/report/
 /vendor/
 /.vscode/

@@ -11,7 +11,6 @@ namespace Datashaman\PHPCheck\Subscribers;
 
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
-use ReflectionClass;
 
 class TextReporter extends Reporter
 {
@@ -29,9 +28,14 @@ class TextReporter extends Reporter
         ];
     }
 
+    public function __call(string $name, array $args): void
+    {
+        $this->report($name, ...$args);
+    }
+
     public function onStartAll(Events\StartAllEvent $event): void
     {
-        $this->file = fopen($this->input->getOption('log-text'), 'a');
+        $this->file = \fopen($this->input->getOption('log-text'), 'a');
         $this->report('onStartAll', $event);
     }
 
@@ -39,31 +43,26 @@ class TextReporter extends Reporter
     {
         $this->report('onEndAll', $event);
 
-        if (is_resource($this->file)) {
-            fclose($this->file);
+        if (\is_resource($this->file)) {
+            \fclose($this->file);
         }
     }
 
-    public function __call(string $name, array $args)
+    protected function report(string $name, Events\Event $event): void
     {
-        $this->report($name, ...$args);
-    }
-
-    protected function report(string $name, Events\Event $event)
-    {
-        $shortName = preg_replace(
+        $shortName = \preg_replace(
             '/Event$/',
             '',
-            (new ReflectionClass($event))->getShortName()
+            reflection()->getClass($event)->getShortName()
         );
-        $message = sprintf(
+        $message = \sprintf(
             '%s [%-10s]',
-            strftime('%F %T', (int) $event->time),
-            strtoupper($shortName)
+            \strftime('%F %T', (int) $event->time),
+            \mb_strtoupper($shortName)
         );
 
         if (
-            in_array(
+            \in_array(
                 $name,
                 [
                     'onError',
@@ -73,32 +72,32 @@ class TextReporter extends Reporter
                 ]
             )
         ) {
-            $message .= ' ' . $this->getMethodSignature($event->method);
+            $message .= ' ' . reflection()->getMethodSignature($event->method);
         }
 
         if (
             $event instanceof Events\ResultEvent
         ) {
-            if (!is_null($event->args)) {
-                $args = preg_replace(
+            if (null !== $event->args) {
+                $args = \preg_replace(
                     [
                         '/^\[/',
                         '/\]$/',
                     ],
                     '',
-                    json_encode($event->args)
+                    \json_encode($event->args)
                 );
 
                 $message .= '(' . $args . ')';
             }
 
             if ($event->cause) {
-                $message .= ' caused ' . get_class($event->cause) . '("' . $event->cause->getMessage() . '")';
+                $message .= ' caused ' . \get_class($event->cause) . '("' . $event->cause->getMessage() . '")';
             }
         }
 
         $message .= "\n";
 
-        fwrite($this->file, $message);
+        \fwrite($this->file, $message);
     }
 }

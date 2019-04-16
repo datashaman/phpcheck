@@ -13,201 +13,235 @@ namespace Datashaman\PHPCheck\Checks;
 
 use Datashaman\PHPCheck\Check;
 use Datashaman\PHPCheck\Gen;
+use Datashaman\PHPCheck\MkGen;
+use DateTime;
 use Webmozart\Assert\Assert;
 
-class GenCheck extends Check
+class GenCheck
 {
     /**
-     * @param string $c {@gen characters}
+     * @param string $char {@gen characters()}
      */
-    public function checkCharacters(string $c): void
+    public function checkCharacters(string $char): bool
     {
-        Assert::eq(1, \mb_strlen($c));
-        $ord = \mb_ord($c);
-        Assert::greaterThanEq($ord, Gen::MIN_UNICODE, $ord);
-        Assert::lessThanEq($ord, Gen::MAX_UNICODE);
+        $ord = \mb_ord($char);
 
-        foreach (Gen::EXCLUDE_UNICODE as $interval) {
-            Assert::false($ord >= $interval[0] && $ord <= $interval[1]);
-        }
+        return \mb_strlen($char) === 1
+            && $ord >= MkGen::UNICODE_MIN
+            && $ord <= MkGen::UNICODE_MAX
+            && !array_filter(
+                MkGen::UNICODE_EXCLUDE,
+                function ($interval) use ($ord) {
+                    return $ord >= $interval[0] && $ord <= $interval[1];
+                }
+            );
     }
 
-    public function checkStrings(string $string): void
+    public function checkStrings(string $string): bool
     {
-        Assert::true(\mb_strlen($string) <= 30);
-    }
+        $result = \mb_strlen($string) < 100;
 
-    /**
-     * @param string $string {@gen ascii}
-     */
-    public function checkAscii(string $string): void
-    {
-        Assert::true(\mb_strlen($string) <= 30);
-
-        foreach ($this->mbSplit($string) as $character) {
-            Assert::range(\ord($character), 0, 0x7F);
-        }
+        return $result;
     }
 
     /**
-     * @iterates
+     * @param string $string {@gen ascii()}
      */
-    public function checkBooleans(): void
+    public function checkAscii(string $string): bool
     {
-        $counts = [
-            false => 0,
-            true  => 0,
-        ];
-
-        $func = function (bool $b) use (&$counts): void {
-            $counts[$b]++;
-        };
-
-        $this->runner->iterate(
-            $func,
-            10000
-        );
-
-        $total          = $counts[false] + $counts[true];
-        $percentageTrue = $counts[true] / $total * 100;
-
-        Assert::true($percentageTrue >= 45 && $percentageTrue <= 55);
+        return \mb_strlen($string) <= 30
+            && (bool) array_filter(
+                $this->mbSplit($string),
+                function ($character) {
+                    $ord = mb_ord($character);
+                    return $ord >= 0 && $ord <= 0x7F;
+                }
+            );
     }
 
     /**
-     * @iterates
+     * @coverTable "Values" [[true, 49], [false, 49]]
+     * @iterations 10000
+     * @tabulate "Values" [$bin]
      */
-    public function checkBooleansWithPercentage(): void
+    public function checkBooleans(bool $bin): bool
     {
-        $counts = [
-            false => 0,
-            true  => 0,
-        ];
-
-        /**
-         * @param bool $b {@gen booleans:[75]}
-         */
-        $func = function (bool $b) use (&$counts): void {
-            $counts[$b]++;
-        };
-
-        $this->runner->iterate(
-            $func,
-            10000
-        );
-
-        $total          = $counts[false] + $counts[true];
-        $percentageTrue = $counts[true] / $total * 100;
-
-        Assert::true($percentageTrue >= 70 && $percentageTrue <= 80);
+        return true;
     }
 
     /**
-     * @param string $c {@gen characters:[32,126]}
+     * @param bool $bin {@gen booleans(75)}
+     *
+     * @coverTable "Values" [[true, 74], [false, 24]]
+     * @iterations 10000
+     * @tabulate "Values" [$bin]
      */
-    public function checkCharactersWithNumbers(string $c): void
+    public function checkBooleansWithPercentage(bool $bin): bool
     {
-        $ord = \mb_ord($c);
-        Assert::greaterThanEq($ord, 32);
-        Assert::lessThanEq($ord, 126);
+        return true;
     }
 
     /**
-     * @param string $c {@gen characters:[" ","~"]}
+     * @param string $char {@gen characters(32, 126)}
      */
-    public function checkCharactersWithStrings(string $c): void
+    public function checkCharactersWithNumbers(string $char): bool
     {
-        $ord = \mb_ord($c);
-        Assert::greaterThanEq($ord, 32);
-        Assert::lessThanEq($ord, 126);
+        $ord = \mb_ord($char);
+
+        return $ord >= 32 && $ord <= 126;
     }
 
     /**
-     * @param int $value {@gen choose:[[1,2,3]]}
+     * @param string $char {@gen characters(" ", "~")}
      */
-    public function checkChoose(int $value): void
+    public function checkCharactersWithStrings(string $char): bool
     {
-        Assert::range($value, 1, 3);
+        return $char >= ' ' && $char <= '~';
+    }
+
+    /**
+     * @param int $int {@gen elements([1,2,3])}
+     */
+    public function checkChoose(int $int): bool
+    {
+        return $int >= 1 && $int <= 3;
+    }
+
+    /**
+     * @param DateTime $value {@gen dates()}
+     */
+    public function checkDates(DateTime $value): bool
+    {
+        return $value->format('H:i:s') === '00:00:00';
+    }
+
+    /**
+     * @param DateTime $value {@gen datetimes()}
+     */
+    public function checkNaiveDateTimes(DateTime $value): bool
+    {
+        return $value->format('H:i:s') !== '00:00:00'
+            && $value->getOffset() === 0;
+    }
+
+    /**
+     * @param DateTime $value {@gen datetimes("0001-01-01", "9999-12-31", timezones())}
+     */
+    public function checkDateTimesWithTimezones(DateTime $value): bool
+    {
+        return $value->format('H:i:s') !== '00:00:00'
+            && $value->getTimezone() !== null;
     }
 
     /**
      * @iterations 5
      */
-    public function checkIterations(): void
+    public function checkIterations(): bool
     {
         static $iterations = 0;
         $iterations++;
-        Assert::lessThanEq($iterations, 5);
+
+        return $iterations <= 5;
     }
 
     /**
-     * @param float $f {@gen floats:[0,5]}
+     * @param float $float {@gen floats(0, 5)}
      */
-    public function checkFloats(float $f): void
+    public function checkFloats(float $float): bool
     {
-        Assert::greaterThanEq($f, 0);
-        Assert::lessThanEq($f, 5);
-
-        if (\preg_match('/\.([0-9]*)$/', (string) $f, $match)) {
-            Assert::lessThanEq(\mb_strlen($match[1]), 4);
-        }
+        return $float >= 0 && $float <= 5;
     }
 
     /**
-     * @param float $f {@gen floats:[0,5,{@gen integers:[4,4]}]}
+     * @param array $array {@gen listOf(choose(0, 10))}
      */
-    public function checkFloatsWithDecimalGen(float $f): void
+    public function checkListOfInt(array $array): bool
     {
-        Assert::greaterThanEq($f, 0);
-        Assert::lessThanEq($f, 5);
-
-        if (\preg_match('/\.([0-9]*)$/', (string) $f, $match)) {
-            Assert::lessThanEq(\mb_strlen($match[1]), 4);
-        }
+        return !count($array)
+            || (bool) array_filter(
+                $array,
+                function ($item) {
+                    return is_int($item) && $item >= 0 && $item <= 10;
+                }
+            );
     }
 
     /**
-     * @param string $s {@gen strings:[{@gen integers:[5,30]}]}
+     * @param mixed $value {@gen oneof(choose(0, 10), choose("a", "z"))}
      */
-    public function checkStringsWithMinMax(string $s): void
+    public function checkOneof($value): bool
     {
-        $count = \mb_strlen($s);
-        Assert::lessThanEq($count, 30);
-        Assert::greaterThanEq($count, 5);
+        return $value >= 'a' && $value <= 'z'
+            || $value >= 0 && $value <= 10;
     }
 
     /**
-     * @param array $list {@gen listOf:[{@gen integers:[0,10]},{@gen integers:[5,5]}]}
+     * @param array $list {@gen vectorOf(5, choose(0, 10))}
      */
-    public function checkListOfInts(array $list): void
+    public function checkVectorOfInts(array $list): bool
     {
-        Assert::count($list, 5);
-
-        foreach ($list as $value) {
-            Assert::integer($value);
-        }
+        return count($list) === 5
+            && (bool) array_filter(
+                $list,
+                function ($item) {
+                    return is_int($item) && $item >= 0 && $item <= 10;
+                }
+            );
     }
 
     /**
-     * @param string $str {@gen faker:["email"]}
+     * @param string $str {@gen faker("email")}
      */
-    public function checkFakerWithoutArgs(string $str): void
+    public function checkFakerWithoutArgs(string $str): bool
     {
-        Assert::true(\filter_var($str, \FILTER_VALIDATE_EMAIL) !== false, 'should produce an email');
+        return \filter_var($str, \FILTER_VALIDATE_EMAIL) !== false;
     }
 
     /**
-     * @param int $n {@gen faker:["numberBetween",5,5]}
+     * @param int $int {@gen faker("numberBetween", 5, 5)}
      */
-    public function checkFakerWithArgs(int $n): void
+    public function checkFakerWithArgs(int $int): bool
     {
-        Assert::eq(5, $n);
+        return $int === 5;
     }
 
-    protected function mbSplit(string $string)
+    /**
+     * @param int $int {@gen variant(123, choose(0, 1000000))}
+     */
+    public function checkVariant(int $int): bool
     {
-        if (($arr = \preg_split('/(?<!^)(?!$)/u', $string)) !== false) {
-            return \array_filter($arr);
+        return $int === 309391;
+    }
+
+    /**
+     * @param string $zone {@gen timezones()}
+     */
+    public function checkTimezones(string $zone): bool
+    {
+        return in_array($zone, \timezone_identifiers_list());
+    }
+
+    /**
+     * @param int $i {@gen choose(1, 5)}
+     *
+     * @coverTable "Values" [[1, 18], [2, 18], [3, 18], [4, 18], [5, 18]]
+     * @iterations 10000
+     * @tabulate "Values" [$i]
+     */
+    public function checkTabulate(int $i): bool
+    {
+        return $i >= 1 && $i <= 5;
+    }
+
+    protected function mbSplit(string $str)
+    {
+        if (($arr = \preg_split('/(?<!^)(?!$)/u', $str)) !== false) {
+            return \array_filter(
+                $arr,
+                function ($char) {
+                    return $char !== '';
+                }
+            );
         }
 
         return [];

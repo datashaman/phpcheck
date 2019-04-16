@@ -38,7 +38,7 @@ Annotate your check method parameters to control the arguments provided to the m
 
 Parameter tags (use them in the description of a parameter, usually the end):
 
-* `{@gen name}` or `{@gen name:params}` where `name` is the name of the generator and `params` is a JSON encoded array of arguments passed to the generator.
+* `{@gen #name}` or `{@gen #name param1 param2}` where `#name` is the name of a generator below and `param1` and `param2` are JSON encoded values which become arguments passed to the generator.
 
 Method tags:
 
@@ -54,7 +54,7 @@ Below is the list of generators that are currently available:
 * `characters($minChar, $maxChar)`
 * `choose(array $arr)`
 * `faker(...$args)`
-* `floats(float $min, float $max, Generator $decimals = null)`
+* `floats(float $min, float $max)`
 * `integers(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)`
 * `intervals(array $include = [[PHP_INT_MIN, PHP_INT_MAX]], array $exclude=[])`
 * `listOf(Generator $values = null, Generator $sizes = null)`

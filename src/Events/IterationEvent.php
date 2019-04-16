@@ -11,15 +11,15 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck\Events;
 
-use ReflectionMethod;
+use ReflectionFunction;
 use Throwable;
 
-abstract class ResultEvent extends Event
+class IterationEvent extends Event
 {
     /**
-     * @var ReflectionMethod
+     * @var ReflectionFunction
      */
-    public $method;
+    public $function;
 
     /**
      * @var array
@@ -32,25 +32,20 @@ abstract class ResultEvent extends Event
     public $args;
 
     /**
-     * @var null|Throwable
+     * @var bool
      */
-    public $cause;
-
-    /**
-     * @var string
-     */
-    public $status;
+    public $passed;
 
     public function __construct(
-        ReflectionMethod $method,
+        ReflectionFunction $function,
         array $tags,
-        array $args = null,
-        Throwable $cause = null
+        array $args,
+        bool $passed
     ) {
         parent::__construct();
-        $this->method = $method;
+        $this->function = $function;
         $this->tags = $tags;
         $this->args   = $args;
-        $this->cause  = $cause;
+        $this->passed  = $passed;
     }
 }

@@ -16,31 +16,19 @@ class ExecutionFailure extends Exception
 {
     protected $args;
 
-    protected $cause;
-
-    public function __construct(
-        array $args,
-        Throwable $cause
-    ) {
+    public function __construct(array $args) {
         parent::__construct(
             \sprintf(
-                "args=%s resulted in failure '%s'",
-                \json_encode($args),
-                $cause->getMessage()
+                "args=%s resulted in failure",
+                \json_encode($args)
             )
         );
 
         $this->args  = $args;
-        $this->cause = $cause;
     }
 
     public function getArgs()
     {
         return $this->args;
-    }
-
-    public function getCause()
-    {
-        return $this->cause;
     }
 }
