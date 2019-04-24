@@ -21,6 +21,8 @@ final class CheckEvents
 
     public const FAILURE = 'check.failure';
 
+    public const ITERATION = 'check.iteration';
+
     public const START = 'check.start';
 
     public const START_ALL = 'check.start_all';

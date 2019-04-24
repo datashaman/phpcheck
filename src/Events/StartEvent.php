@@ -20,9 +20,17 @@ class StartEvent extends Event
      */
     public $method;
 
-    public function __construct(ReflectionMethod $method)
-    {
+    /**
+     * @var array
+     */
+    public $tags;
+
+    public function __construct(
+        ReflectionMethod $method,
+        array $tags
+    ) {
         parent::__construct();
         $this->method = $method;
+        $this->tags = $tags;
     }
 }

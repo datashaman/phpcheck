@@ -16,9 +16,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class RunState implements EventSubscriberInterface
 {
-    protected const DATABASE_DIR = '.phpcheck';
+    public const DATABASE_DIR = '.phpcheck';
 
-    protected const CREATE_RESULTS_SQL = <<<'EOT'
+    public const CREATE_RESULTS_SQL = <<<'EOT'
 CREATE TABLE IF NOT EXISTS results (
     class TEXT NOT NULL,
     method TEXT NOT NULL,
@@ -49,13 +49,13 @@ EOT;
 SELECT args FROM results WHERE class = :class AND method = :method AND status IN ('ERROR', 'FAILURE')
 EOT;
 
-    protected $errors;
+    protected $errors = [];
 
-    protected $failures;
+    protected $failures = [];
 
     protected $startTime;
 
-    protected $successes;
+    protected $successes = [];
 
     public static function getSubscribedEvents(): array
     {
@@ -69,9 +69,8 @@ EOT;
 
     public function getDefectArgs(ReflectionMethod $method): ?array
     {
-        $database  = $this->getResultsDatabase();
+        $statement = app('database')->prepare(self::SELECT_DEFECT_SQL);
 
-        $statement = $database->prepare(self::SELECT_DEFECT_SQL);
         $statement->bindValue(':class', $method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
         $statement->bindValue(':method', $method->getName(), \SQLITE3_TEXT);
 
@@ -142,9 +141,8 @@ EOT;
     {
         $args = $event->args ? (\json_encode($event->args) ?: '') : '';
 
-        $database  = $this->getResultsDatabase();
+        $statement = app('database')->prepare(self::INSERT_RESULT_SQL);
 
-        $statement = $database->prepare(self::INSERT_RESULT_SQL);
         $statement->bindValue(':class', $event->method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
         $statement->bindValue(':method', $event->method->getName(), \SQLITE3_TEXT);
         $statement->bindValue(':status', $event->status, \SQLITE3_TEXT);
@@ -163,21 +161,5 @@ EOT;
         $format = \preg_replace('/(%f)/', $decimal, '%F %T.%f');
 
         return \strftime($format, (int) $microtime);
-    }
-
-    protected function getResultsDatabase(): SQLite3
-    {
-        static $database;
-
-        if (!isset($database)) {
-            if (!\is_dir(self::DATABASE_DIR)) {
-                \mkdir(self::DATABASE_DIR, 0755);
-            }
-
-            $database = new SQLite3(self::DATABASE_DIR . \DIRECTORY_SEPARATOR . 'results.db');
-            $database->exec(self::CREATE_RESULTS_SQL);
-        }
-
-        return $database;
     }
 }

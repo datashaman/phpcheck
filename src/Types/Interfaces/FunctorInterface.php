@@ -7,14 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Datashaman\PHPCheck\Coverage;
+namespace Datashaman\PHPCheck\Types\Interfaces;
 
-abstract class Coverage
+interface FunctorInterface
 {
-    public function __destruct()
-    {
-        global $coverage;
-
-        $coverage->stop();
-    }
+    public function map(callable $func): self;
 }

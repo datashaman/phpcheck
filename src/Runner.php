@@ -13,13 +13,12 @@ namespace Datashaman\PHPCheck;
 
 use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
-use ReflectionClass;
 use ReflectionFunction;
+use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use SimpleXMLElement;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
 use Throwable;
@@ -27,23 +26,19 @@ use Webmozart\Assert\Assert;
 
 class Runner implements EventSubscriberInterface
 {
-    public const MAX_ITERATIONS = 100;
+    public const MAX_DISCARD_RATIO = 10;
+    public const MAX_SIZE = 100;
+    public const MAX_SUCCESS = 100;
 
     protected const CONFIG_FILE = 'phpcheck.xml';
 
-    protected $maxIterations = self::MAX_ITERATIONS;
+    private $seed;
 
-    protected $state;
+    private $input;
 
-    protected $argumentFactory;
+    private $output;
 
-    protected $dispatcher;
-
-    protected $input;
-
-    protected $output;
-
-    protected $totalIterations;
+    private $totalIterations = 0;
 
     public static function getSubscribedEvents(): array
     {
@@ -58,38 +53,9 @@ class Runner implements EventSubscriberInterface
         ];
     }
 
-    public function __construct(int $seed = null)
-    {
-        $this->argumentFactory = new ArgumentFactory($this, $seed);
-        $this->dispatcher      = new EventDispatcher();
-        $this->state           = new RunState();
-
-        $this->dispatcher->addSubscriber($this->state);
-    }
-
-    public function getGen()
-    {
-        return $this->argumentFactory->getGen();
-    }
-
-    public function getInput()
-    {
-        return $this->input;
-    }
-
-    public function getMaxIterations()
-    {
-        return $this->maxIterations;
-    }
-
     public function getOutput()
     {
         return $this->output;
-    }
-
-    public function getState()
-    {
-        return $this->state;
     }
 
     public function getTotalIterations()
@@ -98,51 +64,37 @@ class Runner implements EventSubscriberInterface
     }
 
     public function iterate(
-        callable $callable,
-        int $iterations = null
-    ): void {
-        $function  = new ReflectionFunction($callable);
-        $arguments = $this->argumentFactory->make($function);
+        callable $subject,
+        callable $check = null,
+        array $options = []
+    ): array {
+        $size = $options['iterations'] ?? $this->maxSuccess;
 
-        $maxIterations = null === $iterations
-            ? $this->maxIterations
-            : $iterations;
+        $result = $this->checks(
+            $size,
+            $subject,
+            $check,
+            $options
+        );
 
-        $iterations = 0;
+        $this->totalIterations += $result['iteration'];
 
-        while ($arguments->valid()) {
-            $args = $arguments->current();
-
-            try {
-                \call_user_func($callable, ...$args);
-                $iterations++;
-            } catch (InvalidArgumentException $exception) {
-                $this->totalIterations += $iterations + 1;
-
-                throw new ExecutionFailure($args, $exception);
-            } catch (Throwable $throwable) {
-                $this->totalIterations += $iterations + 1;
-
-                throw new ExecutionError($args, $throwable);
-            }
-
-            if ($iterations++ >= $maxIterations - 1) {
-                break;
-            }
-
-            $arguments->next();
-        }
-
-        $this->totalIterations += $iterations;
+        return $result;
     }
 
     public function execute(InputInterface $input, OutputInterface $output): void
     {
+        $state = app('state');
+
         $this->input  = $input;
         $this->output = $output;
 
+        if ($replay = $input->getOption('replay')) {
+            $this->setSeed((int) $replay);
+        }
+
         if ($input->getOption('coverage-html') !== false) {
-            if (is_null($input->getOption('coverage-html'))) {
+            if (null === $input->getOption('coverage-html')) {
                 $output->writeln('<error>You must specify a directory for coverage-html</error>');
                 exit(1);
             }
@@ -155,26 +107,26 @@ class Runner implements EventSubscriberInterface
 
         $config = $this->getConfig();
 
-        $this->maxIterations = (int) $input->getOption('iterations');
+        $this->maxSuccess = (int) $input->getOption('max-success');
 
-        $this->dispatcher->addSubscriber(new Subscribers\ConsoleReporter($this));
+        $dispatcher = app('dispatcher');
 
         if ($input->getOption('log-junit') !== false) {
-            if (is_null($input->getOption('log-junit'))) {
+            if (null === $input->getOption('log-junit')) {
                 $output->writeln('<error>You must specify a filename for log-junit</error>');
                 exit(1);
             }
             $reporter = new Subscribers\JUnitReporter($this);
-            $this->dispatcher->addSubscriber($reporter);
+            $dispatcher->addSubscriber($reporter);
         }
 
         if ($input->getOption('log-text') !== false) {
-            if (is_null($input->getOption('log-text'))) {
+            if (null === $input->getOption('log-text')) {
                 $output->writeln('<error>You must specify a filename for log-text</error>');
                 exit(1);
             }
             $reporter = new Subscribers\TextReporter($this);
-            $this->dispatcher->addSubscriber($reporter);
+            $dispatcher->addSubscriber($reporter);
         }
 
         $bootstrap = $input->getOption('bootstrap')
@@ -188,12 +140,12 @@ class Runner implements EventSubscriberInterface
         if (isset($config->subscribers)) {
             foreach ($config->subscribers->subscriber as $subscriber) {
                 $class = (string) $subscriber['class'];
-                $this->dispatcher->addSubscriber(new $class($this));
+                $dispatcher->addSubscriber(new $class($this));
             }
         }
 
         $event = new Events\StartAllEvent();
-        $this->dispatcher->dispatch(CheckEvents::START_ALL, $event);
+        $dispatcher->dispatch(CheckEvents::START_ALL, $event);
 
         [$classFilter, $methodFilter] = $this->getFilter($input);
 
@@ -225,9 +177,8 @@ class Runner implements EventSubscriberInterface
                 continue;
             }
 
-            $test = new $testClass($this);
-
-            $class = new ReflectionClass($test);
+            $test  = new $testClass($this);
+            $class = reflection()->getClass($test);
 
             foreach ($class->getMethods() as $method) {
                 $name = $method->getName();
@@ -240,19 +191,20 @@ class Runner implements EventSubscriberInterface
                     continue;
                 }
 
+                $parameterCount = count($method->getParameters());
                 $tags = $this->getMethodTags($method);
 
                 $closure = $method->getClosure($test);
 
-                $event = new Events\StartEvent($method);
-                $this->dispatcher->dispatch(CheckEvents::START, $event);
+                $event = new Events\StartEvent($method, $tags);
+                $dispatcher->dispatch(CheckEvents::START, $event);
 
                 try {
-                    if (!empty($tags['iterates'])) {
+                    if (!$parameterCount) {
                         \call_user_func($closure);
                     } else {
                         $noDefects  = ($input->getOption('no-defects') !== false);
-                        $defectArgs = $this->state->getDefectArgs($method);
+                        $defectArgs = $state->getDefectArgs($method);
 
                         if (!$noDefects && $defectArgs) {
                             try {
@@ -264,37 +216,46 @@ class Runner implements EventSubscriberInterface
                             }
                         }
 
-                        $this->iterate($closure, $tags['iterations'] ?? $this->maxIterations);
+                        $result = $this->iterate(
+                            $closure,
+                            null,
+                            $tags
+                        );
+
+                        if (!$result['passed']) {
+                            throw new ExecutionFailure($result['input'], $result['error']);
+                        }
                     }
 
-                    $event = new Events\SuccessEvent($method);
-                    $this->dispatcher->dispatch(CheckEvents::SUCCESS, $event);
+                    $event = new Events\SuccessEvent($method, $tags);
+                    $dispatcher->dispatch(CheckEvents::SUCCESS, $event);
                     $status = 'SUCCESS';
                 } catch (ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
                         $method,
-                        $failure->getArgs(),
-                        $failure->getCause()
+                        $tags,
+                        $failure->getArgs()
                     );
-                    $this->dispatcher->dispatch(CheckEvents::FAILURE, $event);
+                    $dispatcher->dispatch(CheckEvents::FAILURE, $event);
                     $status = 'FAILURE';
                 } catch (ExecutionError $error) {
                     $event = new Events\ErrorEvent(
                         $method,
+                        $tags,
                         $error->getArgs(),
                         $error->getCause()
                     );
-                    $this->dispatcher->dispatch(CheckEvents::ERROR, $event);
+                    $dispatcher->dispatch(CheckEvents::ERROR, $event);
                     $status = 'ERROR';
                 }
 
-                $event = new Events\EndEvent($method, $status);
-                $this->dispatcher->dispatch(CheckEvents::END, $event);
+                $event = new Events\EndEvent($method, $tags, $status);
+                $dispatcher->dispatch(CheckEvents::END, $event);
             }
         }
 
         $event = new Events\EndAllEvent();
-        $this->dispatcher->dispatch(CheckEvents::END_ALL, $event);
+        $dispatcher->dispatch(CheckEvents::END_ALL, $event);
     }
 
     protected function getConfig(string $filename = null): ?SimpleXMLElement
@@ -360,18 +321,39 @@ class Runner implements EventSubscriberInterface
 
         $tags = $docBlock->getTags();
 
-        $result = [];
+        $result = [
+            'coverTable' => [],
+            'tabulate' => [],
+        ];
 
         foreach ($tags as $tag) {
             $tagName = $tag->getName();
+            $description = (string) $tag->getDescription();
 
             if ($tagName === 'iterates') {
                 // If a method has an @iterates tag,
                 // it handles its own iteration internally
                 // and should be called normally with no args.
                 $result['iterates'] = true;
+            } elseif ($tagName === 'coverTable') {
+                if (preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
+                    $label = $match[1];
+                    $expression = $match[2];
+                    $result['coverTable'][$label] = $expression;
+                } else {
+                    throw new Exception('Unable to parse coverTable tag: ' . $description);
+                }
+                $result['coverTable'][] = $description;
             } elseif ($tagName === 'iterations') {
-                $result['iterations'] = (int) (string) $tag->getDescription();
+                $result['iterations'] = (int) $description;
+            } elseif ($tagName === 'tabulate') {
+                if (preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
+                    $label = $match[1];
+                    $expression = $match[2];
+                    $result['tabulate'][$label] = $expression;
+                }
+            } elseif ($tagName === 'within') {
+                $result['within'] = (int) $description;
             }
         }
 
@@ -395,5 +377,151 @@ class Runner implements EventSubscriberInterface
         }
 
         return $parts;
+    }
+
+    protected function shrink($args)
+    {
+        foreach ($args as &$arg) {
+            if (is_string($arg)) {
+                if (mb_strlen($arg)) {
+                    $shrunkArg = mb_substr($arg, 0, -1);
+                    $arg = $shrunkArg;
+
+                    return $args;
+                }
+            } elseif (is_array($arg)) {
+                if (count($arg)) {
+                    $shrunkArg = array_slice($arg, 0, count($arg) - 1);
+                    $arg = $shrunkArg;
+
+                    return $args;
+                }
+            } elseif (is_bool($arg)) {
+                if ($arg === true) {
+                    $arg = false;
+
+                    return $args;
+                }
+            } elseif (is_int($arg)) {
+                if ($arg !== 0) {
+                    $arg = (int) ($arg / 2);
+
+                    return $args;
+                }
+            } elseif ($arg instanceof DateTime) {
+                $timestamp = $arg->getTimestamp();
+                $difference = $timestamp - (new DateTime('2000-01-01'))->getTimestamp();
+
+                if ($difference) {
+                    $timestamp = (int) ($timestamp - $difference / 2);
+
+                    $arg = new DateTime("@$timestamp");
+
+                    return $args;
+                }
+            } else {
+                throw new Exception('Add another shrink handler');
+            }
+        }
+
+        throw new Example($args);
+    }
+
+    protected function passed(
+        ReflectionFunctionAbstract $subject,
+        ReflectionFunctionAbstract $check,
+        array $input
+    ) {
+        $error = null;
+        $output = null;
+        $passed = null;
+
+        try {
+            set_error_handler(
+                function ($code, $message, $file, $line) {
+                    throw new CheckError(
+                        $message,
+                        $code,
+                        $file,
+                        $line
+                    );
+                }
+            );
+
+            if ($subject == $check) {
+                $passed = $subject->invoke(...$input);
+            } else {
+                $output = $subject->invoke(...$input);
+                $passed = $check->invoke($input, $output);
+            }
+        }
+
+        catch (CheckError $error) {
+            $passed = false;
+        }
+
+        return [$passed, $output, $error];
+    }
+
+    public function checks(
+        int $size,
+        callable $subject,
+        callable $check = null,
+        array $tags = null
+    ): array {
+        $reflection = reflection()->reflect($subject);
+        $signature = reflection()->getFunctionSignature($reflection);
+
+        $check = is_null($check)
+            ? $reflection
+            : reflection()->reflect($check);
+
+        $gen = app('gen');
+        $dispatcher = app('dispatcher');
+        $result = null;
+
+        for($iteration = 1; $iteration <= $size; $iteration++) {
+            $input = $gen
+                ->resize(
+                    $iteration - 1,
+                    $gen->arguments($subject)
+                )
+                ->generate();
+            [$passed, $output, $error] = $this->passed($reflection, $check, $input);
+
+            $event = new Events\IterationEvent($reflection, $tags, $input, $passed);
+            $dispatcher->dispatch(CheckEvents::ITERATION, $event);
+
+            $result = compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
+
+            $exhausted = false;
+
+            while (!$passed) {
+                try {
+                    $input = $this->shrink($input);
+                } catch (Example $e) {
+                    $input = $e->args;
+                    $exhausted = true;
+                }
+
+                [$passed, $output, $error] = $this->passed($reflection, $check, $input);
+
+                if ($passed) {
+                    break;
+                }
+
+                $result = compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
+
+                if ($exhausted) {
+                    break;
+                }
+            }
+
+            if (!$result['passed']) {
+                break;
+            }
+        }
+
+        return $result;
     }
 }
