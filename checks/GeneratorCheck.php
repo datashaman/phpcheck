@@ -11,13 +11,9 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck\Checks;
 
-use Datashaman\PHPCheck\Check;
-use Datashaman\PHPCheck\Gen;
-use Datashaman\PHPCheck\MkGen;
 use DateTime;
-use Webmozart\Assert\Assert;
 
-class GenCheck
+class GeneratorCheck
 {
     /**
      * @param string $char {@gen characters()}
@@ -27,10 +23,10 @@ class GenCheck
         $ord = \mb_ord($char);
 
         return \mb_strlen($char) === 1
-            && $ord >= MkGen::UNICODE_MIN
-            && $ord <= MkGen::UNICODE_MAX
-            && !array_filter(
-                MkGen::UNICODE_EXCLUDE,
+            && $ord >= \Datashaman\PHPCheck\UNICODE_MIN
+            && $ord <= \Datashaman\PHPCheck\UNICODE_MAX
+            && !\array_filter(
+                \Datashaman\PHPCheck\UNICODE_EXCLUDE,
                 function ($interval) use ($ord) {
                     return $ord >= $interval[0] && $ord <= $interval[1];
                 }
@@ -39,9 +35,7 @@ class GenCheck
 
     public function checkStrings(string $string): bool
     {
-        $result = \mb_strlen($string) < 100;
-
-        return $result;
+        return \mb_strlen($string) < 100;
     }
 
     /**
@@ -50,10 +44,11 @@ class GenCheck
     public function checkAscii(string $string): bool
     {
         return \mb_strlen($string) <= 30
-            && (bool) array_filter(
+            && (bool) \array_filter(
                 $this->mbSplit($string),
                 function ($character) {
-                    $ord = mb_ord($character);
+                    $ord = \mb_ord($character);
+
                     return $ord >= 0 && $ord <= 0x7F;
                 }
             );
@@ -61,7 +56,7 @@ class GenCheck
 
     /**
      * @coverTable "Values" [[true, 49], [false, 49]]
-     * @iterations 10000
+     * @maxSuccess 10000
      * @tabulate "Values" [$bin]
      */
     public function checkBooleans(bool $bin): bool
@@ -73,7 +68,7 @@ class GenCheck
      * @param bool $bin {@gen booleans(75)}
      *
      * @coverTable "Values" [[true, 74], [false, 24]]
-     * @iterations 10000
+     * @maxSuccess 10000
      * @tabulate "Values" [$bin]
      */
     public function checkBooleansWithPercentage(bool $bin): bool
@@ -134,14 +129,14 @@ class GenCheck
     }
 
     /**
-     * @iterations 5
+     * @maxSuccess 5
      */
-    public function checkIterations(): bool
+    public function checkMaxSuccess(): bool
     {
-        static $iterations = 0;
-        $iterations++;
+        static $checks = 0;
+        $checks++;
 
-        return $iterations <= 5;
+        return $checks <= 5;
     }
 
     /**
@@ -157,17 +152,17 @@ class GenCheck
      */
     public function checkListOfInt(array $array): bool
     {
-        return !count($array)
-            || (bool) array_filter(
+        return !\count($array)
+            || (bool) \array_filter(
                 $array,
                 function ($item) {
-                    return is_int($item) && $item >= 0 && $item <= 10;
+                    return \is_int($item) && $item >= 0 && $item <= 10;
                 }
             );
     }
 
     /**
-     * @param mixed $value {@gen oneof(choose(0, 10), choose("a", "z"))}
+     * @param mixed $value {@gen oneof([choose(0, 10), choose("a", "z")])}
      */
     public function checkOneof($value): bool
     {
@@ -180,11 +175,11 @@ class GenCheck
      */
     public function checkVectorOfInts(array $list): bool
     {
-        return count($list) === 5
-            && (bool) array_filter(
+        return \count($list) === 5
+            && (bool) \array_filter(
                 $list,
                 function ($item) {
-                    return is_int($item) && $item >= 0 && $item <= 10;
+                    return \is_int($item) && $item >= 0 && $item <= 10;
                 }
             );
     }
@@ -210,7 +205,7 @@ class GenCheck
      */
     public function checkVariant(int $int): bool
     {
-        return $int === 309391;
+        return $int === 857674;
     }
 
     /**
@@ -218,14 +213,14 @@ class GenCheck
      */
     public function checkTimezones(string $zone): bool
     {
-        return in_array($zone, \timezone_identifiers_list());
+        return \in_array($zone, \timezone_identifiers_list());
     }
 
     /**
      * @param int $i {@gen choose(1, 5)}
      *
      * @coverTable "Values" [[1, 18], [2, 18], [3, 18], [4, 18], [5, 18]]
-     * @iterations 10000
+     * @maxSuccess 10000
      * @tabulate "Values" [$i]
      */
     public function checkTabulate(int $i): bool

@@ -10,16 +10,16 @@
 namespace Datashaman\PHPCheck;
 
 use Exception;
-use Throwable;
 
 class ExecutionFailure extends Exception
 {
     protected $args;
 
-    public function __construct(array $args) {
+    public function __construct(array $args)
+    {
         parent::__construct(
             \sprintf(
-                "args=%s resulted in failure",
+                'args=%s resulted in failure',
                 \json_encode($args)
             )
         );

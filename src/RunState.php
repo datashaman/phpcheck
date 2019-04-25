@@ -10,7 +10,6 @@
 namespace Datashaman\PHPCheck;
 
 use ReflectionMethod;
-use SQLite3;
 use SQLite3Result;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

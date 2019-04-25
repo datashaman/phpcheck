@@ -93,7 +93,7 @@ class CheckCommand extends Command
                 null,
                 InputOption::VALUE_REQUIRED,
                 "Maximum number of successful checks before succeeding. Testing stops at the first failure.\n" .
-                "If all tests are passing and you want to run more tests, increase this number.",
+                'If all tests are passing and you want to run more tests, increase this number.',
                 Runner::MAX_SUCCESS
             )
             ->addOption(

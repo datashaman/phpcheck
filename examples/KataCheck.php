@@ -35,26 +35,32 @@ function add(string $numbers)
 class KataCheck
 {
     /**
-     * @param string $delimiter {@gen #choose "!" "/"}
-     * @param array $ints {@gen #resize 3 #listOf #choose 0 500}
+     * @param string $delimiter {@gen choose("!", "/")}
+     * @param array $ints {@gen resize(3, listOf(choose(0, 500)))}
      */
     public function checkBasicInput(string $delimiter, array $ints)
     {
         $numbers = "//$delimiter\n" . implode($delimiter, $ints);
-        Assert::eq(array_sum($ints), add($numbers));
+
+        return array_sum($ints) === add($numbers);
     }
 
     /**
-     * @param string $delimiter {@gen #choose "!" ","}
-     * @param array $ints {@gen #vectorOf 4 #choose -100 -1}
+     * @param string $delimiter {@gen choose("!", ",")}
+     * @param array $ints {@gen vectorOf(4, choose(-100, -1))}
      */
     public function checkNegatives(string $delimiter, array $ints)
     {
         $numbers = "//$delimiter\n" . implode($delimiter, $ints);
-        Assert::throws(
-            function () use ($numbers) {
-                add($numbers);
-            }
-        );
+
+        try {
+            add($numbers);
+        }
+
+        catch (Exception $e) {
+            return true;
+        }
+
+        return false;
     }
 }

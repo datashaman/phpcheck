@@ -2,15 +2,12 @@
 
 namespace Datashaman\PHPCheck\Checks;
 
-use Datashaman\PHPCheck\Check;
-use Webmozart\Assert\Assert;
-
 require_once __DIR__ . '/encoder.php';
 
-class EncoderCheck extends Check
+class EncoderCheck
 {
     public function checkEncode(string $str)
     {
-        Assert::eq($str, decode(encode($str)));
+        return $str === decode(encode($str));
     }
 }

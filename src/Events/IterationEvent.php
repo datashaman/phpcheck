@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Datashaman\PHPCheck\Events;
 
 use ReflectionFunction;
-use Throwable;
 
 class IterationEvent extends Event
 {
@@ -44,8 +43,8 @@ class IterationEvent extends Event
     ) {
         parent::__construct();
         $this->function = $function;
-        $this->tags = $tags;
-        $this->args   = $args;
-        $this->passed  = $passed;
+        $this->tags     = $tags;
+        $this->args     = $args;
+        $this->passed   = $passed;
     }
 }

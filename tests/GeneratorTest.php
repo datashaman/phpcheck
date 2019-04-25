@@ -2,16 +2,42 @@
 
 namespace Datashaman\PHPCheck\Tests;
 
-use Datashaman\PHPCheck\MkGen;
-use Datashaman\PHPCheck\Gen;
-use Datashaman\PHPCheck\Types\Maybe;
+use function Datashaman\PHPCheck\{
+    choose,
+    generate,
+    listOf,
+    oneof,
+    resize,
+    scale,
+    suchThat,
+    suchThatMap,
+    suchThatMaybe,
+    variant
+};
 
-class MkGenTest extends GenTestCase
+use Datashaman\PHPCheck\Types\Maybe;
+use Generator;
+use PHPUnit\Framework\TestCase;
+
+class GeneratorTest extends TestCase
 {
+    protected function _testGenerator(
+        Generator $gen,
+        callable $callable
+    ) {
+        $counter = 0;
+
+        while ($counter < 100) {
+            $value = generate($gen);
+            call_user_func($callable, $value);
+            $counter++;
+        }
+    }
+
     public function testChooseWithFloatRange()
     {
         $this->_testGenerator(
-            gen()->choose([0.0, 10.0]),
+            choose([0.0, 10.0]),
             function ($current) {
                 $this->assertIsFloat($current);
                 $this->assertGreaterThanOrEqual(0.0, $current);
@@ -23,7 +49,7 @@ class MkGenTest extends GenTestCase
     public function testChooseWithIntRange()
     {
         $this->_testGenerator(
-            gen()->choose([0, 10]),
+            choose([0, 10]),
             function ($current) {
                 $this->assertIsInt($current);
                 $this->assertGreaterThanOrEqual(0, $current);
@@ -35,7 +61,7 @@ class MkGenTest extends GenTestCase
     public function testChooseWithCharacterRange()
     {
         $this->_testGenerator(
-            gen()->choose(['a', 'z']),
+            choose(['a', 'z']),
             function ($current) {
                 $this->assertIsString($current);
                 $this->assertGreaterThanOrEqual('a', $current);
@@ -47,7 +73,7 @@ class MkGenTest extends GenTestCase
     public function testChooseWithFloatArgs()
     {
         $this->_testGenerator(
-            gen()->choose(0.0, 10.0),
+            choose(0.0, 10.0),
             function ($current) {
                 $this->assertIsFloat($current);
                 $this->assertGreaterThanOrEqual(0.0, $current);
@@ -59,7 +85,7 @@ class MkGenTest extends GenTestCase
     public function testChooseWithIntArgs()
     {
         $this->_testGenerator(
-            gen()->choose(0, 10),
+            choose(0, 10),
             function ($current) {
                 $this->assertIsInt($current);
                 $this->assertGreaterThanOrEqual(0, $current);
@@ -71,7 +97,7 @@ class MkGenTest extends GenTestCase
     public function testChooseWithCharacterArgs()
     {
         $this->_testGenerator(
-            gen()->choose('a', 'z'),
+            choose('a', 'z'),
             function ($current) {
                 $this->assertIsString($current);
                 $this->assertGreaterThanOrEqual('a', $current);
@@ -83,7 +109,7 @@ class MkGenTest extends GenTestCase
     public function testListOfCharacters()
     {
         $this->_testGenerator(
-            gen()->listOf(gen()->choose('a', 'z')),
+            listOf(choose('a', 'z')),
             function ($current) {
                 $this->assertIsArray($current);
                 foreach ($current as $char) {
@@ -97,9 +123,11 @@ class MkGenTest extends GenTestCase
     public function testOneof()
     {
         $this->_testGenerator(
-            gen()->oneof(
-                gen()->choose('a', 'z'),
-                gen()->choose(0, 10)
+            oneof(
+                [
+                    choose('a', 'z'),
+                    choose(0, 10),
+                ]
             ),
             function ($current) {
                 $this->assertTrue(
@@ -113,7 +141,7 @@ class MkGenTest extends GenTestCase
     public function testResizedListOfCharacters()
     {
         $this->_testGenerator(
-            gen()->resize(3, gen()->listOf(gen()->choose('a', 'z'))),
+            resize(3, listOf(choose('a', 'z'))),
             function ($current) {
                 $this->assertIsArray($current);
                 $this->assertLessThanOrEqual(3, count($current));
@@ -124,11 +152,11 @@ class MkGenTest extends GenTestCase
     public function testScaleListOfCharacters()
     {
         $this->_testGenerator(
-            gen()->scale(
+            scale(
                 function (int $size) {
                     return $size / 3;
                 },
-                gen()->listOf(gen()->choose('a', 'z'))
+                listOf(choose('a', 'z'))
             ),
             function ($current) {
                 $this->assertIsArray($current);
@@ -140,8 +168,8 @@ class MkGenTest extends GenTestCase
     public function testSuchThat()
     {
         $this->_testGenerator(
-            gen()->suchThat(
-                gen()->choose(0, 10),
+            suchThat(
+                choose(0, 10),
                 function (int $value) {
                     return $value > 5;
                 }
@@ -155,8 +183,8 @@ class MkGenTest extends GenTestCase
     public function testSuchThatMap()
     {
         $this->_testGenerator(
-            gen()->suchThatMap(
-                gen()->choose(0, 10),
+            suchThatMap(
+                choose(0, 10),
                 function (int $value) {
                     $value = $value + 10;
 
@@ -173,8 +201,8 @@ class MkGenTest extends GenTestCase
     public function testSuchThatMaybe()
     {
         $this->_testGenerator(
-            gen()->suchThatMaybe(
-                gen()->choose(0, 10),
+            suchThatMaybe(
+                choose(0, 10),
                 function (int $value) {
                     return $value > 5;
                 }
@@ -188,8 +216,8 @@ class MkGenTest extends GenTestCase
     public function testSuchThatNothing()
     {
         $this->_testGenerator(
-            gen()->suchThatMaybe(
-                gen()->choose(0, 10),
+            suchThatMaybe(
+                choose(0, 10),
                 function (int $value) {
                     return $value > 10;
                 }
@@ -203,12 +231,12 @@ class MkGenTest extends GenTestCase
     public function testVariant()
     {
         $this->_testGenerator(
-            gen()->variant(
+            variant(
                 123,
-                gen()->choose(0, 1000000)
+                choose(0, 1000000)
             ),
             function ($current) {
-                $this->assertEquals(309391, $current);
+                $this->assertEquals(857674, $current);
             }
         );
     }

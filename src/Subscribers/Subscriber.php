@@ -9,6 +9,8 @@
  */
 namespace Datashaman\PHPCheck\Subscribers;
 
+use function Datashaman\PHPCheck\reflection;
+
 use ReflectionMethod;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

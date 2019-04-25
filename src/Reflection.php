@@ -87,7 +87,7 @@ class Reflection
     public function reflect($subject)
     {
         if (
-            is_string($subject)
+            \is_string($subject)
             || $subject instanceof Closure
         ) {
             $subject = new ReflectionFunction($subject);

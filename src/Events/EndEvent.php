@@ -37,7 +37,7 @@ class EndEvent extends Event
     ) {
         parent::__construct();
         $this->method = $method;
-        $this->tags = $tags;
+        $this->tags   = $tags;
         $this->status = $status;
     }
 }

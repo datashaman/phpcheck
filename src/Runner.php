@@ -11,9 +11,9 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck;
 
+use Exception;
 use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
-use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use SimpleXMLElement;
@@ -27,7 +27,9 @@ use Webmozart\Assert\Assert;
 class Runner implements EventSubscriberInterface
 {
     public const MAX_DISCARD_RATIO = 10;
+
     public const MAX_SIZE = 100;
+
     public const MAX_SUCCESS = 100;
 
     protected const CONFIG_FILE = 'phpcheck.xml';
@@ -68,10 +70,10 @@ class Runner implements EventSubscriberInterface
         callable $check = null,
         array $options = []
     ): array {
-        $size = $options['iterations'] ?? $this->maxSuccess;
+        $maxSuccess = $options['maxSuccess'] ?? $this->maxSuccess;
 
         $result = $this->checks(
-            $size,
+            $maxSuccess,
             $subject,
             $check,
             $options
@@ -191,8 +193,8 @@ class Runner implements EventSubscriberInterface
                     continue;
                 }
 
-                $parameterCount = count($method->getParameters());
-                $tags = $this->getMethodTags($method);
+                $parameterCount = \count($method->getParameters());
+                $tags           = $this->getMethodTags($method);
 
                 $closure = $method->getClosure($test);
 
@@ -256,6 +258,65 @@ class Runner implements EventSubscriberInterface
 
         $event = new Events\EndAllEvent();
         $dispatcher->dispatch(CheckEvents::END_ALL, $event);
+    }
+
+    public function checks(
+        int $size,
+        callable $subject,
+        callable $check = null,
+        array $tags = null
+    ): array {
+        $reflection = reflection()->reflect($subject);
+        $signature  = reflection()->getFunctionSignature($reflection);
+
+        $check = null === $check
+            ? $reflection
+            : reflection()->reflect($check);
+
+        $dispatcher = app('dispatcher');
+        $result     = null;
+
+        for ($iteration = 1; $iteration <= $size; $iteration++) {
+            $input = generate(resize(
+                \min($iteration - 1, self::MAX_SIZE),
+                arguments($subject)
+            ));
+            [$passed, $output, $error] = $this->passed($reflection, $check, $input);
+
+            $event = new Events\IterationEvent($reflection, $tags, $input, $passed);
+            $dispatcher->dispatch(CheckEvents::ITERATION, $event);
+
+            $result = \compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
+
+            $exhausted = false;
+
+            while (!$passed) {
+                try {
+                    $input = $this->shrink($input);
+                } catch (Example $e) {
+                    $input     = $e->args;
+                    $exhausted = true;
+                }
+
+                [$passed, $output, $error] = $this->passed($reflection, $check, $input);
+
+                if ($passed) {
+                    break;
+                }
+
+                $result = \compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
+
+                if ($exhausted) {
+                    break;
+                }
+            }
+
+            if (!$result['passed']) {
+                break;
+            }
+        }
+
+        return $result;
     }
 
     protected function getConfig(string $filename = null): ?SimpleXMLElement
@@ -323,33 +384,28 @@ class Runner implements EventSubscriberInterface
 
         $result = [
             'coverTable' => [],
-            'tabulate' => [],
+            'tabulate'   => [],
         ];
 
         foreach ($tags as $tag) {
-            $tagName = $tag->getName();
+            $tagName     = $tag->getName();
             $description = (string) $tag->getDescription();
 
-            if ($tagName === 'iterates') {
-                // If a method has an @iterates tag,
-                // it handles its own iteration internally
-                // and should be called normally with no args.
-                $result['iterates'] = true;
-            } elseif ($tagName === 'coverTable') {
-                if (preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
-                    $label = $match[1];
-                    $expression = $match[2];
+            if ($tagName === 'coverTable') {
+                if (\preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
+                    $label                        = $match[1];
+                    $expression                   = $match[2];
                     $result['coverTable'][$label] = $expression;
                 } else {
                     throw new Exception('Unable to parse coverTable tag: ' . $description);
                 }
                 $result['coverTable'][] = $description;
-            } elseif ($tagName === 'iterations') {
-                $result['iterations'] = (int) $description;
+            } elseif ($tagName === 'maxSuccess') {
+                $result['maxSuccess'] = (int) $description;
             } elseif ($tagName === 'tabulate') {
-                if (preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
-                    $label = $match[1];
-                    $expression = $match[2];
+                if (\preg_match('/^"([^"]*)"\s+(.*)$/', $description, $match)) {
+                    $label                      = $match[1];
+                    $expression                 = $match[2];
                     $result['tabulate'][$label] = $expression;
                 }
             } elseif ($tagName === 'within') {
@@ -382,34 +438,34 @@ class Runner implements EventSubscriberInterface
     protected function shrink($args)
     {
         foreach ($args as &$arg) {
-            if (is_string($arg)) {
-                if (mb_strlen($arg)) {
-                    $shrunkArg = mb_substr($arg, 0, -1);
-                    $arg = $shrunkArg;
+            if (\is_string($arg)) {
+                if (\mb_strlen($arg)) {
+                    $shrunkArg = \mb_substr($arg, 0, -1);
+                    $arg       = $shrunkArg;
 
                     return $args;
                 }
-            } elseif (is_array($arg)) {
-                if (count($arg)) {
-                    $shrunkArg = array_slice($arg, 0, count($arg) - 1);
-                    $arg = $shrunkArg;
+            } elseif (\is_array($arg)) {
+                if (\count($arg)) {
+                    $shrunkArg = \array_slice($arg, 0, \count($arg) - 1);
+                    $arg       = $shrunkArg;
 
                     return $args;
                 }
-            } elseif (is_bool($arg)) {
+            } elseif (\is_bool($arg)) {
                 if ($arg === true) {
                     $arg = false;
 
                     return $args;
                 }
-            } elseif (is_int($arg)) {
+            } elseif (\is_int($arg)) {
                 if ($arg !== 0) {
                     $arg = (int) ($arg / 2);
 
                     return $args;
                 }
             } elseif ($arg instanceof DateTime) {
-                $timestamp = $arg->getTimestamp();
+                $timestamp  = $arg->getTimestamp();
                 $difference = $timestamp - (new DateTime('2000-01-01'))->getTimestamp();
 
                 if ($difference) {
@@ -432,13 +488,13 @@ class Runner implements EventSubscriberInterface
         ReflectionFunctionAbstract $check,
         array $input
     ) {
-        $error = null;
+        $error  = null;
         $output = null;
         $passed = null;
 
         try {
-            set_error_handler(
-                function ($code, $message, $file, $line) {
+            \set_error_handler(
+                function ($code, $message, $file, $line): void {
                     throw new CheckError(
                         $message,
                         $code,
@@ -454,74 +510,10 @@ class Runner implements EventSubscriberInterface
                 $output = $subject->invoke(...$input);
                 $passed = $check->invoke($input, $output);
             }
-        }
-
-        catch (CheckError $error) {
+        } catch (CheckError $error) {
             $passed = false;
         }
 
         return [$passed, $output, $error];
-    }
-
-    public function checks(
-        int $size,
-        callable $subject,
-        callable $check = null,
-        array $tags = null
-    ): array {
-        $reflection = reflection()->reflect($subject);
-        $signature = reflection()->getFunctionSignature($reflection);
-
-        $check = is_null($check)
-            ? $reflection
-            : reflection()->reflect($check);
-
-        $gen = app('gen');
-        $dispatcher = app('dispatcher');
-        $result = null;
-
-        for($iteration = 1; $iteration <= $size; $iteration++) {
-            $input = $gen
-                ->resize(
-                    $iteration - 1,
-                    $gen->arguments($subject)
-                )
-                ->generate();
-            [$passed, $output, $error] = $this->passed($reflection, $check, $input);
-
-            $event = new Events\IterationEvent($reflection, $tags, $input, $passed);
-            $dispatcher->dispatch(CheckEvents::ITERATION, $event);
-
-            $result = compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
-
-            $exhausted = false;
-
-            while (!$passed) {
-                try {
-                    $input = $this->shrink($input);
-                } catch (Example $e) {
-                    $input = $e->args;
-                    $exhausted = true;
-                }
-
-                [$passed, $output, $error] = $this->passed($reflection, $check, $input);
-
-                if ($passed) {
-                    break;
-                }
-
-                $result = compact('signature', 'input', 'output', 'passed', 'iteration', 'error');
-
-                if ($exhausted) {
-                    break;
-                }
-            }
-
-            if (!$result['passed']) {
-                break;
-            }
-        }
-
-        return $result;
     }
 }
