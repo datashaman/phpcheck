@@ -9,6 +9,8 @@
  */
 namespace Datashaman\PHPCheck\Results;
 
+use Exception;
+
 class Failure
 {
     /**

@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck;
 
+use DateTime;
 use Exception;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionFunctionAbstract;
@@ -36,6 +37,8 @@ class Runner implements EventSubscriberInterface
     private $seed;
 
     private $input;
+
+    private $maxSuccess;
 
     private $output;
 
@@ -95,11 +98,14 @@ class Runner implements EventSubscriberInterface
                 $output->writeln('<error>You must specify a directory for coverage-html</error>');
                 exit(1);
             }
-            $coverage = new Coverage\HtmlCoverage($this);
+            $coverage = new Coverage\HtmlCoverage($input->getOption('coverage-html'));
         }
 
         if ($input->getOption('coverage-text') !== false) {
-            $coverage = new Coverage\TextCoverage($this);
+            $coverage = new Coverage\TextCoverage(
+                $input->getOption('coverage-text'),
+                $input->getOption('no-ansi')
+            );
         }
 
         $config = $this->getConfig();
@@ -113,7 +119,7 @@ class Runner implements EventSubscriberInterface
                 $output->writeln('<error>You must specify a filename for log-junit</error>');
                 exit(1);
             }
-            $reporter = new Subscribers\JUnitReporter($this);
+            $reporter = new Subscribers\JUnitReporter();
             $dispatcher->addSubscriber($reporter);
         }
 
@@ -122,7 +128,7 @@ class Runner implements EventSubscriberInterface
                 $output->writeln('<error>You must specify a filename for log-text</error>');
                 exit(1);
             }
-            $reporter = new Subscribers\TextReporter($this);
+            $reporter = new Subscribers\TextReporter();
             $dispatcher->addSubscriber($reporter);
         }
 
@@ -155,10 +161,7 @@ class Runner implements EventSubscriberInterface
 
             $classes = \array_diff(
                 \get_declared_classes(),
-                $classes,
-                [
-                    Check::class,
-                ]
+                $classes
             );
 
             $classes = \array_filter(
@@ -218,7 +221,7 @@ class Runner implements EventSubscriberInterface
                         );
 
                         if (!$result['passed']) {
-                            throw new Exceptions\ExecutionFailure($result['input'], $result['error']);
+                            throw new Exceptions\ExecutionFailure($result['input']);
                         }
                     }
 

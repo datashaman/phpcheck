@@ -16,6 +16,13 @@ use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlFacade;
  */
 class HtmlCoverage extends Coverage
 {
+    private $folder;
+
+    public function __construct(string $folder)
+    {
+        $this->folder = $folder;
+    }
+
     /**
      * Processing is done in the __destruct method to ensure maximum coverage
      * results.
@@ -27,6 +34,6 @@ class HtmlCoverage extends Coverage
         parent::__destruct();
 
         $writer = new HtmlFacade();
-        $writer->process($coverage, $this->input->getOption('coverage-html'));
+        $writer->process($coverage, $this->folder);
     }
 }

@@ -12,10 +12,12 @@ declare(strict_types=1);
 namespace Datashaman\PHPCheck\Subscribers;
 
 use function Datashaman\PHPCheck\app;
-
 use Datashaman\PHPCheck\CheckCommand;
 use Datashaman\PHPCheck\CheckEvents;
+
 use Datashaman\PHPCheck\Events;
+use function Datashaman\PHPCheck\reflection;
+use function Datashaman\PHPCheck\repr;
 use NunoMaduro\Collision\Writer;
 use Whoops\Exception\Inspector;
 
@@ -145,7 +147,7 @@ class ConsoleReporter extends Subscriber
                 $this->output->writeln("$number) $signature");
 
                 $this->output->writeln('');
-                $this->output->writeln('ARGS: ' . $this->repr($failure->args));
+                $this->output->writeln('ARGS: ' . repr($failure->args));
                 $this->output->writeln('');
 
                 // $inspector = new Inspector($failure->cause);

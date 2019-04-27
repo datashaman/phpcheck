@@ -9,6 +9,9 @@
  */
 namespace Datashaman\PHPCheck\Coverage;
 
+use function Datashaman\PHPCheck\{
+    app,
+};
 use SebastianBergmann\CodeCoverage\Report\Text;
 
 /**
@@ -16,6 +19,21 @@ use SebastianBergmann\CodeCoverage\Report\Text;
  */
 class TextCoverage extends Coverage
 {
+    private $_output;
+    private $_noAnsi;
+
+    /**
+     * @param null|string $output
+     * @param null|bool $noAnsi
+     */
+    public function __construct(
+        string $output = null,
+        bool $noAnsi = null
+    ) {
+        $this->_output = $output;
+        $this->_noAnsi = $noAnsi;
+    }
+
     /**
      * Processing is done in the __destruct method to ensure maximum coverage
      * results.
@@ -28,16 +46,16 @@ class TextCoverage extends Coverage
 
         $writer = new Text();
 
-        if ($this->input->getOption('coverage-text')) {
+        if ($this->_output) {
             $output = $writer->process($coverage, false);
-            \file_put_contents($this->input->getOption('coverage-text'), $output);
+            \file_put_contents($this->_output, $output);
 
             return;
         }
 
         $color = true;
 
-        if ($this->input->getOption('no-ansi') !== false) {
+        if ($this->_noAnsi !== false) {
             $color = false;
         }
 

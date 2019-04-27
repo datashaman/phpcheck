@@ -9,6 +9,8 @@
  */
 namespace Datashaman\PHPCheck;
 
+use Ds\Map;
+
 \define('LOG', 'phpcheck.log');
 
 function app($name, callable $f = null)
@@ -65,7 +67,7 @@ function repr($value)
 
             if (\is_int($keys[0])) {
                 return '[' . \implode(', ', \array_map(
-                    function ($item) use ($value) {
+                    function ($item) {
                         return repr($item);
                     },
                     $value

@@ -169,7 +169,7 @@ class Tabulator extends Subscriber
                         );
 
                         if ($cover->hasKey($value)) {
-                            $expected = $cover[$value];
+                            $expected = $cover->get($value);
 
                             if ($percentage < $expected) {
                                 $warnings[] = [$value, $expected, $percentage];

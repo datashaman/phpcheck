@@ -9,8 +9,10 @@
  */
 namespace Datashaman\PHPCheck\Subscribers;
 
+use function Datashaman\PHPCheck\app;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
+use function Datashaman\PHPCheck\reflection;
 
 class TextReporter extends Subscriber
 {
@@ -35,7 +37,7 @@ class TextReporter extends Subscriber
 
     public function onStartAll(Events\StartAllEvent $event): void
     {
-        $this->file = \fopen($this->input->getOption('log-text'), 'a');
+        $this->file = \fopen(app('runner')->getInput()->getOption('log-text'), 'a');
         $this->report('onStartAll', $event);
     }
 
