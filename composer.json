@@ -28,7 +28,7 @@
         "phpdocumentor/reflection-docblock": "^4.3",
         "phpunit/php-code-coverage": "^7.0",
         "pimple/pimple": "~3.0",
-        "ruafozy/mersenne-twister": "^1.3",
+        "savvot/random": "^0.3.0",
         "symfony/console": "^4.2",
         "symfony/event-dispatcher": "^4.2",
         "symfony/finder": "^4.2",
@@ -54,7 +54,8 @@
     "autoload": {
         "files": [
             "src/helpers.php",
-            "src/bootstrap.php"
+            "src/bootstrap.php",
+            "src/generators.php"
         ],
         "psr-4": {
             "Datashaman\\PHPCheck\\": "src/"

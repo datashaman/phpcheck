@@ -17,22 +17,29 @@ trait LogTrait
     {
         if ($value instanceof Map) {
             return \get_class($value) . ' {#' . \spl_object_id($value) . '}';
-        } elseif (is_string($value)) {
+        }
+
+        if (\is_string($value)) {
             return '"' . $value . '"';
-        } elseif (is_numeric($value)) {
+        }
+
+        if (\is_numeric($value)) {
             return $value;
-        } elseif (is_array($value)) {
-            if (count($value)) {
-                $keys = array_keys($value);
-                if(is_int($keys[0])) {
-                    return '[' . implode(', ', array_map(
+        }
+
+        if (\is_array($value)) {
+            if (\count($value)) {
+                $keys = \array_keys($value);
+
+                if (\is_int($keys[0])) {
+                    return '[' . \implode(', ', \array_map(
                         function ($item) use ($value) {
                             return $this->repr($item);
                         },
                         $value
                     )) . ']';
                 } else {
-                    return '[' . implode(', ', array_map(
+                    return '[' . \implode(', ', \array_map(
                         function ($key) use ($value) {
                             return "$key=" . $this->repr($value[$key]);
                         },

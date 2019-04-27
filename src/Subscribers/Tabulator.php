@@ -1,10 +1,20 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of the phpcheck package.
+ *
+ * ©Marlin Forbes <marlinf@datashaman.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Datashaman\PHPCheck\Subscribers;
 
+use function Datashaman\PHPCheck\app;
 use Datashaman\PHPCheck\CheckEvents;
+
+use function Datashaman\PHPCheck\evalWithArgs;
 use Datashaman\PHPCheck\Events;
 use Datashaman\PHPCheck\Traits\LogTrait;
 use Ds\Map;
@@ -15,7 +25,9 @@ class Tabulator extends Subscriber
     use LogTrait;
 
     protected $names;
+
     protected $tables;
+
     protected $stats;
 
     public static function getSubscribedEvents(): array
@@ -47,26 +59,18 @@ class Tabulator extends Subscriber
         }
     }
 
-    public function evalTag($expression, $args = [])
-    {
-        extract($args);
-        $expression = "return $expression;";
-
-        return eval($expression);
-    }
-
     public function onIteration(Events\IterationEvent $event): void
     {
         if ($event->tags['tabulate'] ?? false) {
             foreach ($event->tags['tabulate'] as $label => $expression) {
-                $args = array_combine(
+                $args = \array_combine(
                     $this->names,
                     $event->args
                 );
 
-                $values = $this->evalTag($expression, $args);
+                $values = evalWithArgs($expression, $args);
 
-                if (!is_array($values)) {
+                if (!\is_array($values)) {
                     throw new Exception('tabulate expression must return an array of values');
                 }
 
@@ -103,7 +107,7 @@ class Tabulator extends Subscriber
 
             $this->tables->put($event->method, [
                 'tables' => $tables,
-                'tags' => $event->tags,
+                'tags'   => $event->tags,
             ]);
         }
     }
@@ -118,7 +122,7 @@ class Tabulator extends Subscriber
             $output->writeln('');
 
             foreach ($this->tables->keys() as $index => $method) {
-                $output->writeln($index+1 . ') ' . $this->getMethodSignature($method));
+                $output->writeln($index + 1 . ') ' . $this->getMethodSignature($method));
                 $output->writeln('');
 
                 ['tables' => $tables, 'tags' => $tags] = $this->tables->get($method);
@@ -139,12 +143,13 @@ class Tabulator extends Subscriber
                         }
                     );
 
-                    $cover = new Map();
+                    $cover    = new Map();
                     $warnings = [];
 
                     if (isset($tags['coverTable'][$label])) {
                         $expression = $tags['coverTable'][$label];
-                        $results = $this->evalTag($expression);
+                        $results    = evalWithArgs($expression);
+
                         foreach ($results as $result) {
                             [$value, $percentage] = $result;
                             $cover->put($value, $percentage);
@@ -153,9 +158,10 @@ class Tabulator extends Subscriber
 
                     foreach ($stats as $value => $percentage) {
                         $output->writeln(
-                            sprintf('%5s%% %s',
-                                round($percentage, 1),
-                                preg_replace(
+                            \sprintf(
+                                '%5s%% %s',
+                                \round($percentage, 1),
+                                \preg_replace(
                                     '/(^\[|\]$)/',
                                     '',
                                     $this->repr($value)
@@ -179,7 +185,7 @@ class Tabulator extends Subscriber
                             [$value, $expected, $percentage] = $warning;
 
                             $output->writeln(
-                                sprintf(
+                                \sprintf(
                                     "Table '%s' had only %.1f%% %s, but expected %.1f%%",
                                     $label,
                                     $percentage,

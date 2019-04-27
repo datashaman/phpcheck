@@ -27,10 +27,15 @@ Install the composer package into your project. You will require `PHP7.2` or hig
 
     composer require --dev datashaman/phpcheck
 
+Alternately, you can install the composer package globally:
+
+    composer global require datashaman/phpcheck
+
 ## type declarations
 
-`PHPCheck` will automatically generate arguments for check methods based on type declarations. For finer-grained control
-over the arguments, use annotations on the method parameters.
+`PHPCheck` will automatically generate arguments for check methods based on type declarations.
+
+For finer-grained control over the arguments, use annotations on the method parameters.
 
 ## annotations
 
@@ -38,29 +43,47 @@ Annotate your check method parameters to control the arguments provided to the m
 
 Parameter tags (use them in the description of a parameter, usually the end):
 
-* `{@gen #name}` or `{@gen #name param1 param2}` where `#name` is the name of a generator below and `param1` and `param2` are JSON encoded values which become arguments passed to the generator.
+* `{@gen method()}` or `{@gen method(1, 10)}` where `method` is the name of a generator below.
 
 Method tags:
 
-* `@iterates` indicates that this check method handles its own iteration, and should be called once with no parameters.
-* `@iterations` sets the number of iterations for this check method. The default is 100.
+* `@maxSuccess` sets the number of successful checks for a successful result. The default is 100.
 
 ## generators
 
 Below is the list of generators that are currently available:
 
-* `ascii(Generator $sizes = null)`
+* `arguments(callable $callable)`
+* `arrays()`
+* `ascii()`
 * `booleans(int $chanceOfGettingTrue = 50)`
-* `characters($minChar, $maxChar)`
-* `choose(array $arr)`
+* `characters($minChar = null, $maxChar = null)`
+* `choose($min = PHP_INT_MIN, $max = PHP_INT_MAX)`
+* `chooseAny(string $type)`
+* `datetimes($min = null, $max = null, Generator $timezones = null)`
+* `dates($min = null, $max = null)`
+* `elements(array $array)`
 * `faker(...$args)`
 * `floats(float $min, float $max)`
+* `frequency(array $frequencies)`
+* `growingElements(array $array)`
 * `integers(int $min = PHP_INT_MIN, int $max = PHP_INT_MAX)`
 * `intervals(array $include = [[PHP_INT_MIN, PHP_INT_MAX]], array $exclude=[])`
-* `listOf(Generator $values = null, Generator $sizes = null)`
-* `strings(Generator $sizes = null, Generator $characters = null)`
+* `listOf(Generator $gen)`
+* `listOf1(Generator $gen)`
+* `mixed()`
+* `oneof(array $gens)`
+* `resize(int $n, Generator $gen)`
+* `scale(callable $f, Generator $gen)`
+* `strings(Generator $characters = null)`
+* `suchThat(Generator $gen, callable $f)`
+* `suchThatMap(Generator $gen, callable $f)`
+* `suchThatMaybe(Generator $gen, callable $f)`
+* `timezones()`
+* `variant(int $seed, Generator $gen)`
+* `vectorOf(int $n, Generator $gen)`
 
-You have to nest the parameter tag to specify a generator argument. See [GenCheck.php](checks/GenCheck.php) for examples.
+See [GeneratorCheck.php](checks/GeneratorCheck.php) and [GeneratorTest](tests/GeneratorTest.php) for examples of how these are used.
 
 The `characters` generator accepts either characters or integer codepoints for `minChar` and `maxChar`. Characters
 are generated from the complete range of Unicode characters excluding control characters, private ranges and surrogates.
@@ -70,16 +93,9 @@ generator. If you supply more than one argument, the first argument is the metho
 
 This opens up a lot of domain-specific generators. See [Faker](https://github.com/fzaninotto/Faker) for more details.
 
-## assertions
+## check methods
 
-You are free to use whatever assertions library you choose in your check classes.
-
-We have implemented ours with [Webmozart Assert](https://github.com/webmozart/assert).
-
-This package throws `InvalidArgumentException` whenever an assertion fails, which is how
-we distinguish between failures (assertion failures) and errors (unplanned exceptions).
-
-This should be switchable soon.
+Check methods must return a bool indicating success or failure.
 
 ## exceptions
 
@@ -93,7 +109,7 @@ There is an example check implemented in the _examples_ folder. To run it:
 
     phpcheck examples
 
-The [_Gen_ class checks](checks/GenCheck.php) for this package are a great illustration of the use of the generators.
+The [_Generator_ class checks](checks/GenCheck.php) for this package are a great illustration of the use of the generators.
 
 ## command line arguments
 
@@ -183,7 +199,7 @@ Using `---verbose 3` or `-vvv` enables a list of the checks as they are run:
 
     OK (Checks: 13, Iterations: 120006, Failures: 0, Errors: 0)
 
-The above output is from _10000_ iterations per check. The heavy use of generators throughout the architecture ensures low memory usage throughout the run process despite large numbers of iterations.
+The above output is from _10000_ successes per check. The heavy use of generators throughout the architecture ensures low memory usage throughout the run process despite large numbers of iterations.
 
 ## storage of results
 

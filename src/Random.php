@@ -9,15 +9,8 @@
  */
 namespace Datashaman\PHPCheck;
 
-use Exception;
+use Savvot\Random\XorShiftRand;
 
-class Example extends Exception
+class Random extends XorShiftRand
 {
-    public $args;
-
-    public function __construct(array $args)
-    {
-        parent::__construct('Found Example');
-        $this->args = $args;
-    }
 }

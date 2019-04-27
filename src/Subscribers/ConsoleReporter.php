@@ -11,11 +11,12 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck\Subscribers;
 
+use function Datashaman\PHPCheck\app;
+
 use Datashaman\PHPCheck\CheckCommand;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
 use Datashaman\PHPCheck\Traits\LogTrait;
-use Ds\Map;
 use NunoMaduro\Collision\Writer;
 use Whoops\Exception\Inspector;
 
@@ -38,6 +39,7 @@ class ConsoleReporter extends Reporter
     ];
 
     protected $output;
+
     protected $writer;
 
     public static function getSubscribedEvents(): array
