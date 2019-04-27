@@ -83,7 +83,52 @@ Below is the list of generators that are currently available:
 * `variant(int $seed, Generator $gen)`
 * `vectorOf(int $n, Generator $gen)`
 
-See [GeneratorCheck.php](checks/GeneratorCheck.php) and [GeneratorTest](tests/GeneratorTest.php) for examples of how these are used.
+To generate a value from one of the above, use `generate`:
+
+    >>> use function Datashaman\PHPCheck\{
+    ...     choose,
+    ...     generate
+    ... };
+    >>>
+    >>> var_dump(generate(choose(0, 10)));
+    int(2)
+
+To generate a sample of values with increasing size, use `sample`:
+
+    >>> use function Datashaman\PHPCheck\{
+    ...     ascii,
+    ...     strings,
+    ...     sample
+    ... };
+    >>>
+    >>> var_dump(sample(strings(ascii())));
+    array(11) {
+    [0]=>
+    string(0) ""
+    [1]=>
+    string(2) "0]"
+    [2]=>
+    string(2) "^|"
+    [3]=>
+    string(3) "P@N"
+    [4]=>
+    string(5) "G1KPu"
+    [5]=>
+    string(5) "q-e1y"
+    [6]=>
+    string(4) "NcdL"
+    [7]=>
+    string(7) "hS:{_>@"
+    [8]=>
+    string(10) "wjv1X"Zm$V"
+    [9]=>
+    string(16) "aX-6*s0-WX>#cf~T"
+    [10]=>
+    string(12) ";g<&8*b&Q0=)"
+    }
+    => null
+
+See [GeneratorCheck](checks/GeneratorCheck.php) and [GeneratorTest](tests/GeneratorTest.php) for examples of how these are used.
 
 The `characters` generator accepts either characters or integer codepoints for `minChar` and `maxChar`. Characters
 are generated from the complete range of Unicode characters excluding control characters, private ranges and surrogates.
