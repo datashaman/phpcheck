@@ -228,7 +228,7 @@ There is an example check implemented in the _examples_ folder. To run it:
 
     phpcheck examples
 
-The [_Generator_ class checks](checks/GenCheck.php) for this package are a great illustration of the use of the generators.
+The [_Generator_ checks](checks/GeneratorCheck.php) for this package are a great illustration of the use of the generators.
 
 ## command line arguments
 
@@ -288,32 +288,32 @@ Using `---verbose 3` or `-vvv` enables a list of the checks as they are run:
 
     PHPCheck 0.1.0 by Marlin Forbes and contributors.
 
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharacters' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharacters' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkStrings' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkStrings' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkAscii' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkAscii' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkBooleans' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkBooleans' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkBooleansWithPercentage' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkBooleansWithPercentage' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharactersWithNumbers' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharactersWithNumbers' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharactersWithStrings' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkCharactersWithStrings' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkChoose' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkChoose' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkIterations' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkIterations' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkFloats' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkFloats' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkFloatsWithDecimalGen' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkFloatsWithDecimalGen' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkStringsWithMinMax' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkStringsWithMinMax' ended
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkListOfInts' started
-    Check 'Datashaman\PHPCheck\Checks\GenCheck::checkListOfInts' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharacters' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharacters' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkStrings' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkStrings' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkAscii' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkAscii' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleans' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleans' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleansWithPercentage' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleansWithPercentage' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharactersWithNumbers' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharactersWithNumbers' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharactersWithStrings' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkCharactersWithStrings' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkChoose' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkChoose' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkIterations' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkIterations' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkFloats' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkFloats' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkFloatsWithDecimalGen' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkFloatsWithDecimalGen' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkStringsWithMinMax' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkStringsWithMinMax' ended
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkListOfInts' started
+    Check 'Datashaman\PHPCheck\Checks\GeneratorCheck::checkListOfInts' ended
 
     Time: 305 ms, Memory: 6.00 MB
 
