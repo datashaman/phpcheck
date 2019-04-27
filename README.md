@@ -14,6 +14,7 @@ Table of Contents
       * [installation](#installation)
       * [type declarations](#type-declarations)
       * [annotations](#annotations)
+        * [tabulate](#tabulate)
       * [generators](#generators)
       * [assertions](#assertions)
       * [examples](#examples)
@@ -48,6 +49,79 @@ Parameter tags (use them in the description of a parameter, usually the end):
 Method tags:
 
 * `@maxSuccess` sets the number of successful checks for a successful result. The default is 100.
+* `@tabulate` and `@coverTable` (dicussed below).
+
+### tabulate
+
+If you decorate a check method with `tabulate`, information about test case distribution is collected into a table.
+
+The arguments to `tabulate` are the table's name and a _list_ of values associated with the current check. An example:
+
+    /**
+     * @tabulate "Values" [$value]
+     */
+    public function checkBooleans(bool $value)
+    {
+        return true;
+    }
+
+If you run this check, everything passes and a table is output at the end of the check run:
+
+    Tables
+
+    1) Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleans
+
+    Values (100 total)
+
+       52% true
+       48% false
+
+We'd like to check that the coverage is correct for the generator, so we use a `@coverTable` method annotation:
+
+    /**
+     * @coverTable "Values" [[true, 49], [false, 49]]
+     * @tabulate "Values" [$value]
+     */
+    public function checkBooleans(bool $value)
+    {
+        return true;
+    }
+
+The arguments to the annotation are the name of the table, and a list of key value pairs where the value is the expected percentage distribution.
+
+Here's a sample output from the above:
+
+    1) Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleans
+
+    Values (100 total)
+
+    54% true
+    46% false
+
+    Table 'Values' had only 46.0% false, but expected 49.0%
+
+We are now warned when the distribution does not fall within the accepted percentage of generated values.
+
+In this case, we would benefit from running the checks a lot more times so we approach the expected _50/50_ average for a boolean:
+
+    /**
+     * @coverTable "Values" [[true, 49], [false, 49]]
+     * @maxSuccess 10000
+     * @tabulate "Values" [$value]
+     */
+    public function checkBooleans(bool $value)
+    {
+        return true;
+    }
+
+Now with _10000_ successful iterations, the warning disappears from the output and the percentage is within the acceptable _1%_ margin of error:
+
+    1) Datashaman\PHPCheck\Checks\GeneratorCheck::checkBooleans
+
+    Values (10000 total)
+
+        50.5% true
+        49.5% false
 
 ## generators
 
@@ -174,9 +248,10 @@ The `phpcheck` program accept a number of arguments and options:
             --coverage-html[=COVERAGE-HTML] Generate HTML code coverage report [default: false]
             --coverage-text[=COVERAGE-TEXT] Generate text code coverage report [default: false]
         -f, --filter[=FILTER]               Filter the checks that will be run
-        -i, --iterations=ITERATIONS         How many times each check will be run [default: 100]
         -j, --log-junit[=LOG-JUNIT]         Log check execution to JUnit XML file [default: false]
         -t, --log-text[=LOG-TEXT]           Log check execution to text file [default: false]
+        --max-success=MAX-SUCCESS           Maximum number of successful checks before succeeding. Testing stops at the first failure.
+                                            If all tests are passing and you want to run more tests, increase this number. [default: 100]
         -d, --no-defects[=NO-DEFECTS]       Ignore previous defects [default: false]
         -h, --help                          Display this help message
         -q, --quiet                         Do not output any message
@@ -243,8 +318,6 @@ Using `---verbose 3` or `-vvv` enables a list of the checks as they are run:
     Time: 305 ms, Memory: 6.00 MB
 
     OK (Checks: 13, Iterations: 120006, Failures: 0, Errors: 0)
-
-The above output is from _10000_ successes per check. The heavy use of generators throughout the architecture ensures low memory usage throughout the run process despite large numbers of iterations.
 
 ## storage of results
 

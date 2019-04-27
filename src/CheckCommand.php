@@ -68,27 +68,6 @@ class CheckCommand extends Command
                 false
             )
             ->addOption(
-                'max-discard-ratio',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Maximum number of discarded checks per successful check before giving up',
-                Runner::MAX_DISCARD_RATIO
-            )
-            ->addOption(
-                'max-shrinks',
-                null,
-                InputOption::VALUE_REQUIRED,
-                "Maximum number of shrinks to before giving up.\nSetting this to zero turns shrinking off.",
-                Runner::MAX_SIZE
-            )
-            ->addOption(
-                'max-size',
-                null,
-                InputOption::VALUE_REQUIRED,
-                'Size to use for the biggest test cases',
-                Runner::MAX_SIZE
-            )
-            ->addOption(
                 'max-success',
                 null,
                 InputOption::VALUE_REQUIRED,
@@ -102,12 +81,6 @@ class CheckCommand extends Command
                 InputOption::VALUE_OPTIONAL,
                 'Ignore previous defects',
                 false
-            )
-            ->addOption(
-                'replay',
-                'r',
-                InputOption::VALUE_OPTIONAL,
-                'Replay execution with a specific seed'
             )
             ->addArgument(
                 'path',

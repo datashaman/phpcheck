@@ -91,10 +91,6 @@ class Runner implements EventSubscriberInterface
         $this->input  = $input;
         $this->output = $output;
 
-        if ($replay = $input->getOption('replay')) {
-            $this->setSeed((int) $replay);
-        }
-
         if ($input->getOption('coverage-html') !== false) {
             if (null === $input->getOption('coverage-html')) {
                 $output->writeln('<error>You must specify a directory for coverage-html</error>');
