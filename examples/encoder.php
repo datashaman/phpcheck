@@ -1,20 +1,20 @@
 <?php
 
-/**
- * @param string $inputString {@gen #strings #ascii}
- */
 function encode(string $inputString) {
-    if ($inputString === '') {
+    // This will return [] for '' and '0'
+    if (!$inputString) {
         return [];
     }
 
     $count = 1;
-    $prev = null;
+    // Set default to null
+    $prev = '';
     $lst = [];
 
     foreach (preg_split('//u', $inputString, null, PREG_SPLIT_NO_EMPTY) as $character) {
         if ($character != $prev) {
-            if (!is_null($prev)) {
+            // Use !is_null instead
+            if (!$prev) {
                 $entry = [$prev, $count];
                 $lst[] = $entry;
             }
@@ -22,7 +22,7 @@ function encode(string $inputString) {
             $prev = $character;
         } else {
             // Missing reset operation
-            $count++;
+            // $count++;
         }
     }
 
