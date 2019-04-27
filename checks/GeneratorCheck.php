@@ -201,7 +201,7 @@ class GeneratorCheck
     }
 
     /**
-     * @param int $int {@gen variant(123, choose(0, 1000000))}
+     * @param int $int {@gen variant("123", choose(0, 1000000))}
      */
     public function checkVariant(int $int): bool
     {

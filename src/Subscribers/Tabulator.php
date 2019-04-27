@@ -13,22 +13,21 @@ namespace Datashaman\PHPCheck\Subscribers;
 
 use function Datashaman\PHPCheck\app;
 use Datashaman\PHPCheck\CheckEvents;
-
 use function Datashaman\PHPCheck\evalWithArgs;
 use Datashaman\PHPCheck\Events;
-use Datashaman\PHPCheck\Traits\LogTrait;
+
+use function Datashaman\PHPCheck\reflection;
+use function Datashaman\PHPCheck\repr;
 use Ds\Map;
 use Exception;
 
 class Tabulator extends Subscriber
 {
-    use LogTrait;
+    private $names;
 
-    protected $names;
+    private $tables;
 
-    protected $tables;
-
-    protected $stats;
+    private $stats;
 
     public static function getSubscribedEvents(): array
     {
@@ -122,7 +121,7 @@ class Tabulator extends Subscriber
             $output->writeln('');
 
             foreach ($this->tables->keys() as $index => $method) {
-                $output->writeln($index + 1 . ') ' . $this->getMethodSignature($method));
+                $output->writeln($index + 1 . ') ' . reflection()->getMethodSignature($method));
                 $output->writeln('');
 
                 ['tables' => $tables, 'tags' => $tags] = $this->tables->get($method);
@@ -164,13 +163,13 @@ class Tabulator extends Subscriber
                                 \preg_replace(
                                     '/(^\[|\]$)/',
                                     '',
-                                    $this->repr($value)
+                                    repr($value)
                                 )
                             )
                         );
 
                         if ($cover->hasKey($value)) {
-                            $expected = $cover[$value];
+                            $expected = $cover->get($value);
 
                             if ($percentage < $expected) {
                                 $warnings[] = [$value, $expected, $percentage];
@@ -189,7 +188,7 @@ class Tabulator extends Subscriber
                                     "Table '%s' had only %.1f%% %s, but expected %.1f%%",
                                     $label,
                                     $percentage,
-                                    $this->repr($value),
+                                    repr($value),
                                     $expected
                                 )
                             );

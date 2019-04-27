@@ -15,6 +15,7 @@ use Datashaman\PHPCheck\Types\Nothing;
 use DateTime;
 use DateTimeZone;
 use Ds\Map;
+use Exception;
 use Generator;
 use Webmozart\Assert\Assert;
 
@@ -369,7 +370,7 @@ function faker(...$args): Generator
     );
 }
 
-function floats(float $min, float $max): Generator
+function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Generator
 {
     logExecution('mkGen', 'floats', [$min, $max]);
 
@@ -401,7 +402,35 @@ function frequency(array $frequencies): Generator
         $map->put($gen, $weighted);
     }
 
-    return pick($map);
+    return makeGen(
+        function (Random $r) use ($map) {
+            $count = $map->count();
+
+            if ($count <= 1) {
+                return $map->keys()->first();
+            }
+
+            $sum = $map->sum();
+
+            if ($sum < 1) {
+                throw new Exception('Negative or all-zero weights not allowed');
+            }
+
+            $targetWeight = $r->random(1, $sum);
+
+            foreach ($map as $key => $weight) {
+                if ($weight < 0) {
+                    throw new Exception('Negative weights not allowed');
+                }
+
+                $targetWeight -= $weight;
+
+                if ($targetWeight <= 0) {
+                    return $key;
+                }
+            }
+        }
+    );
 }
 
 function growingElements(array $array): Generator
@@ -537,17 +566,6 @@ function oneof(array $gens): Generator
     );
 }
 
-function pick(Map $weighted): Generator
-{
-    logExecution('mkGen', 'pick', $weighted);
-
-    return makeGen(
-        function (Random $r) use ($weighted) {
-            return $r->arrayWeightRand($weighted);
-        }
-    );
-}
-
 function resize(int $n, Generator $gen): Generator
 {
     logExecution('mkGen', 'resize', [$n, $gen]);
@@ -667,7 +685,7 @@ function suchThatMaybe(Generator $gen, callable $f): Generator
     };
 
     return makeGen(
-        function (Random $r, $n) use ($gen, $try) {
+        function (Random $r, $n) use ($try) {
             return $try($n, $n * 2, $r);
         }
     );
@@ -689,7 +707,7 @@ function timezones(): Generator
     );
 }
 
-function variant(int $seed, Generator $gen): Generator
+function variant(string $seed, Generator $gen): Generator
 {
     logExecution('mkGen', 'variant', [$seed, $gen]);
 

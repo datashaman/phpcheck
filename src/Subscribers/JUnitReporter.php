@@ -13,13 +13,16 @@ namespace Datashaman\PHPCheck\Subscribers;
 
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
+use function Datashaman\PHPCheck\{
+    app
+};
 use SimpleXMLElement;
 
-class JUnitReporter extends Reporter
+class JUnitReporter extends Subscriber
 {
-    protected $testsuite;
+    private $testsuite;
 
-    protected $testcase;
+    private $testcase;
 
     public static function getSubscribedEvents(): array
     {
@@ -69,6 +72,6 @@ class JUnitReporter extends Reporter
 
     public function onEndAll(): void
     {
-        $this->testsuite->asXML($this->input->getOption('log-junit'));
+        $this->testsuite->asXML(app('runner')->getInput()->getOption('log-junit'));
     }
 }

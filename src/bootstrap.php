@@ -50,7 +50,7 @@ app('runner', function ($c) {
 
     $c['dispatcher']->addSubscriber($c['state']);
     $c['dispatcher']->addSubscriber($c['tabulator']);
-    $c['dispatcher']->addSubscriber(new ConsoleReporter($runner));
+    $c['dispatcher']->addSubscriber(new ConsoleReporter());
 
     return $runner;
 });

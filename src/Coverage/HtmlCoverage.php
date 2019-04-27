@@ -11,8 +11,22 @@ namespace Datashaman\PHPCheck\Coverage;
 
 use SebastianBergmann\CodeCoverage\Report\Html\Facade as HtmlFacade;
 
+/**
+ * This class produces an HTML coverage report to a specified folder.
+ */
 class HtmlCoverage extends Coverage
 {
+    private $folder;
+
+    public function __construct(string $folder)
+    {
+        $this->folder = $folder;
+    }
+
+    /**
+     * Processing is done in the __destruct method to ensure maximum coverage
+     * results.
+     */
     public function __destruct()
     {
         global $coverage;
@@ -20,6 +34,6 @@ class HtmlCoverage extends Coverage
         parent::__destruct();
 
         $writer = new HtmlFacade();
-        $writer->process($coverage, $this->input->getOption('coverage-html'));
+        $writer->process($coverage, $this->folder);
     }
 }

@@ -9,6 +9,9 @@
  */
 namespace Datashaman\PHPCheck\Coverage;
 
+/**
+ * Abstract base class for coverage classes.
+ */
 abstract class Coverage
 {
     public function __destruct()
