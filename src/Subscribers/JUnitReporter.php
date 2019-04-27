@@ -15,11 +15,11 @@ use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
 use SimpleXMLElement;
 
-class JUnitReporter extends Reporter
+class JUnitReporter extends Subscriber
 {
-    protected $testsuite;
+    private $testsuite;
 
-    protected $testcase;
+    private $testcase;
 
     public static function getSubscribedEvents(): array
     {

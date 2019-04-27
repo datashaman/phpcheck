@@ -16,14 +16,11 @@ use function Datashaman\PHPCheck\app;
 use Datashaman\PHPCheck\CheckCommand;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
-use Datashaman\PHPCheck\Traits\LogTrait;
 use NunoMaduro\Collision\Writer;
 use Whoops\Exception\Inspector;
 
-class ConsoleReporter extends Reporter
+class ConsoleReporter extends Subscriber
 {
-    use LogTrait;
-
     protected const HEADER = 'PHPCheck %s by Marlin Forbes and contributors.';
 
     protected const STATUS_CHARACTERS = [
@@ -38,9 +35,9 @@ class ConsoleReporter extends Reporter
         'SUCCESS' => 'info',
     ];
 
-    protected $output;
+    private $output;
 
-    protected $writer;
+    private $writer;
 
     public static function getSubscribedEvents(): array
     {
@@ -62,7 +59,6 @@ class ConsoleReporter extends Reporter
                 '#' . $baseDir . '/src/*#',
                 '#' . $baseDir . '/bin/*#',
                 '#vendor/symfony/console.*#',
-                '#vendor/webmozart/assert.*#',
             ]
         );
     }
@@ -80,7 +76,7 @@ class ConsoleReporter extends Reporter
     public function onStart(Events\StartEvent $event): void
     {
         if ($this->output->isDebug()) {
-            $signature = $this->getMethodSignature($event->method);
+            $signature = reflection()->getMethodSignature($event->method);
             $this->output->writeln("Check '$signature' started");
         }
     }
@@ -88,7 +84,7 @@ class ConsoleReporter extends Reporter
     public function onEnd(Events\EndEvent $event): void
     {
         if ($this->output->isDebug()) {
-            $signature = $this->getMethodSignature($event->method);
+            $signature = reflection()->getMethodSignature($event->method);
             $this->output->writeln("Check '$signature' ended");
 
             return;
@@ -145,7 +141,7 @@ class ConsoleReporter extends Reporter
 
             foreach ($failures as $index => $failure) {
                 $number    = $index + 1;
-                $signature = $this->getMethodSignature($failure->method);
+                $signature = reflection()->getMethodSignature($failure->method);
                 $this->output->writeln("$number) $signature");
 
                 $this->output->writeln('');
@@ -169,7 +165,7 @@ class ConsoleReporter extends Reporter
 
             foreach ($errors as $index => $error) {
                 $number    = $index + 1;
-                $signature = $this->getMethodSignature($error->method);
+                $signature = reflection()->getMethodSignature($error->method);
                 $this->output->writeln("$number) $signature");
 
                 $inspector = new Inspector($error->cause);
@@ -188,5 +184,17 @@ class ConsoleReporter extends Reporter
                 ? "<error>DEFECTS $stats</error>"
                 : "<info>OK $stats</info>"
         );
+    }
+
+    private function convertBytes(int $bytes): string
+    {
+        if ($bytes == 0) {
+            return '0.00 B';
+        }
+
+        $suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+        $exponent = (int) \floor(\log($bytes, 1024));
+
+        return \sprintf('%.2f %s', \round($bytes / 1024 ** $exponent, 2), $suffixes[$exponent]);
     }
 }

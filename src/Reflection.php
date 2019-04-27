@@ -24,11 +24,6 @@ class Reflection
         return new ReflectionClass($class);
     }
 
-    public function getMethod($class, $method)
-    {
-        return new ReflectionMethod($class, $method);
-    }
-
     public function getFunctionSignature(ReflectionFunction $function): string
     {
         return $function->getName();
@@ -37,34 +32,6 @@ class Reflection
     public function getMethodSignature(ReflectionMethod $method): string
     {
         return $method->getDeclaringClass()->getName() . '::' . $method->getName();
-    }
-
-    public function getParamAnnotations($reflectionCallable): array
-    {
-        $factory    = DocBlockFactory::createInstance();
-        $docComment = $reflectionCallable->getDocComment();
-
-        if ($docComment === false) {
-            return [];
-        }
-
-        $docBlock = $factory->create($docComment);
-
-        return $docBlock->getTagsByName('param');
-    }
-
-    public function getParamAnnotation(ReflectionParameter $param): ?Param
-    {
-        $method      = $param->getDeclaringFunction();
-        $annotations = $this->getParamAnnotations($method);
-
-        foreach ($annotations as $annotation) {
-            if ($annotation->getVariableName() === $param->getName()) {
-                return $annotation;
-            }
-        }
-
-        return null;
     }
 
     public function getParamTags(ReflectionParameter $param): array
@@ -94,5 +61,33 @@ class Reflection
         }
 
         return $subject;
+    }
+
+    private function getParamAnnotations($reflectionCallable): array
+    {
+        $factory    = DocBlockFactory::createInstance();
+        $docComment = $reflectionCallable->getDocComment();
+
+        if ($docComment === false) {
+            return [];
+        }
+
+        $docBlock = $factory->create($docComment);
+
+        return $docBlock->getTagsByName('param');
+    }
+
+    private function getParamAnnotation(ReflectionParameter $param): ?Param
+    {
+        $method      = $param->getDeclaringFunction();
+        $annotations = $this->getParamAnnotations($method);
+
+        foreach ($annotations as $annotation) {
+            if ($annotation->getVariableName() === $param->getName()) {
+                return $annotation;
+            }
+        }
+
+        return null;
     }
 }

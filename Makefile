@@ -6,6 +6,12 @@ watch:
 watch-playground:
 	while inotifywait -e close_write -r composer.* ./src ./checks ./functions ./playground ./tests; do php playground/test.php; done
 
+docs-build:
+	php sami.phar update sami.config.php
+
+docs-clean:
+	rm -rf build/ cache/
+
 phpcheck:
 	@phpcheck
 

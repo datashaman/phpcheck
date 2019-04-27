@@ -11,8 +11,15 @@ namespace Datashaman\PHPCheck\Coverage;
 
 use SebastianBergmann\CodeCoverage\Report\Text;
 
+/**
+ * This class produces a text coverage report to standard output or a specified file.
+ */
 class TextCoverage extends Coverage
 {
+    /**
+     * Processing is done in the __destruct method to ensure maximum coverage
+     * results.
+     */
     public function __destruct()
     {
         global $coverage;

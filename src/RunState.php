@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS results (
 )
 EOT;
 
-    protected const INSERT_RESULT_SQL = <<<'EOT'
+    private const INSERT_RESULT_SQL = <<<'EOT'
 INSERT OR REPLACE INTO results (
     class,
     method,
@@ -44,17 +44,17 @@ INSERT OR REPLACE INTO results (
 )
 EOT;
 
-    protected const SELECT_DEFECT_SQL = <<<'EOT'
+    private const SELECT_DEFECT_SQL = <<<'EOT'
 SELECT args FROM results WHERE class = :class AND method = :method AND status IN ('ERROR', 'FAILURE')
 EOT;
 
-    protected $errors = [];
+    private $errors = [];
 
-    protected $failures = [];
+    private $failures = [];
 
-    protected $startTime;
+    private $startTime;
 
-    protected $successes = [];
+    private $successes = [];
 
     public static function getSubscribedEvents(): array
     {
@@ -90,22 +90,22 @@ EOT;
         return null;
     }
 
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
-    public function getFailures()
+    public function getFailures(): array
     {
         return $this->failures;
     }
 
-    public function getSuccesses()
+    public function getSuccesses(): array
     {
         return $this->successes;
     }
 
-    public function getStartTime()
+    public function getStartTime(): float
     {
         return $this->startTime;
     }
@@ -136,7 +136,7 @@ EOT;
         $this->saveResult($event);
     }
 
-    protected function saveResult(Events\ResultEvent $event): void
+    private function saveResult(Events\ResultEvent $event): void
     {
         $args = $event->args ? (\json_encode($event->args) ?: '') : '';
 
@@ -151,7 +151,7 @@ EOT;
         $statement->execute();
     }
 
-    protected function formatMicrotime(float $microtime): string
+    private function formatMicrotime(float $microtime): string
     {
         $decimal = \preg_match('/^[0-9]*\\.([0-9]+)$/', (string) $microtime, $reg)
             ? \mb_substr(\str_pad($reg[1], 6, '0'), 0, 6)

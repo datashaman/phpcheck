@@ -12,7 +12,7 @@ namespace Datashaman\PHPCheck\Subscribers;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
 
-class TextReporter extends Reporter
+class TextReporter extends Subscriber
 {
     protected $file;
 

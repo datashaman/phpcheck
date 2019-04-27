@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace Datashaman\PHPCheck;
 
 use Exception;
-use InvalidArgumentException;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -207,10 +206,8 @@ class Runner implements EventSubscriberInterface
                         if (!$noDefects && $defectArgs) {
                             try {
                                 \call_user_func($closure, ...$defectArgs);
-                            } catch (InvalidArgumentException $exception) {
-                                throw new ExecutionFailure($defectArgs, $exception);
                             } catch (Throwable $throwable) {
-                                throw new ExecutionError($defectArgs, $throwable);
+                                throw new Exceptions\ExecutionError($defectArgs, $throwable);
                             }
                         }
 
@@ -221,14 +218,14 @@ class Runner implements EventSubscriberInterface
                         );
 
                         if (!$result['passed']) {
-                            throw new ExecutionFailure($result['input'], $result['error']);
+                            throw new Exceptions\ExecutionFailure($result['input'], $result['error']);
                         }
                     }
 
                     $event = new Events\SuccessEvent($method, $tags);
                     $dispatcher->dispatch(CheckEvents::SUCCESS, $event);
                     $status = 'SUCCESS';
-                } catch (ExecutionFailure $failure) {
+                } catch (Exceptions\ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
                         $method,
                         $tags,
@@ -236,7 +233,7 @@ class Runner implements EventSubscriberInterface
                     );
                     $dispatcher->dispatch(CheckEvents::FAILURE, $event);
                     $status = 'FAILURE';
-                } catch (ExecutionError $error) {
+                } catch (Exceptions\ExecutionError $error) {
                     $event = new Events\ErrorEvent(
                         $method,
                         $tags,
@@ -256,7 +253,7 @@ class Runner implements EventSubscriberInterface
         $dispatcher->dispatch(CheckEvents::END_ALL, $event);
     }
 
-    public function checks(
+    private function checks(
         int $size,
         callable $subject,
         callable $check = null,
@@ -289,7 +286,7 @@ class Runner implements EventSubscriberInterface
             while (!$passed) {
                 try {
                     $input = $this->shrink($input);
-                } catch (Example $e) {
+                } catch (Exceptions\Example $e) {
                     $input     = $e->args;
                     $exhausted = true;
                 }
@@ -315,7 +312,7 @@ class Runner implements EventSubscriberInterface
         return $result;
     }
 
-    protected function getConfig(string $filename = null): ?SimpleXMLElement
+    private function getConfig(string $filename = null): ?SimpleXMLElement
     {
         $filename = self::CONFIG_FILE;
 
@@ -333,7 +330,7 @@ class Runner implements EventSubscriberInterface
         return null;
     }
 
-    protected function gatherPaths(OutputInterface $output, string $pathArgument): array
+    private function gatherPaths(OutputInterface $output, string $pathArgument): array
     {
         $path         = \realpath($pathArgument);
 
@@ -365,7 +362,7 @@ class Runner implements EventSubscriberInterface
         return $paths;
     }
 
-    protected function getMethodTags(ReflectionMethod $method)
+    private function getMethodTags(ReflectionMethod $method)
     {
         $factory    = DocBlockFactory::createInstance();
         $docComment = $method->getDocComment();
@@ -412,7 +409,7 @@ class Runner implements EventSubscriberInterface
         return $result;
     }
 
-    protected function getFilter(InputInterface $input)
+    private function getFilter(InputInterface $input)
     {
         $filter = $input->getOption('filter');
 
@@ -431,7 +428,7 @@ class Runner implements EventSubscriberInterface
         return $parts;
     }
 
-    protected function shrink($args)
+    private function shrink($args)
     {
         foreach ($args as &$arg) {
             if (\is_string($arg)) {
@@ -476,10 +473,10 @@ class Runner implements EventSubscriberInterface
             }
         }
 
-        throw new Example($args);
+        throw new Exceptions\Example($args);
     }
 
-    protected function passed(
+    private function passed(
         ReflectionFunctionAbstract $subject,
         ReflectionFunctionAbstract $check,
         array $input
@@ -491,7 +488,7 @@ class Runner implements EventSubscriberInterface
         try {
             \set_error_handler(
                 function ($code, $message, $file, $line): void {
-                    throw new CheckError(
+                    throw new Exceptions\CheckError(
                         $message,
                         $code,
                         $file,
@@ -506,7 +503,7 @@ class Runner implements EventSubscriberInterface
                 $output = $subject->invoke(...$input);
                 $passed = $check->invoke($input, $output);
             }
-        } catch (CheckError $error) {
+        } catch (Exceptions\CheckError $error) {
             $passed = false;
         }
 
