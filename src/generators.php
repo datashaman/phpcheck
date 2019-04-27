@@ -559,21 +559,17 @@ function resize(int $n, Generator $gen): Generator
     );
 }
 
-function sample(Generator $gen): Generator
+function sample(Generator $gen): array
 {
     logExecution('mkGen', 'sample', $gen);
 
     $sizes = \range(0, 20, 2);
 
-    return makeGen(
-        function (Random $r) use ($gen, $sizes) {
-            return \array_map(
-                function ($n) use ($r, $gen) {
-                    return generate($gen, $r, $n);
-                },
-                $sizes
-            );
-        }
+    return \array_map(
+        function ($n) use ($gen) {
+            return generate($gen, null, $n);
+        },
+        $sizes
     );
 }
 
