@@ -78,7 +78,7 @@ class ConsoleReporter extends Subscriber
     public function onStart(Events\StartEvent $event): void
     {
         if ($this->output->isDebug()) {
-            $signature = reflection()->getMethodSignature($event->method);
+            $signature = app('reflection')->getMethodSignature($event->function);
             $this->output->writeln("Check '$signature' started");
         }
     }
@@ -86,7 +86,7 @@ class ConsoleReporter extends Subscriber
     public function onEnd(Events\EndEvent $event): void
     {
         if ($this->output->isDebug()) {
-            $signature = reflection()->getMethodSignature($event->method);
+            $signature = app('reflection')->getMethodSignature($event->function);
             $this->output->writeln("Check '$signature' ended");
 
             return;
@@ -143,7 +143,7 @@ class ConsoleReporter extends Subscriber
 
             foreach ($failures as $index => $failure) {
                 $number    = $index + 1;
-                $signature = reflection()->getMethodSignature($failure->method);
+                $signature = app('reflection')->getMethodSignature($failure->function);
                 $this->output->writeln("$number) $signature");
 
                 $this->output->writeln('');
@@ -167,7 +167,7 @@ class ConsoleReporter extends Subscriber
 
             foreach ($errors as $index => $error) {
                 $number    = $index + 1;
-                $signature = reflection()->getMethodSignature($error->method);
+                $signature = app('reflection')->getMethodSignature($error->function);
                 $this->output->writeln("$number) $signature");
 
                 $inspector = new Inspector($error->cause);

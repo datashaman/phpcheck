@@ -9,6 +9,7 @@
  */
 namespace Datashaman\PHPCheck;
 
+use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use SQLite3Result;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -66,12 +67,18 @@ EOT;
         ];
     }
 
-    public function getDefectArgs(ReflectionMethod $method): ?array
+    public function getDefectArgs(ReflectionFunctionAbstract $function): ?array
     {
         $statement = app('database')->prepare(self::SELECT_DEFECT_SQL);
 
-        $statement->bindValue(':class', $method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
-        $statement->bindValue(':method', $method->getName(), \SQLITE3_TEXT);
+        $statement->bindValue(
+            ':class',
+            $function instanceof ReflectionMethod
+                ? $function->getDeclaringClass()->getName()
+                : '',
+            \SQLITE3_TEXT
+        );
+        $statement->bindValue(':method', $function->getName(), \SQLITE3_TEXT);
 
         $result = $statement->execute();
 
@@ -142,8 +149,14 @@ EOT;
 
         $statement = app('database')->prepare(self::INSERT_RESULT_SQL);
 
-        $statement->bindValue(':class', $event->method->getDeclaringClass()->getName(), \SQLITE3_TEXT);
-        $statement->bindValue(':method', $event->method->getName(), \SQLITE3_TEXT);
+        $statement->bindValue(
+            ':class',
+            $event->function instanceof ReflectionMethod
+                ? $event->function->getDeclaringClass()->getName()
+                : '',
+            \SQLITE3_TEXT
+        );
+        $statement->bindValue(':method', $event->function->getName(), \SQLITE3_TEXT);
         $statement->bindValue(':status', $event->status, \SQLITE3_TEXT);
         $statement->bindValue(':time', $this->formatMicrotime($event->time));
         $statement->bindValue(':args', $args);

@@ -42,47 +42,32 @@ const TYPE_GENERATORS = [
     'string' => 'Datashaman\PHPCheck\strings',
 ];
 
-function makeGen(callable $f): Generator
-{
-    $func = function () use ($f) {
-        $args = yield;
-
-        while (true) {
-            [$r, $n] = checkArgs($args);
-            $args    = yield $f($r, $n);
-        }
-    };
-
-    $gen = $func();
-    $gen->next();
-
-    return $gen;
-}
-
-function checkArgs($args)
-{
-    $args = $args ?: [];
-
-    $args    = \array_pad($args, 2, null);
-    [$r, $n] = $args;
-
-    if (!$r) {
-        $r = app('random');
-    }
-
-    if (null === $n) {
-        $n = 30;
-    }
-
-    return [$r, $n];
-}
-
-function generate($gen, Random $r = null, int $n = null)
-{
-    return $gen->send([$r, $n]);
-}
-
-function arguments(callable $callable): Generator
+/**
+ * Generate an array of arguments for the callable function.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\arguments;
+ * use function Datashaman\PHPCheck\generate;
+ *
+ * function funcA(int $x, string $s) {
+ * }
+ *
+ * var_dump(generate(arguments('funcA')));
+ *
+ * /**
+ *  * @param string $s {@gen faker("username")}
+ *  *\/
+ * function funcB(string $s) {
+ * }
+ *
+ * var_dump(generate(arguments('funcB')));
+ * </pre>
+ *
+ * @param callable $f
+ *
+ * @return Generator
+ */
+function arguments(callable $f): Generator
 {
     static $cache;
 
@@ -90,13 +75,14 @@ function arguments(callable $callable): Generator
         $cache = new Map();
     }
 
-    if (!$cache->hasKey($callable)) {
-        $function = reflection()->reflect($callable);
+    if (!$cache->hasKey($f)) {
+        $reflection = app('reflection');
+        $function = $reflection->reflect($f);
 
         $generators = [];
 
         foreach ($function->getParameters() as $param) {
-            $tags = reflection()->getParamTags($param);
+            $tags = $reflection->getParamTags($param);
 
             if (\array_key_exists('gen', $tags)) {
                 $generator = evalWithArgs($tags['gen']);
@@ -116,23 +102,35 @@ function arguments(callable $callable): Generator
         }
 
         $generator = makeGen(
-            function () use ($generators) {
+            function (Random $r, int $n = null) use ($generators) {
                 $arguments = [];
 
                 foreach ($generators as $generator) {
-                    $arguments[] = generate($generator);
+                    $arguments[] = generate($generator, $r, $n);
                 }
 
                 return $arguments;
             }
         );
 
-        $cache->put($callable, $generator);
+        $cache->put($f, $generator);
     }
 
-    return $cache->get($callable);
+    return $cache->get($f);
 }
 
+/**
+ * Generate an array of mixed values.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\arrays;
+ * use function Datashaman\PHPCheck\generate;
+ *
+ * var_dump(generate(arrays()));
+ * </pre>
+ *
+ * @return Generator
+ */
 function arrays(): Generator
 {
     logExecution('mkGen', 'arrays');
@@ -140,6 +138,23 @@ function arrays(): Generator
     return listOf(mixed());
 }
 
+/**
+ * Generate an ASCII character.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\ascii;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\strings;
+ *
+ * // Generate an ASCII character.
+ * var_dump(sample(ascii()));
+ *
+ * // Generate an ASCII string.
+ * var_dump(sample(strings(ascii())));
+ * </pre>
+ *
+ * @return Generator
+ */
 function ascii(): Generator
 {
     logExecution('mkGen', 'ascii');
@@ -147,6 +162,22 @@ function ascii(): Generator
     return characters(0, 0x7F);
 }
 
+/**
+ * Generate a boolean value.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\booleans;
+ * use function Datashaman\PHPCheck\generate;
+ *
+ * // Generate a boolean value with 50% chance true.
+ * var_dump(generate(booleans()));
+ *
+ * // Generate a boolean value with 75% chance true.
+ * var_dump(generate(booleans(75)));
+ * </pre>
+ *
+ * @return Generator
+ */
 function booleans(int $chanceOfGettingTrue = 50): Generator
 {
     logExecution('mkGen', 'booleans', 50);
@@ -158,6 +189,21 @@ function booleans(int $chanceOfGettingTrue = 50): Generator
     );
 }
 
+/**
+ * Generate a character. The value is generated from all Unicode characters except control characters, surrogates and private ranges.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\characters;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(characters()));
+ * </pre>
+ *
+ * @param null|int|string $minChar The minimum character to be generated.
+ * @param null|int|string $maxChar The maximum character to be generated.
+ *
+ * @return Generator
+ */
 function characters(
     $minChar = null,
     $maxChar = null
@@ -206,6 +252,22 @@ function characters(
     );
 }
 
+/**
+ * Generates a random element in the given inclusive range.
+ *
+ * This is another paragraph.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\choose;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(choose(0, 10)));
+ * var_dump(sample(choose("a", "e")));
+ * </pre>
+ *
+ * @param int|string $min The minimum element to generate. Can be an integer or a one character string.
+ * @param int|string $max The maximum element to generate. Can be an integer or a one character string.
+ */
 function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
 {
     logExecution('mkGen', 'choose', [$min, $max]);
@@ -242,6 +304,19 @@ function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
     );
 }
 
+/**
+ * Generate a value by type.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\chooseAny;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(chooseAny('float')));
+ * </pre>
+ * @param string $type The type to be generated. Can be one of: `float`, `int`, `string`.
+ *
+ * @return Generator
+ */
 function chooseAny(string $type): Generator
 {
     logExecution('mkGen', 'chooseAny', $type);
@@ -258,6 +333,25 @@ function chooseAny(string $type): Generator
     }
 }
 
+/**
+ * Generate datetimes, optionally with generated timezones.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\datetimes;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\timezones;
+ *
+ * var_dump(sample(datetimes()));
+ *
+ * var_dump(sample(datetimes('2000-01-01', '2100-01-01', timezones())));
+ * </pre>
+ *
+ * @param null|string|DateTime $min The minimum datetime to be generated.
+ * @param null|string|DateTime $max The maximum datetime to be generated.
+ * @param null|Generator $timezones Optional timezones generator. Default is naive datetimes.
+ *
+ * @return Generator
+ */
 function datetimes(
     $min = null,
     $max = null,
@@ -306,6 +400,21 @@ function datetimes(
     );
 }
 
+/**
+ * Generate dates.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\dates;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(dates('2000-01-01', '2300-01-01')));
+ * </pre>
+ *
+ * @param int|string|DateTime $min The minimum date to be generated.
+ * @param int|string|DateTime $max The maximum date to be generated.
+ *
+ * @return Generator
+ */
 function dates($min = null, $max = null): Generator
 {
     logExecution('mkGen', 'dates', [$min, $max]);
@@ -335,6 +444,21 @@ function dates($min = null, $max = null): Generator
     );
 }
 
+/**
+ * Generates one of the given values. The input list must be non-empty.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\elements;
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\listOf1;
+ *
+ * var_dump(generate(listOf1(elements(['abc', 123, 'u&me']))));
+ * </pre>
+ *
+ * @param array $array The array to be generated from.
+ *
+ * @return Generator
+ */
 function elements(array $array): Generator
 {
     logExecution('mkGen', 'elements', $array);
@@ -350,6 +474,22 @@ function elements(array $array): Generator
     );
 }
 
+/**
+ * Generates a value from the Faker factory.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\generate;
+ *
+ * var_dump(generate(faker("creditCardDetails")));
+ * var_dump(generate(faker("email")));
+ * var_dump(generate(faker("imageUrl", 400, 300, "cats")));
+ * </pre>
+ *
+ * @param mixed $args,... First argument is the factory property or method name. If there is more than 1 argument, it's treated as a method call. If if there is 1 argument, it's treated as a property.
+ *
+ * @return Generator
+ */
 function faker(...$args): Generator
 {
     logExecution('mkGen', 'faker', $args);
@@ -370,6 +510,20 @@ function faker(...$args): Generator
     );
 }
 
+/**
+ * Generate floats optionally within a specific range.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\floats;
+ * use function Datashaman\PHPCheck\generate;
+ *
+ * var_dump(generate(floats(-1000, 1000)));
+ * </pre>
+ * @param float $min The minimum float value to generate.
+ * @param float $max The maximum float value to generate.
+ *
+ * @return Generator
+ */
 function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Generator
 {
     logExecution('mkGen', 'floats', [$min, $max]);
@@ -389,6 +543,24 @@ function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Gener
     );
 }
 
+/**
+ * Chooses one of the given generators, with a weighted random distribution. The input list must be non-empty.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\frequency;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(frequency([
+ *     [1, faker("email")],
+ *     [4, faker("lastName")],
+ * ])));
+ * </pre>
+ *
+ * @param array $frequencies A weighted list consisting of pairs of `[weight, generator]`.
+ *
+ * @return Generator
+ */
 function frequency(array $frequencies): Generator
 {
     logExecution('mkGen', 'frequencies', $frequencies);
@@ -426,13 +598,28 @@ function frequency(array $frequencies): Generator
                 $targetWeight -= $weight;
 
                 if ($targetWeight <= 0) {
-                    return $key;
+                    return generate($key, $r);
                 }
             }
         }
     );
 }
 
+/**
+ * Takes a list of elements of increasing size, and chooses among an initial segment of the list. The size of this initial segment increases with the size parameter. The input list must be non-empty.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\growingElements;
+ * use function Datashaman\PHPCheck\listOf;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(listOf(growingElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))));
+ * </pre>
+ *
+ * @param array $array The array containing the elements to be selected.
+ *
+ * @return Generator
+ */
 function growingElements(array $array): Generator
 {
     return makeGen(
@@ -449,6 +636,23 @@ function growingElements(array $array): Generator
     );
 }
 
+/**
+ * Generate an element within a set of intervals, and excluding another set of intervals.
+ *
+ * Intervals are defined as a list of `[min, max]` pairs, for example: `[[1, 3], [4, 10], [11, 40]]`.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\intervals;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(intervals([[1, 10], [1, 5]])));
+ * </pre>
+ *
+ * @param array $includes An array of intervals to include in selecting the value.
+ * @param array $excludes An array of intervals to exclude from the selection.
+ *
+ * @return Generator
+ */
 function intervals(
     array $include = [[\PHP_INT_MIN, \PHP_INT_MAX]],
     array $exclude = []
@@ -510,6 +714,25 @@ function intervals(
     );
 }
 
+/**
+ * Generates a list of random length. The maximum length depends on the size parameter.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\listOf;
+ * use function Datashaman\PHPCheck\resize;
+ * use function Datashaman\PHPCheck\strings;
+ *
+ * var_dump(generate(listOf(strings(faker("emoji")))));
+ *
+ * var_dump(generate(resize(2, listOf(faker("ipv4")))));
+ * </pre>
+ *
+ * @param Generator $gen The generator that creates the values.
+ *
+ * @return Generator
+ */
 function listOf(Generator $gen): Generator
 {
     logExecution('mkGen', 'listOf', $gen);
@@ -523,6 +746,24 @@ function listOf(Generator $gen): Generator
     );
 }
 
+/**
+ * Generates a non-empty list of random length. The maximum length depends on the size parameter.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\listOf1;
+ * use function Datashaman\PHPCheck\resize;
+ *
+ * var_dump(generate(listOf1(faker("creditCardNumber"))));
+ *
+ * var_dump(generate(resize(2, listOf1(faker("emoji")))));
+ * </pre>
+ *
+ * @param Generator $gen The generator that creates the values.
+ *
+ * @return Generator
+ */
 function listOf1(Generator $gen): Generator
 {
     logExecution('mkGen', 'listOf1', $gen);
@@ -536,6 +777,25 @@ function listOf1(Generator $gen): Generator
     );
 }
 
+/**
+ * Randomly generates from one of the following generators:
+ * * [strings()](#strings)
+ * * [choose()](#choose)
+ * * [booleans()](#booleans)
+ * * [dates()](#dates)
+ * * [datetimes()](#datetimes)
+ * * [listOf(strings())](#listOf)
+ * * [listOf(choose())](#listOf)
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\mixed;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(mixed()));
+ * </pre>
+ *
+ * @return Generator
+ */
 function mixed(): Generator
 {
     logExecution('mkGen', 'mixed');
@@ -553,6 +813,25 @@ function mixed(): Generator
     );
 }
 
+/**
+ * Randomly uses one of the given generators. The input list must be non-empty.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\oneof;
+ * use function Datashaman\PHPCheck\sample;
+ *
+ * var_dump(sample(oneof(
+ *     [
+ *         faker("email"),
+ *         faker("e164PhoneNumber")
+ *     ]
+ * )));
+ * </pre>
+ * @param array $gens The list of generators to be chosen from.
+ *
+ * @return Generator
+ */
 function oneof(array $gens): Generator
 {
     logExecution('mkGen', 'oneof', $gens);
@@ -566,6 +845,23 @@ function oneof(array $gens): Generator
     );
 }
 
+/**
+ * Overrides the size parameter. Returns a generator which uses the given size instead of the runtime-size parameter.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\faker;
+ * use function Datashaman\PHPCheck\listOf;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\resize;
+ *
+ * var_dump(sample(resize(3, listOf(faker("firstname")))));
+ * </pre>
+ *
+ * @param int $n The size to be used by the generator.
+ * @param Generator $gen The generator that creates the values.
+ *
+ * @return Generator
+ */
 function resize(int $n, Generator $gen): Generator
 {
     logExecution('mkGen', 'resize', [$n, $gen]);
@@ -577,33 +873,57 @@ function resize(int $n, Generator $gen): Generator
     );
 }
 
-function sample(Generator $gen): array
-{
-    logExecution('mkGen', 'sample', $gen);
-
-    $sizes = \range(0, 20, 2);
-
-    return \array_map(
-        function ($n) use ($gen) {
-            return generate($gen, null, $n);
-        },
-        $sizes
-    );
-}
-
+/**
+ * Adjust the size parameter, by transforming it with the given function.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\ascii;
+ * use function Datashaman\PHPCheck\listOf;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\scale;
+ * use function Datashaman\PHPCheck\strings;
+ *
+ * var_dump(sample(scale(function ($n) {
+ *     return $n / 10;
+ * }, listOf(strings(ascii())))));
+ * </pre>
+ *
+ * @param callable $f The transform function that scales the size.
+ * @param Generator $gen The generator who's size will be scaled.
+ *
+ * @return Generator
+ */
 function scale(callable $f, Generator $gen): Generator
 {
     logExecution('mkGen', 'scale', ['callable', $gen]);
 
     return makeGen(
         function (Random $r, $n) use ($f, $gen) {
-            $newSize = \call_user_func($f, $n);
+            $newSize = (int) \call_user_func($f, $n);
 
             return generate($gen, $r, $newSize);
         }
     );
 }
 
+/**
+ * Generate strings, optionally from a specific character generator.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\ascii;
+ * use function Datashaman\PHPCheck\characters;
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\strings;
+ *
+ * var_dump(generate(strings()));
+ * var_dump(generate(strings(ascii())));
+ * var_dump(generate(strings(characters('a', 'e'))));
+ * </pre>
+ *
+ * @param null|Generator $characters
+ *
+ * @return Generator
+ */
 function strings(Generator $characters = null): Generator
 {
     logExecution('mkGen', 'strings');
@@ -626,6 +946,24 @@ function strings(Generator $characters = null): Generator
     );
 }
 
+/**
+ * Generates a value that satisfies a predicate.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\choose;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\suchThat;
+ *
+ * var_dump(sample(suchThat(choose(0, 100), function ($value) {
+ *     return $value < 50;
+ * })));
+ * </pre>
+ *
+ * @param Generator $gen The generator that creates the values.
+ * @param callable $f The predicate function that must be satisfied.
+ *
+ * @return Gen
+ */
 function suchThat(Generator $gen, callable $f): Generator
 {
     logExecution('mkGen', 'suchThat', [$gen, 'callable']);
@@ -647,6 +985,27 @@ function suchThat(Generator $gen, callable $f): Generator
     );
 }
 
+/**
+ * Generates a value for which the given function returns a Just, and then applies the function.
+ *
+ * The callable must return a Maybe object.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\choose;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\suchThatMap;
+ * use Datashaman\PHPCheck\Types\Just;
+ *
+ * var_dump(sample(suchThatMap(choose(0, 5), function ($value) {
+ *     return new Just($value + 100);
+ * })));
+ * </pre>
+ *
+ * @param Generator $gen The generator that creates the values.
+ * @param callable $f The map function.
+ *
+ * @return Generator
+ */
 function suchThatMap(Generator $gen, callable $f): Generator
 {
     logExecution('mkGen', 'suchThatMap', [$gen, 'callable']);
@@ -666,6 +1025,28 @@ function suchThatMap(Generator $gen, callable $f): Generator
     );
 }
 
+/**
+ * Tries to generate a value that satisfies a predicate. If it fails to do so after enough attempts, returns Nothing.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\choose;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\suchThatMaybe;
+ *
+ * var_dump(sample(suchThatMaybe(choose(0, 100), function ($value) {
+ *     return $value < 99;
+ * })));
+ *
+ * var_dump(sample(suchThatMaybe(choose(0, 100), function ($value) {
+ *     return $value > 99;
+ * })));
+ * </pre>
+ *
+ * @param Generator $gen The generator that creates the values.
+ * @param callable $f The predicate function that must be satisfied.
+ *
+ * @return Generator
+ */
 function suchThatMaybe(Generator $gen, callable $f): Generator
 {
     logExecution('mkGen', 'suchThatMaybe', [$gen, 'callable']);
@@ -691,6 +1072,18 @@ function suchThatMaybe(Generator $gen, callable $f): Generator
     );
 }
 
+/**
+ * Generate a timezone.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\timezones;
+ *
+ * var_dump(generate(timezones()));
+ * </pre>
+ *
+ * @return Generator
+ */
 function timezones(): Generator
 {
     logExecution('mkGen', 'timezones');
@@ -707,6 +1100,22 @@ function timezones(): Generator
     );
 }
 
+/**
+ * Modifies a generator using an integer seed so it will always produce the same result.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\ascii;
+ * use function Datashaman\PHPCheck\sample;
+ * use function Datashaman\PHPCheck\strings;
+ * use function Datashaman\PHPCheck\variant;
+ *
+ * var_dump(sample(variant(123, strings(ascii()))));
+ * </pre>
+ * @param int $seed The seed to be used by the generator.
+ * @param Generator $gen The generator to be seeded.
+ *
+ * @return Generator
+ */
 function variant(string $seed, Generator $gen): Generator
 {
     logExecution('mkGen', 'variant', [$seed, $gen]);
@@ -718,6 +1127,22 @@ function variant(string $seed, Generator $gen): Generator
     );
 }
 
+/**
+ * Generates a list of the given length.
+ *
+ * <pre>
+ * use function Datashaman\PHPCheck\choose;
+ * use function Datashaman\PHPCheck\generate;
+ * use function Datashaman\PHPCheck\vectorOf;
+ *
+ * var_dump(generate(vectorOf(5, choose(0, 10))));
+ * </pre>
+ *
+ * @param int $n The length of the list to be generated.
+ * @param Generator $gen The generator that produces the values.
+ *
+ * @return Generator
+ */
 function vectorOf(int $n, Generator $gen): Generator
 {
     logExecution('mkGen', 'vectorOf', [$n, $gen]);

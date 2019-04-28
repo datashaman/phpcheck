@@ -16,7 +16,6 @@ use Datashaman\PHPCheck\CheckEvents;
 use function Datashaman\PHPCheck\evalWithArgs;
 use Datashaman\PHPCheck\Events;
 
-use function Datashaman\PHPCheck\reflection;
 use function Datashaman\PHPCheck\repr;
 use Ds\Map;
 use Exception;
@@ -50,7 +49,7 @@ class Tabulator extends Subscriber
             $this->stats = new Map();
             $this->names = [];
 
-            foreach ($event->method->getParameters() as $param) {
+            foreach ($event->function->getParameters() as $param) {
                 $this->names[$param->getPosition()] = $param->getName();
             }
 
@@ -104,7 +103,7 @@ class Tabulator extends Subscriber
                     }
                 );
 
-            $this->tables->put($event->method, [
+            $this->tables->put($event->function, [
                 'tables' => $tables,
                 'tags'   => $event->tags,
             ]);
@@ -120,11 +119,13 @@ class Tabulator extends Subscriber
             $output->writeln('Tables');
             $output->writeln('');
 
-            foreach ($this->tables->keys() as $index => $method) {
-                $output->writeln($index + 1 . ') ' . reflection()->getMethodSignature($method));
+            $reflection = app('reflection');
+
+            foreach ($this->tables->keys() as $index => $function) {
+                $output->writeln($index + 1 . ') ' . $reflection->getMethodSignature($function));
                 $output->writeln('');
 
-                ['tables' => $tables, 'tags' => $tags] = $this->tables->get($method);
+                ['tables' => $tables, 'tags' => $tags] = $this->tables->get($function);
 
                 foreach ($tables as $label => $stats) {
                     $total = $stats->sum();

@@ -92,7 +92,20 @@ class CheckCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): ?int
     {
-        $result = app('runner')->execute($input, $output);
+        $args = new Args();
+
+        $args->bootstrap = $input->getOption('bootstrap');
+        $args->coverageHtml = $input->getOption('coverage-html');
+        $args->coverageText = $input->getOption('coverage-text');
+        $args->filter = $input->getOption('filter');
+        $args->logJunit = $input->getOption('log-junit');
+        $args->logText = $input->getOption('log-text');
+        $args->maxSuccess = $input->getOption('max-success');
+        $args->noDefects = $input->getOption('no-defects');
+        $args->output = $output;
+        $args->path = $input->getArgument('path');
+
+        $result = app('runner')->execute($args);
 
         // TODO Return code
 

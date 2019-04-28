@@ -14,10 +14,10 @@ namespace Datashaman\PHPCheck;
 use DateTime;
 use Exception;
 use phpDocumentor\Reflection\DocBlockFactory;
+use ReflectionFunction;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use SimpleXMLElement;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
@@ -35,8 +35,6 @@ class Runner implements EventSubscriberInterface
     protected const CONFIG_FILE = 'phpcheck.xml';
 
     private $seed;
-
-    private $input;
 
     private $maxSuccess;
 
@@ -86,73 +84,10 @@ class Runner implements EventSubscriberInterface
         return $result;
     }
 
-    public function execute(InputInterface $input, OutputInterface $output): void
+    protected function gatherMethods($args)
     {
-        $state = app('state');
-
-        $this->input  = $input;
-        $this->output = $output;
-
-        if ($input->getOption('coverage-html') !== false) {
-            if (null === $input->getOption('coverage-html')) {
-                $output->writeln('<error>You must specify a directory for coverage-html</error>');
-                exit(1);
-            }
-            $coverage = new Coverage\HtmlCoverage($input->getOption('coverage-html'));
-        }
-
-        if ($input->getOption('coverage-text') !== false) {
-            $coverage = new Coverage\TextCoverage(
-                $input->getOption('coverage-text'),
-                $input->getOption('no-ansi')
-            );
-        }
-
-        $config = $this->getConfig();
-
-        $this->maxSuccess = (int) $input->getOption('max-success');
-
-        $dispatcher = app('dispatcher');
-
-        if ($input->getOption('log-junit') !== false) {
-            if (null === $input->getOption('log-junit')) {
-                $output->writeln('<error>You must specify a filename for log-junit</error>');
-                exit(1);
-            }
-            $reporter = new Subscribers\JUnitReporter();
-            $dispatcher->addSubscriber($reporter);
-        }
-
-        if ($input->getOption('log-text') !== false) {
-            if (null === $input->getOption('log-text')) {
-                $output->writeln('<error>You must specify a filename for log-text</error>');
-                exit(1);
-            }
-            $reporter = new Subscribers\TextReporter();
-            $dispatcher->addSubscriber($reporter);
-        }
-
-        $bootstrap = $input->getOption('bootstrap')
-            ?: $config['bootstrap']
-            ?? null;
-
-        if ($bootstrap) {
-            include_once $bootstrap;
-        }
-
-        if (isset($config->subscribers)) {
-            foreach ($config->subscribers->subscriber as $subscriber) {
-                $class = (string) $subscriber['class'];
-                $dispatcher->addSubscriber(new $class($this));
-            }
-        }
-
-        $event = new Events\StartAllEvent();
-        $dispatcher->dispatch(CheckEvents::START_ALL, $event);
-
-        [$classFilter, $methodFilter] = $this->getFilter($input);
-
-        $paths = $this->gatherPaths($output, $input->getArgument('path'));
+        $methods = [];
+        $paths = $this->gatherPaths($args->output, $args->path);
 
         foreach ($paths as $path) {
             $classes = \get_declared_classes();
@@ -173,12 +108,14 @@ class Runner implements EventSubscriberInterface
 
             $testClass = \array_pop($classes);
 
+            [$classFilter, $methodFilter] = $this->getFilter($args);
+
             if ($classFilter && !\fnmatch($classFilter, $testClass)) {
                 continue;
             }
 
-            $test  = new $testClass($this);
-            $class = reflection()->getClass($test);
+            $class = app('reflection')->getClass($testClass);
+            $methods[$testClass] = [];
 
             foreach ($class->getMethods() as $method) {
                 $name = $method->getName();
@@ -191,31 +128,115 @@ class Runner implements EventSubscriberInterface
                     continue;
                 }
 
-                $parameterCount = \count($method->getParameters());
-                $tags           = $this->getMethodTags($method);
+                $methods[$testClass][] = $method;
+            }
+        }
 
-                $closure = $method->getClosure($test);
+        return $methods;
+    }
 
-                $event = new Events\StartEvent($method, $tags);
+    public function execute(Args $args): void
+    {
+        $state = app('state');
+
+        $output = $this->output = $args->output;
+
+        if ($args->coverageHtml !== false) {
+            if (null === $args->coverageHtml) {
+                $output->writeln('<error>You must specify a directory for coverage-html</error>');
+                exit(1);
+            }
+            $coverage = new Coverage\HtmlCoverage($args->coverageHtml);
+        }
+
+        if ($args->coverageText !== false) {
+            $coverage = new Coverage\TextCoverage(
+                $args->coverageText,
+                $args->noAnsi
+            );
+        }
+
+        $config = $this->getConfig();
+
+        $this->maxSuccess = (int) $args->maxSuccess;
+
+        $dispatcher = app('dispatcher');
+
+        if ($args->logJunit !== false) {
+            if (null === $args->logJunit) {
+                $output->writeln('<error>You must specify a filename for log-junit</error>');
+                exit(1);
+            }
+            $reporter = new Subscribers\JUnitReporter();
+            $dispatcher->addSubscriber($reporter);
+        }
+
+        if ($args->logText !== false) {
+            if (null === $args->logText) {
+                $output->writeln('<error>You must specify a filename for log-text</error>');
+                exit(1);
+            }
+            $reporter = new Subscribers\TextReporter();
+            $dispatcher->addSubscriber($reporter);
+        }
+
+        $bootstrap = $args->bootstrap
+            ?: $config['bootstrap']
+            ?? null;
+
+        if ($bootstrap) {
+            include_once $bootstrap;
+        }
+
+        if (isset($config->subscribers)) {
+            foreach ($config->subscribers->subscriber as $subscriber) {
+                $class = (string) $subscriber['class'];
+                $dispatcher->addSubscriber(new $class($this));
+            }
+        }
+
+        $event = new Events\StartAllEvent();
+        $dispatcher->dispatch(CheckEvents::START_ALL, $event);
+
+        if ($args->path) {
+            $allFunctions = $this->gatherMethods($args);
+        } elseif ($args->subject) {
+            $allFunctions = [null => [new ReflectionFunction($args->subject)]];
+        }
+
+        foreach ($allFunctions as $testClass => $functions) {
+            $test = null;
+
+            if ($testClass) {
+                $test = new $testClass();
+            }
+
+            foreach ($functions as $function) {
+                $tags           = $this->getTags($function);
+                $event = new Events\StartEvent($function, $tags);
                 $dispatcher->dispatch(CheckEvents::START, $event);
+
+                $parameterCount = \count($function->getParameters());
 
                 try {
                     if (!$parameterCount) {
-                        \call_user_func($closure);
+                        $test ? $function->invoke($test) : $function->invoke();
                     } else {
-                        $noDefects  = ($input->getOption('no-defects') !== false);
-                        $defectArgs = $state->getDefectArgs($method);
+                        $noDefects  = ($args->noDefects !== false);
+                        $defectArgs = $state->getDefectArgs($function);
 
                         if (!$noDefects && $defectArgs) {
                             try {
-                                \call_user_func($closure, ...$defectArgs);
+                                $test
+                                    ? $function->invoke($test, ...$defectArgs)
+                                    : $function->invoke(...$defectArgs);
                             } catch (Throwable $throwable) {
                                 throw new Exceptions\ExecutionError($defectArgs, $throwable);
                             }
                         }
 
                         $result = $this->iterate(
-                            $closure,
+                            $test ? $function->getClosure($test) : $function->getClosure(),
                             null,
                             $tags
                         );
@@ -225,12 +246,12 @@ class Runner implements EventSubscriberInterface
                         }
                     }
 
-                    $event = new Events\SuccessEvent($method, $tags);
+                    $event = new Events\SuccessEvent($function, $tags);
                     $dispatcher->dispatch(CheckEvents::SUCCESS, $event);
                     $status = 'SUCCESS';
                 } catch (Exceptions\ExecutionFailure $failure) {
                     $event = new Events\FailureEvent(
-                        $method,
+                        $function,
                         $tags,
                         $failure->getArgs()
                     );
@@ -238,7 +259,7 @@ class Runner implements EventSubscriberInterface
                     $status = 'FAILURE';
                 } catch (Exceptions\ExecutionError $error) {
                     $event = new Events\ErrorEvent(
-                        $method,
+                        $function,
                         $tags,
                         $error->getArgs(),
                         $error->getCause()
@@ -247,7 +268,7 @@ class Runner implements EventSubscriberInterface
                     $status = 'ERROR';
                 }
 
-                $event = new Events\EndEvent($method, $tags, $status);
+                $event = new Events\EndEvent($function, $tags, $status);
                 $dispatcher->dispatch(CheckEvents::END, $event);
             }
         }
@@ -262,15 +283,15 @@ class Runner implements EventSubscriberInterface
         callable $check = null,
         array $tags = null
     ): array {
-        $reflection = reflection()->reflect($subject);
-        $signature  = reflection()->getFunctionSignature($reflection);
+        $reflection = app('reflection')->reflect($subject);
+        $signature  = app('reflection')->getFunctionSignature($reflection);
 
         $check = null === $check
             ? $reflection
-            : reflection()->reflect($check);
+            : app('reflection')->reflect($check);
 
         $dispatcher = app('dispatcher');
-        $result     = null;
+        $result     = [];
 
         for ($iteration = 1; $iteration <= $size; $iteration++) {
             $input = generate(resize(
@@ -365,10 +386,10 @@ class Runner implements EventSubscriberInterface
         return $paths;
     }
 
-    private function getMethodTags(ReflectionMethod $method)
+    private function getTags(ReflectionFunctionAbstract $function)
     {
         $factory    = DocBlockFactory::createInstance();
-        $docComment = $method->getDocComment();
+        $docComment = $function->getDocComment();
 
         if ($docComment === false) {
             return [];
@@ -412,9 +433,9 @@ class Runner implements EventSubscriberInterface
         return $result;
     }
 
-    private function getFilter(InputInterface $input)
+    private function getFilter(Args $args)
     {
-        $filter = $input->getOption('filter');
+        $filter = $args->filter;
 
         if (!$filter) {
             return [null, null];

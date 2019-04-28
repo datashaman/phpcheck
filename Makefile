@@ -12,6 +12,11 @@ docs-build:
 docs-clean:
 	rm -rf build/ cache/
 
+docs-functions:
+	mkdir -p docs
+	cp css/functions.css docs/
+	./generate-function-docs > docs/functions.html
+
 phpcheck:
 	@phpcheck
 

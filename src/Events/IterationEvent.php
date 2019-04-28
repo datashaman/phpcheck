@@ -11,12 +11,12 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck\Events;
 
-use ReflectionFunction;
+use ReflectionFunctionAbstract;
 
 class IterationEvent extends Event
 {
     /**
-     * @var ReflectionFunction
+     * @var ReflectionFunctionAbstract
      */
     public $function;
 
@@ -36,7 +36,7 @@ class IterationEvent extends Event
     public $passed;
 
     public function __construct(
-        ReflectionFunction $function,
+        ReflectionFunctionAbstract $function,
         array $tags,
         array $args,
         bool $passed

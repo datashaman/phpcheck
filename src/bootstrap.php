@@ -45,6 +45,10 @@ app('random', function ($c) {
     return new Random();
 });
 
+app('reflection', function ($c) {
+    return new Reflection();
+});
+
 app('runner', function ($c) {
     $runner = new Runner();
 
