@@ -94,17 +94,17 @@ class CheckCommand extends Command
     {
         $args = new Args();
 
-        $args->bootstrap = $input->getOption('bootstrap');
+        $args->bootstrap    = $input->getOption('bootstrap');
         $args->coverageHtml = $input->getOption('coverage-html');
         $args->coverageText = $input->getOption('coverage-text');
-        $args->filter = $input->getOption('filter');
-        $args->logJunit = $input->getOption('log-junit');
-        $args->logText = $input->getOption('log-text');
-        $args->maxSuccess = $input->getOption('max-success');
-        $args->noAnsi = $input->getOption('no-ansi');
-        $args->noDefects = $input->getOption('no-defects');
-        $args->output = $output;
-        $args->path = $input->getArgument('path');
+        $args->filter       = $input->getOption('filter');
+        $args->logJunit     = $input->getOption('log-junit');
+        $args->logText      = $input->getOption('log-text');
+        $args->maxSuccess   = $input->getOption('max-success');
+        $args->noAnsi       = $input->getOption('no-ansi');
+        $args->noDefects    = $input->getOption('no-defects');
+        $args->output       = $output;
+        $args->path         = $input->getArgument('path');
 
         $result = app('runner')->execute($args);
 

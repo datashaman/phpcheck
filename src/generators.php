@@ -54,7 +54,7 @@ const TYPE_GENERATORS = [
  *
  * var_dump(generate(arguments('funcA')));
  *
- * /**
+ * \/**
  *  * @param string $s {@gen faker("username")}
  *  *\/
  * function funcB(string $s) {
@@ -63,9 +63,7 @@ const TYPE_GENERATORS = [
  * var_dump(generate(arguments('funcB')));
  * </pre>
  *
- * @param callable $f
  *
- * @return Generator
  */
 function arguments(callable $f): Generator
 {
@@ -77,7 +75,7 @@ function arguments(callable $f): Generator
 
     if (!$cache->hasKey($f)) {
         $reflection = app('reflection');
-        $function = $reflection->reflect($f);
+        $function   = $reflection->reflect($f);
 
         $generators = [];
 
@@ -129,7 +127,6 @@ function arguments(callable $f): Generator
  * var_dump(generate(arrays()));
  * </pre>
  *
- * @return Generator
  */
 function arrays(): Generator
 {
@@ -153,7 +150,6 @@ function arrays(): Generator
  * var_dump(sample(strings(ascii())));
  * </pre>
  *
- * @return Generator
  */
 function ascii(): Generator
 {
@@ -176,7 +172,6 @@ function ascii(): Generator
  * var_dump(generate(booleans(75)));
  * </pre>
  *
- * @return Generator
  */
 function booleans(int $chanceOfGettingTrue = 50): Generator
 {
@@ -199,10 +194,9 @@ function booleans(int $chanceOfGettingTrue = 50): Generator
  * var_dump(sample(characters()));
  * </pre>
  *
- * @param null|int|string $minChar The minimum character to be generated.
- * @param null|int|string $maxChar The maximum character to be generated.
+ * @param null|int|string $minChar the minimum character to be generated
+ * @param null|int|string $maxChar the maximum character to be generated
  *
- * @return Generator
  */
 function characters(
     $minChar = null,
@@ -265,8 +259,8 @@ function characters(
  * var_dump(sample(choose("a", "e")));
  * </pre>
  *
- * @param int|array|float|string $min The minimum element to generate. Can be an integer, float or a one character string. If it's an array, it must be a `[min, max]` pair.
- * @param int|float|string $max The maximum element to generate. Can be an integer, float or a one character string.
+ * @param array|float|int|string $min The minimum element to generate. Can be an integer, float or a one character string. If it's an array, it must be a `[min, max]` pair.
+ * @param float|int|string       $max The maximum element to generate. Can be an integer, float or a one character string.
  */
 function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
 {
@@ -313,9 +307,9 @@ function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
  *
  * var_dump(sample(chooseAny('float')));
  * </pre>
+ *
  * @param string $type The type to be generated. Can be one of: `float`, `int`, `string`.
  *
- * @return Generator
  */
 function chooseAny(string $type): Generator
 {
@@ -346,11 +340,10 @@ function chooseAny(string $type): Generator
  * var_dump(sample(datetimes('2000-01-01', '2100-01-01', timezones())));
  * </pre>
  *
- * @param null|array|string|DateTime $min The minimum datetime to be generated. If it's an array, it must a `[min, max]` pair.
- * @param null|string|DateTime $max The maximum datetime to be generated.
- * @param null|Generator $timezones Optional timezones generator. Default is naive datetimes.
+ * @param null|array|DateTime|string $min       The minimum datetime to be generated. If it's an array, it must a `[min, max]` pair.
+ * @param null|DateTime|string       $max       the maximum datetime to be generated
+ * @param null|Generator             $timezones Optional timezones generator. Default is naive datetimes.
  *
- * @return Generator
  */
 function datetimes(
     $min = null,
@@ -410,10 +403,9 @@ function datetimes(
  * var_dump(sample(dates('2000-01-01', '2300-01-01')));
  * </pre>
  *
- * @param int|array|string|DateTime $min The minimum date to be generated. If it's an array, it must be a `[min, max]` pair.
- * @param int|string|DateTime $max The maximum date to be generated.
+ * @param array|DateTime|int|string $min The minimum date to be generated. If it's an array, it must be a `[min, max]` pair.
+ * @param DateTime|int|string       $max the maximum date to be generated
  *
- * @return Generator
  */
 function dates($min = null, $max = null): Generator
 {
@@ -455,9 +447,8 @@ function dates($min = null, $max = null): Generator
  * var_dump(generate(listOf1(elements(['abc', 123, 'u&me']))));
  * </pre>
  *
- * @param array $array The array to be generated from.
+ * @param array $array the array to be generated from
  *
- * @return Generator
  */
 function elements(array $array): Generator
 {
@@ -488,7 +479,6 @@ function elements(array $array): Generator
  *
  * @param array $args,... First argument is the factory property or method name. If there is more than 1 argument, it's treated as a method call. If if there is 1 argument, it's treated as a property.
  *
- * @return Generator
  */
 function faker(...$args): Generator
 {
@@ -519,10 +509,10 @@ function faker(...$args): Generator
  *
  * var_dump(generate(floats(-1000, 1000)));
  * </pre>
- * @param float $min The minimum float value to generate.
- * @param float $max The maximum float value to generate.
  *
- * @return Generator
+ * @param float $min the minimum float value to generate
+ * @param float $max the maximum float value to generate
+ *
  */
 function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Generator
 {
@@ -557,9 +547,8 @@ function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Gener
  * ])));
  * </pre>
  *
- * @param array $frequencies A weighted list consisting of pairs of `[weight, generator]`.
+ * @param array $frequencies a weighted list consisting of pairs of `[weight, generator]`
  *
- * @return Generator
  */
 function frequency(array $frequencies): Generator
 {
@@ -616,9 +605,8 @@ function frequency(array $frequencies): Generator
  * var_dump(sample(listOf(growingElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))));
  * </pre>
  *
- * @param array $array The array containing the elements to be selected.
+ * @param array $array the array containing the elements to be selected
  *
- * @return Generator
  */
 function growingElements(array $array): Generator
 {
@@ -645,13 +633,12 @@ function growingElements(array $array): Generator
  * use function Datashaman\PHPCheck\intervals;
  * use function Datashaman\PHPCheck\sample;
  *
- * var_dump(sample(intervals([[1, 10], [1, 5]])));
+ * var_dump(sample(intervals([[1, 10]], [[1, 5]])));
  * </pre>
  *
- * @param array $include An array of intervals to include in selecting the value.
- * @param array $exclude An array of intervals to exclude from the selection.
+ * @param array $include an array of intervals to include in selecting the value
+ * @param array $exclude an array of intervals to exclude from the selection
  *
- * @return Generator
  */
 function intervals(
     array $include = [[\PHP_INT_MIN, \PHP_INT_MAX]],
@@ -729,9 +716,8 @@ function intervals(
  * var_dump(generate(resize(2, listOf(faker("ipv4")))));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
+ * @param Generator $gen the generator that creates the values
  *
- * @return Generator
  */
 function listOf(Generator $gen): Generator
 {
@@ -760,9 +746,8 @@ function listOf(Generator $gen): Generator
  * var_dump(generate(resize(2, listOf1(faker("emoji")))));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
+ * @param Generator $gen the generator that creates the values
  *
- * @return Generator
  */
 function listOf1(Generator $gen): Generator
 {
@@ -794,7 +779,6 @@ function listOf1(Generator $gen): Generator
  * var_dump(sample(mixed()));
  * </pre>
  *
- * @return Generator
  */
 function mixed(): Generator
 {
@@ -828,9 +812,9 @@ function mixed(): Generator
  *     ]
  * )));
  * </pre>
- * @param array $gens The list of generators to be chosen from.
  *
- * @return Generator
+ * @param array $gens the list of generators to be chosen from
+ *
  */
 function oneof(array $gens): Generator
 {
@@ -857,10 +841,9 @@ function oneof(array $gens): Generator
  * var_dump(sample(resize(3, listOf(faker("firstname")))));
  * </pre>
  *
- * @param int $n The size to be used by the generator.
- * @param Generator $gen The generator that creates the values.
+ * @param int       $n   the size to be used by the generator
+ * @param Generator $gen the generator that creates the values
  *
- * @return Generator
  */
 function resize(int $n, Generator $gen): Generator
 {
@@ -888,10 +871,9 @@ function resize(int $n, Generator $gen): Generator
  * }, listOf(strings(ascii())))));
  * </pre>
  *
- * @param callable $f The transform function that scales the size.
- * @param Generator $gen The generator who's size will be scaled.
+ * @param callable  $f   the transform function that scales the size
+ * @param Generator $gen the generator who's size will be scaled
  *
- * @return Generator
  */
 function scale(callable $f, Generator $gen): Generator
 {
@@ -920,9 +902,7 @@ function scale(callable $f, Generator $gen): Generator
  * var_dump(generate(strings(characters('a', 'e'))));
  * </pre>
  *
- * @param null|Generator $characters
  *
- * @return Generator
  */
 function strings(Generator $characters = null): Generator
 {
@@ -959,10 +939,9 @@ function strings(Generator $characters = null): Generator
  * })));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
- * @param callable $f The predicate function that must be satisfied.
+ * @param Generator $gen the generator that creates the values
+ * @param callable  $f   the predicate function that must be satisfied
  *
- * @return Generator
  */
 function suchThat(Generator $gen, callable $f): Generator
 {
@@ -1001,10 +980,9 @@ function suchThat(Generator $gen, callable $f): Generator
  * })));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
- * @param callable $f The map function.
+ * @param Generator $gen the generator that creates the values
+ * @param callable  $f   the map function
  *
- * @return Generator
  */
 function suchThatMap(Generator $gen, callable $f): Generator
 {
@@ -1042,10 +1020,9 @@ function suchThatMap(Generator $gen, callable $f): Generator
  * })));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
- * @param callable $f The predicate function that must be satisfied.
+ * @param Generator $gen the generator that creates the values
+ * @param callable  $f   the predicate function that must be satisfied
  *
- * @return Generator
  */
 function suchThatMaybe(Generator $gen, callable $f): Generator
 {
@@ -1082,7 +1059,6 @@ function suchThatMaybe(Generator $gen, callable $f): Generator
  * var_dump(generate(timezones()));
  * </pre>
  *
- * @return Generator
  */
 function timezones(): Generator
 {
@@ -1111,10 +1087,10 @@ function timezones(): Generator
  *
  * var_dump(sample(variant("123", strings(ascii()))));
  * </pre>
- * @param string $seed The seed to be used by the generator.
- * @param Generator $gen The generator to be seeded.
  *
- * @return Generator
+ * @param string    $seed the seed to be used by the generator
+ * @param Generator $gen  the generator to be seeded
+ *
  */
 function variant(string $seed, Generator $gen): Generator
 {
@@ -1138,10 +1114,9 @@ function variant(string $seed, Generator $gen): Generator
  * var_dump(generate(vectorOf(5, choose(0, 10))));
  * </pre>
  *
- * @param int $n The length of the list to be generated.
- * @param Generator $gen The generator that produces the values.
+ * @param int       $n   the length of the list to be generated
+ * @param Generator $gen the generator that produces the values
  *
- * @return Generator
  */
 function vectorOf(int $n, Generator $gen): Generator
 {

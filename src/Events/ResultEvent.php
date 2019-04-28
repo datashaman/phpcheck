@@ -49,8 +49,8 @@ abstract class ResultEvent extends Event
     ) {
         parent::__construct();
         $this->function = $function;
-        $this->tags   = $tags;
-        $this->args   = $args;
-        $this->cause  = $cause;
+        $this->tags     = $tags;
+        $this->args     = $args;
+        $this->cause    = $cause;
     }
 }

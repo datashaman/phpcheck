@@ -20,21 +20,11 @@ docs-functions:
 phpcheck:
 	@phpcheck
 
-phpcheck-coverage-html:
+phpcheck-coverage:
 	sudo phpenmod xdebug
 	@phpcheck --coverage-html report/phpcheck-coverage
 	sudo phpdismod xdebug
 	@xdg-open report/phpcheck-coverage/index.html
-
-phpcheck-coverage-console:
-	sudo phpenmod xdebug
-	@phpcheck --coverage-text
-	sudo phpdismod xdebug
-
-phpcheck-coverage-text:
-	sudo phpenmod xdebug
-	@phpcheck --coverage-text report/phpcheck-coverage.txt
-	sudo phpdismod xdebug
 
 phpcheck-log-junit:
 	@phpcheck --log-junit build/phpcheck.xml

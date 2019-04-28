@@ -17,7 +17,7 @@ class Random extends XorShiftRand
     {
         do {
             $value = parent::random($min, $max);
-        } while (!is_int($value));
+        } while (!\is_int($value));
 
         return $value;
     }

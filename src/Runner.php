@@ -16,19 +16,15 @@ use Exception;
 use phpDocumentor\Reflection\DocBlockFactory;
 use ReflectionFunction;
 use ReflectionFunctionAbstract;
-use ReflectionMethod;
 use SimpleXMLElement;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\Finder;
 use Throwable;
 use Webmozart\Assert\Assert;
 
-class Runner implements EventSubscriberInterface
+class Runner
 {
     public const MAX_DISCARD_RATIO = 10;
-
-    public const MAX_SIZE = 100;
 
     public const MAX_SUCCESS = 100;
 
@@ -41,19 +37,6 @@ class Runner implements EventSubscriberInterface
     private $output;
 
     private $totalIterations = 0;
-
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            CheckEvents::END_ALL   => 'onEndAll',
-            CheckEvents::FAILURE   => 'onFailure',
-            CheckEvents::END       => 'onEnd',
-            CheckEvents::ERROR     => 'onError',
-            CheckEvents::START     => 'onStart',
-            CheckEvents::START_ALL => 'onStartAll',
-            CheckEvents::SUCCESS   => 'onSuccess',
-        ];
-    }
 
     public function getOutput()
     {
@@ -82,57 +65,6 @@ class Runner implements EventSubscriberInterface
         $this->totalIterations += $result['iteration'];
 
         return $result;
-    }
-
-    protected function gatherMethods($args)
-    {
-        $methods = [];
-        $paths = $this->gatherPaths($args->output, $args->path);
-
-        foreach ($paths as $path) {
-            $classes = \get_declared_classes();
-
-            include $path;
-
-            $classes = \array_diff(
-                \get_declared_classes(),
-                $classes
-            );
-
-            $classes = \array_filter(
-                $classes,
-                function ($class) {
-                    return \preg_match('/Check$/', $class) === 1;
-                }
-            );
-
-            $testClass = \array_pop($classes);
-
-            [$classFilter, $methodFilter] = $this->getFilter($args);
-
-            if ($classFilter && !\fnmatch($classFilter, $testClass)) {
-                continue;
-            }
-
-            $class = app('reflection')->getClass($testClass);
-            $methods[$testClass] = [];
-
-            foreach ($class->getMethods() as $method) {
-                $name = $method->getName();
-
-                if ($methodFilter && !\fnmatch($methodFilter, $name)) {
-                    continue;
-                }
-
-                if (\preg_match('/^check/', $method->getName()) !== 1) {
-                    continue;
-                }
-
-                $methods[$testClass][] = $method;
-            }
-        }
-
-        return $methods;
     }
 
     public function execute(Args $args): void
@@ -215,7 +147,7 @@ class Runner implements EventSubscriberInterface
 
             foreach ($functions as $function) {
                 $tags           = $this->getTags($function);
-                $event = new Events\StartEvent($function, $tags);
+                $event          = new Events\StartEvent($function, $tags);
                 $dispatcher->dispatch(CheckEvents::START, $event);
 
                 $parameterCount = \count($function->getParameters());
@@ -279,6 +211,57 @@ class Runner implements EventSubscriberInterface
         $dispatcher->dispatch(CheckEvents::END_ALL, $event);
     }
 
+    protected function gatherMethods($args)
+    {
+        $methods = [];
+        $paths   = $this->gatherPaths($args->output, $args->path);
+
+        foreach ($paths as $path) {
+            $classes = \get_declared_classes();
+
+            include $path;
+
+            $classes = \array_diff(
+                \get_declared_classes(),
+                $classes
+            );
+
+            $classes = \array_filter(
+                $classes,
+                function ($class) {
+                    return \preg_match('/Check$/', $class) === 1;
+                }
+            );
+
+            $testClass = \array_pop($classes);
+
+            [$classFilter, $methodFilter] = $this->getFilter($args);
+
+            if ($classFilter && !\fnmatch($classFilter, $testClass)) {
+                continue;
+            }
+
+            $class               = app('reflection')->getClass($testClass);
+            $methods[$testClass] = [];
+
+            foreach ($class->getMethods() as $method) {
+                $name = $method->getName();
+
+                if ($methodFilter && !\fnmatch($methodFilter, $name)) {
+                    continue;
+                }
+
+                if (\preg_match('/^check/', $method->getName()) !== 1) {
+                    continue;
+                }
+
+                $methods[$testClass][] = $method;
+            }
+        }
+
+        return $methods;
+    }
+
     private function checks(
         int $size,
         callable $subject,
@@ -297,7 +280,7 @@ class Runner implements EventSubscriberInterface
 
         for ($iteration = 1; $iteration <= $size; $iteration++) {
             $input = generate(resize(
-                \min($iteration - 1, self::MAX_SIZE),
+                \min($iteration - 1, DEFAULT_SIZE),
                 arguments($subject)
             ));
             [$passed, $output, $error] = $this->passed($reflection, $check, $input);
