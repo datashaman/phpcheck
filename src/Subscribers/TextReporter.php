@@ -12,7 +12,6 @@ namespace Datashaman\PHPCheck\Subscribers;
 use function Datashaman\PHPCheck\app;
 use Datashaman\PHPCheck\CheckEvents;
 use Datashaman\PHPCheck\Events;
-use function Datashaman\PHPCheck\reflection;
 
 class TextReporter extends Subscriber
 {
@@ -55,7 +54,7 @@ class TextReporter extends Subscriber
         $shortName = \preg_replace(
             '/Event$/',
             '',
-            reflection()->getClass($event)->getShortName()
+            app('reflection')->getClass($event)->getShortName()
         );
         $message = \sprintf(
             '%s [%-10s]',
@@ -74,7 +73,7 @@ class TextReporter extends Subscriber
                 ]
             )
         ) {
-            $message .= ' ' . reflection()->getMethodSignature($event->method);
+            $message .= ' ' . app('reflection')->getMethodSignature($event->method);
         }
 
         if (

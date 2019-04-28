@@ -11,14 +11,14 @@ declare(strict_types=1);
  */
 namespace Datashaman\PHPCheck\Events;
 
-use ReflectionMethod;
+use ReflectionFunctionAbstract;
 
 class EndEvent extends Event
 {
     /**
-     * @var ReflectionMethod
+     * @var ReflectionFunctionAbstract
      */
-    public $method;
+    public $function;
 
     /**
      * @var array
@@ -31,12 +31,12 @@ class EndEvent extends Event
     public $status;
 
     public function __construct(
-        ReflectionMethod $method,
+        ReflectionFunctionAbstract $function,
         array $tags,
         string $status
     ) {
         parent::__construct();
-        $this->method = $method;
+        $this->function = $function;
         $this->tags   = $tags;
         $this->status = $status;
     }

@@ -1,7 +1,7 @@
 /build/
 /cache/
 /composer.lock
-/docs/api/
+/docs/
 /.env
 /.phpcheck/
 /.php_cs.cache
