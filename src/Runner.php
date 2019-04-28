@@ -198,6 +198,8 @@ class Runner implements EventSubscriberInterface
         $event = new Events\StartAllEvent();
         $dispatcher->dispatch(CheckEvents::START_ALL, $event);
 
+        $allFunctions = [];
+
         if ($args->path) {
             $allFunctions = $this->gatherMethods($args);
         } elseif ($args->subject) {

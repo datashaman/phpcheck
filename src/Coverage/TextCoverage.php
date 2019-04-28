@@ -9,9 +9,7 @@
  */
 namespace Datashaman\PHPCheck\Coverage;
 
-use function Datashaman\PHPCheck\{
-    app,
-};
+use function Datashaman\PHPCheck\app;
 use SebastianBergmann\CodeCoverage\Report\Text;
 
 /**

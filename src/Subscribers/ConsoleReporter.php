@@ -16,7 +16,6 @@ use Datashaman\PHPCheck\CheckCommand;
 use Datashaman\PHPCheck\CheckEvents;
 
 use Datashaman\PHPCheck\Events;
-use function Datashaman\PHPCheck\reflection;
 use function Datashaman\PHPCheck\repr;
 use NunoMaduro\Collision\Writer;
 use Whoops\Exception\Inspector;
