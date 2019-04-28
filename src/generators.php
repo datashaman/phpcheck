@@ -265,8 +265,8 @@ function characters(
  * var_dump(sample(choose("a", "e")));
  * </pre>
  *
- * @param int|string $min The minimum element to generate. Can be an integer or a one character string.
- * @param int|string $max The maximum element to generate. Can be an integer or a one character string.
+ * @param int|array|float|string $min The minimum element to generate. Can be an integer, float or a one character string. If it's an array, it must be a `[min, max]` pair.
+ * @param int|float|string $max The maximum element to generate. Can be an integer, float or a one character string.
  */
 function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
 {
@@ -346,7 +346,7 @@ function chooseAny(string $type): Generator
  * var_dump(sample(datetimes('2000-01-01', '2100-01-01', timezones())));
  * </pre>
  *
- * @param null|string|DateTime $min The minimum datetime to be generated.
+ * @param null|array|string|DateTime $min The minimum datetime to be generated. If it's an array, it must a `[min, max]` pair.
  * @param null|string|DateTime $max The maximum datetime to be generated.
  * @param null|Generator $timezones Optional timezones generator. Default is naive datetimes.
  *
@@ -410,7 +410,7 @@ function datetimes(
  * var_dump(sample(dates('2000-01-01', '2300-01-01')));
  * </pre>
  *
- * @param int|string|DateTime $min The minimum date to be generated.
+ * @param int|array|string|DateTime $min The minimum date to be generated. If it's an array, it must be a `[min, max]` pair.
  * @param int|string|DateTime $max The maximum date to be generated.
  *
  * @return Generator
@@ -486,7 +486,7 @@ function elements(array $array): Generator
  * var_dump(generate(faker("imageUrl", 400, 300, "cats")));
  * </pre>
  *
- * @param mixed $args,... First argument is the factory property or method name. If there is more than 1 argument, it's treated as a method call. If if there is 1 argument, it's treated as a property.
+ * @param array $args,... First argument is the factory property or method name. If there is more than 1 argument, it's treated as a method call. If if there is 1 argument, it's treated as a property.
  *
  * @return Generator
  */
@@ -648,8 +648,8 @@ function growingElements(array $array): Generator
  * var_dump(sample(intervals([[1, 10], [1, 5]])));
  * </pre>
  *
- * @param array $includes An array of intervals to include in selecting the value.
- * @param array $excludes An array of intervals to exclude from the selection.
+ * @param array $include An array of intervals to include in selecting the value.
+ * @param array $exclude An array of intervals to exclude from the selection.
  *
  * @return Generator
  */
@@ -962,7 +962,7 @@ function strings(Generator $characters = null): Generator
  * @param Generator $gen The generator that creates the values.
  * @param callable $f The predicate function that must be satisfied.
  *
- * @return Gen
+ * @return Generator
  */
 function suchThat(Generator $gen, callable $f): Generator
 {
@@ -1109,9 +1109,9 @@ function timezones(): Generator
  * use function Datashaman\PHPCheck\strings;
  * use function Datashaman\PHPCheck\variant;
  *
- * var_dump(sample(variant(123, strings(ascii()))));
+ * var_dump(sample(variant("123", strings(ascii()))));
  * </pre>
- * @param int $seed The seed to be used by the generator.
+ * @param string $seed The seed to be used by the generator.
  * @param Generator $gen The generator to be seeded.
  *
  * @return Generator

@@ -44,8 +44,8 @@ class JUnitReporter extends Subscriber
     public function onStart(Events\StartEvent $event): void
     {
         $this->testcase              = $this->testsuite->addChild('testcase');
-        $this->testcase['classname'] = $event->method->getDeclaringClass()->getName();
-        $this->testcase['name']      = $event->method->getName();
+        $this->testcase['classname'] = $event->function->getDeclaringClass()->getName();
+        $this->testcase['name']      = $event->function->getName();
     }
 
     public function onError(Events\ErrorEvent $event): void

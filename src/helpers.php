@@ -254,10 +254,8 @@ function makeGen(callable $f): Generator
  *
  * @param callable $f The property function (or check).
  * @param null|resource $output Stream for the quickCheck output. Defaults to `stdout`.
- *
- * @return Result
  */
-function quickCheck(callable $f, resource $output = null)
+function quickCheck(callable $f, $output = null): void
 {
     $stdout = false;
 

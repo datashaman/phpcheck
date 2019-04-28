@@ -73,7 +73,7 @@ class TextReporter extends Subscriber
                 ]
             )
         ) {
-            $message .= ' ' . app('reflection')->getMethodSignature($event->method);
+            $message .= ' ' . app('reflection')->getMethodSignature($event->function);
         }
 
         if (
