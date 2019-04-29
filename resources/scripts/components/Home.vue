@@ -6,13 +6,13 @@
 
                 <b-nav-item href="#helpers">HELPERS</b-nav-item>
 
-                <b-nav-item v-for="f in helpers" :key="f.shortName" :href="'#main-' + f.shortName">
+                <b-nav-item v-for="f in helpers" :key="f.shortName" :href="'#' + f.shortName">
                     {{ f.shortName }}
                 </b-nav-item>
 
                 <b-nav-item href="#generators">GENERATORS</b-nav-item>
 
-                <b-nav-item v-for="f in helpers" :key="f.shortName" :href="'#main-' + f.shortName">
+                <b-nav-item v-for="f in generators" :key="f.shortName" :href="'#' + f.shortName">
                     {{ f.shortName }}
                 </b-nav-item>
             </b-nav>
