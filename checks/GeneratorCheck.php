@@ -35,7 +35,7 @@ class GeneratorCheck
 
     public function checkStrings(string $string): bool
     {
-        return \mb_strlen($string) < 100;
+        return \mb_strlen($string) <= 30;
     }
 
     /**

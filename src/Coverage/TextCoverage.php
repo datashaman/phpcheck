@@ -9,7 +9,6 @@
  */
 namespace Datashaman\PHPCheck\Coverage;
 
-use function Datashaman\PHPCheck\app;
 use SebastianBergmann\CodeCoverage\Report\Text;
 
 /**
@@ -18,12 +17,9 @@ use SebastianBergmann\CodeCoverage\Report\Text;
 class TextCoverage extends Coverage
 {
     private $_output;
+
     private $_noAnsi;
 
-    /**
-     * @param null|string $output
-     * @param null|bool $noAnsi
-     */
     public function __construct(
         string $output = null,
         bool $noAnsi = null

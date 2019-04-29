@@ -31,6 +31,6 @@ class StartEvent extends Event
     ) {
         parent::__construct();
         $this->function = $function;
-        $this->tags   = $tags;
+        $this->tags     = $tags;
     }
 }

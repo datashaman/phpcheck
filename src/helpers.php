@@ -33,7 +33,6 @@ use Symfony\Component\Console\Output\StreamOutput;
  * @param null|callable $f    Callable to create the dependency. If this is null, the dependency is returned.
  * @nodocs
  *
- * @return mixed
  */
 function app($name, callable $f = null)
 {
@@ -54,7 +53,7 @@ function app($name, callable $f = null)
  * Normalize the args coming back from a yield inside
  * the generator.
  *
- * @param mixed $args Arguments received from a yield call.
+ * @param mixed $args arguments received from a yield call
  * @nodocs
  *
  * @return array
@@ -90,10 +89,9 @@ function checkArgs($args)
  * </pre>
  *
  * @param string $expression PHP string expression to be evaluated. Must not include semi-colon.
- * @param array $args Local arguments defined while the expression is evaluated.
+ * @param array  $args       local arguments defined while the expression is evaluated
  * @nodocs
  *
- * @return mixed
  */
 function evalWithArgs(string $expression, $args = [])
 {
@@ -118,11 +116,7 @@ function evalWithArgs(string $expression, $args = [])
  * // Generate an ASCII string.
  * echo generate(strings(ascii())) . "\n";
  * </pre>
- * @param Generator $gen
- * @param null|Random $r
- * @param null|int $n
  *
- * @return mixed
  */
 function generate(
     Generator $gen,
@@ -134,6 +128,8 @@ function generate(
 
 /**
  * @nodocs
+ *
+ * @param null|mixed $values
  */
 function logExecution($subject, $method, $values = null): void
 {
@@ -204,9 +200,8 @@ function logExecution($subject, $method, $values = null): void
  * var_dump(sample($genB));
  * </pre>
  *
- * @param callable $f A callable function that returns a value, should accept (Random $r = null, int $n = null), and should pass $r into any generate calls within its body.
+ * @param callable $f a callable function that returns a value, should accept (Random $r = null, int $n = null), and should pass $r into any generate calls within its body
  *
- * @return Generator
  */
 function makeGen(callable $f): Generator
 {
@@ -261,19 +256,19 @@ function quickCheck(callable $f, $output = null): void
 
     if (null === $output) {
         $stdout = true;
-        $output = fopen('php://temp', 'w');
+        $output = \fopen('php://temp', 'w');
     }
 
-    $args = new Args();
+    $args          = new Args();
     $args->subject = $f;
-    $args->output = new StreamOutput($output);
+    $args->output  = new StreamOutput($output);
 
     app('runner')->execute($args);
 
     if ($stdout) {
-        rewind($output);
-        echo stream_get_contents($output);
-        fclose($output);
+        \rewind($output);
+        print \stream_get_contents($output);
+        \fclose($output);
     }
 }
 
@@ -292,7 +287,7 @@ function quickCheck(callable $f, $output = null): void
  * var_dump(repr(new DateTime()));
  * </pre>
  *
- * @param mixed $value The value to represent.
+ * @param mixed $value the value to represent
  * @nodocs
  *
  * @return string
@@ -307,11 +302,11 @@ function repr($value)
         return '"' . $value . '"';
     }
 
-    if ($value === PHP_INT_MIN) {
+    if ($value === \PHP_INT_MIN) {
         return 'PHP_INT_MIN';
     }
 
-    if ($value === PHP_INT_MAX) {
+    if ($value === \PHP_INT_MAX) {
         return 'PHP_INT_MAX';
     }
 
@@ -357,9 +352,8 @@ function repr($value)
  * var_dump(sample(strings(ascii())));
  * </pre>
  *
- * @param Generator $gen The generator that creates the values.
+ * @param Generator $gen the generator that creates the values
  *
- * @return array
  */
 function sample(Generator $gen): array
 {
