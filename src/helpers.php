@@ -11,6 +11,7 @@ namespace Datashaman\PHPCheck;
 
 use Ds\Map;
 use Generator;
+use Icecave\Repr\Repr;
 use Symfony\Component\Console\Output\StreamOutput;
 
 \define('LOG', 'phpcheck.log');
@@ -84,8 +85,9 @@ function checkArgs($args)
  *
  * <pre>
  * use function Datashaman\PHPCheck\evalWithArgs;
+ * use function Datashaman\PHPCheck\repr;
  *
- * var_dump(evalWithArgs('strtoupper("Hi $name!")', ['name' => 'Bob']));
+ * print repr(evalWithArgs('strtoupper("Hi $name!")', ['name' => 'Bob']));
  * </pre>
  *
  * @param string $expression PHP string expression to be evaluated. Must not include semi-colon.
@@ -177,6 +179,7 @@ function logExecution($subject, $method, $values = null): void
  * <pre>
  * use function Datashaman\PHPCheck\generate;
  * use function Datashaman\PHPCheck\makeGen;
+ * use function Datashaman\PHPCheck\repr;
  * use function Datashaman\PHPCheck\sample;
  * use Datashaman\PHPCheck\Random;
  *
@@ -186,7 +189,7 @@ function logExecution($subject, $method, $values = null): void
  * });
  *
  * // Generate some integers.
- * var_dump(sample($genA));
+ * print repr(sample($genA)) . PHP_EOL;
  *
  * // Make another generator that uses $genA to return a character.
  * // The Random object $r is passed to the generate call.
@@ -197,7 +200,7 @@ function logExecution($subject, $method, $values = null): void
  * });
  *
  * // Generate some characters.
- * var_dump(sample($genB));
+ * print repr(sample($genB));
  * </pre>
  *
  * @param callable $f a callable function that returns a value, should accept (Random $r = null, int $n = null), and should pass $r into any generate calls within its body
@@ -279,12 +282,12 @@ function quickCheck(callable $f, $output = null): void
  * use function Datashaman\PHPCheck\repr;
  * use Ds\Map;
  *
- * var_dump(repr([1, 2, 3]));
- * var_dump(repr(['a' => 'A', 'b' => 'B', 'c' => 'C']));
- * var_dump(repr(new Ds\Map(['a' => 'A', 'b' => 'B', 'c' => 'C'])));
- * var_dump(repr("string"));
- * var_dump(repr(100));
- * var_dump(repr(new DateTime()));
+ * print repr([1, 2, 3]) . PHP_EOL;
+ * print repr(['a' => 'A', 'b' => 'B', 'c' => 'C']) . PHP_EOL;
+ * print repr(new Ds\Map(['a' => 'A', 'b' => 'B', 'c' => 'C'])) . PHP_EOL;
+ * print repr("string") . PHP_EOL;
+ * print repr(100) . PHP_EOL;
+ * print repr(new DateTime());
  * </pre>
  *
  * @param mixed $value the value to represent
@@ -294,6 +297,8 @@ function quickCheck(callable $f, $output = null): void
  */
 function repr($value)
 {
+    return Repr::repr($value);
+
     if ($value instanceof Map) {
         return \get_class($value) . ' {#' . \spl_object_id($value) . '}';
     }
@@ -346,10 +351,11 @@ function repr($value)
  *
  * <pre>
  * use function Datashaman\PHPCheck\ascii;
+ * use function Datashaman\PHPCheck\repr;
  * use function Datashaman\PHPCheck\sample;
  * use function Datashaman\PHPCheck\strings;
  *
- * var_dump(sample(strings(ascii())));
+ * print repr(sample(strings(ascii())));
  * </pre>
  *
  * @param Generator $gen the generator that creates the values

@@ -24,6 +24,7 @@
         "ext-xmlwriter": "*",
         "erusev/parsedown": "^1.7",
         "fzaninotto/faker": "^1.8",
+        "icecave/repr": "^1.0",
         "nikic/php-parser": "^4.2",
         "nunomaduro/collision": "^3.0",
         "phpdocumentor/reflection-docblock": "^4.3",
