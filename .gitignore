@@ -3,6 +3,7 @@
 /composer.lock
 /docs/
 /.env
+/node_modules/
 /.phpcheck/
 /.php_cs.cache
 /php_errors.log

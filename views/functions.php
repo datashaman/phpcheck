@@ -29,33 +29,29 @@
 
     <div id="menu">
         <div class="pure-menu">
-            <a class="pure-menu-heading" href="#">PHPCheck</a>
+            <input type="search" id="search" placeholder="Search">
 
-            <ul class="pure-menu-list">
-                <li class="pure-menu-heading">Helpers</li>
-                <?php foreach ($functions['helpers.php'] as $function): ?>
-                    <li class="pure-menu-item">
-                        <a href="#<?= $function['shortName'] ?>" class="pure-menu-link">
-                            <?= $function['shortName'] ?>
-                            <?php if (!isset($function['example'])): ?>
-                                <sup class="fas fa-exclamation"></sup>
-                            <?php endif ?>
-                        </a>
-                    </li>
-                <?php endforeach ?>
+            <div id="functions">
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-heading">Helpers</li>
+                    <?php foreach ($functions['helpers.php'] as $function): ?>
+                        <li id="menu-item-<?= $function['shortName'] ?>" class="pure-menu-item">
+                            <a href="<?= $function['href'] ?>" class="pure-menu-link">
+                                <span class="shortName"><?= $function['shortName'] ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach ?>
 
-                <li class="pure-menu-heading">Generators</li>
-                <?php foreach ($functions['generators.php'] as $function): ?>
-                    <li class="pure-menu-item">
-                        <a href="#<?= $function['shortName'] ?>" class="pure-menu-link">
-                            <?= $function['shortName'] ?>
-                            <?php if (!isset($function['example'])): ?>
-                                <sup class="fas fa-exclamation"></sup>
-                            <?php endif ?>
-                        </a>
-                    </li>
-                <?php endforeach ?>
-            </ul>
+                    <li class="pure-menu-heading">Generators</li>
+                    <?php foreach ($functions['generators.php'] as $function): ?>
+                        <li id="menu-item-<?= $function['shortName'] ?>" class="pure-menu-item">
+                            <a href="<?= $function['href'] ?>" class="pure-menu-link">
+                                <span class="shortName"><?= $function['shortName'] ?></span>
+                            </a>
+                        </li>
+                    <?php endforeach ?>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -70,8 +66,7 @@
     </div>
 </div>
 
-<script src="https://unpkg.com/clipboard@2/dist/clipboard.min.js"></script>
-<script>new ClipboardJS('.copy');</script>
+<script src="functions.js"></script>
 
 </body>
 </html>

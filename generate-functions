@@ -173,13 +173,15 @@ $functions = array_filter(
             }
 
             $arguments = getArguments($function, $docBlock);
+            $shortName = $function->getShortName();
 
             $result = [
                 'arguments' => $arguments,
-                'file' => basename($function->getFilename()),
+                'file' => basename($function->getFilename(), '.php'),
                 'header' => getHeader($function, $arguments),
                 'name' => $function->getName(),
-                'shortName' => $function->getShortName(),
+                'href' => "#$shortName",
+                'shortName' => $shortName,
             ];
 
             if ($docBlock) {
@@ -280,4 +282,6 @@ $functions = array_reduce(
     []
 );
 
-echo $templating->render('functions', compact('functions'));
+echo json_encode($functions, JSON_PRETTY_PRINT);
+
+// echo $templating->render('functions', compact('functions'));

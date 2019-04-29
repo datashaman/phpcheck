@@ -13,9 +13,10 @@ docs-clean:
 	rm -rf build/ cache/
 
 docs-functions:
-	mkdir -p docs
-	cp css/functions.css docs/
-	./generate-function-docs > docs/functions.html
+	mkdir -p build/docs resources/json/
+	cp resources/views/functions.html build/docs/
+	./generate-functions > resources/json/functions.json
+	webpack --mode=development
 
 phpcheck:
 	@phpcheck
@@ -58,3 +59,12 @@ profile:
 	# @php -d xdebug.profiler_enable=1 `which phpunit`
 	@php -d xdebug.profiler_enable=1 `which phpcheck`
 	sudo phpdismod xdebug
+
+webpack-development:
+	webpack --mode=development
+
+webpack-production:
+	webpack --mode=production
+
+webpack-watch:
+	webpack --mode=development --watch

@@ -11,9 +11,11 @@ namespace Datashaman\PHPCheck\Types;
 
 use Datashaman\PHPCheck\Types\Interfaces\FunctorInterface;
 use Datashaman\PHPCheck\Types\Interfaces\MonadInterface;
+use Icecave\Repr\RepresentableInterface;
 
 abstract class Maybe extends Monad implements
-    FunctorInterface
+    FunctorInterface,
+    RepresentableInterface
 {
     public static function unit($value = null): self
     {

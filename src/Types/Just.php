@@ -9,6 +9,12 @@
  */
 namespace Datashaman\PHPCheck\Types;
 
+use Icecave\Repr\Generator;
+
 class Just extends Maybe
 {
+    public function stringRepresentation(Generator $generator, $currentDepth = 0)
+    {
+        return '<Just ' . $this->value . '>';
+    }
 }
