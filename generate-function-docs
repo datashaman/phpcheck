@@ -231,7 +231,7 @@ foreach ($functions as &$function) {
 <?php
 <<<CONFIG
 packages:
-    - "datashaman/phpcheck: dev-wip"
+    - "datashaman/phpcheck: *"
 CONFIG;
 #
 # This is a Melody script. http://melody.sensiolabs.org/
