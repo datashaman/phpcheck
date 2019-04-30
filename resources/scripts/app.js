@@ -5,6 +5,11 @@ import VueClipboard from 'vue-clipboard2'
 import VueHighlightJS from 'vue-highlightjs'
 import Vuex from 'vuex'
 
+import '@fortawesome/fontawesome-free/js/fontawesome'
+import '@fortawesome/fontawesome-free/js/solid'
+import '@fortawesome/fontawesome-free/js/regular'
+import '@fortawesome/fontawesome-free/js/brands'
+
 Vue.use(BootstrapVue)
 Vue.use(VueClipboard)
 Vue.use(VueHighlightJS)

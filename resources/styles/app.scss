@@ -1,8 +1,5 @@
-@import 'node_modules/bootstrap/scss/bootstrap';
-@import 'node_modules/bootstrap-vue/src/index';
-
-$fa-font-path: "~font-awesome/fonts";
-@import "~font-awesome/scss/font-awesome";
+@import '~bootstrap/scss/bootstrap';
+@import '~bootstrap-vue/src/index';
 
 #menu {
     height: 100vh;

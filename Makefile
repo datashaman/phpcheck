@@ -13,13 +13,7 @@ docs-clean:
 	rm -rf build/ cache/
 
 docs-functions:
-	mkdir -p build/docs resources/json/
-	cp resources/views/functions.html build/docs/
-	webpack --mode=development
-
-docs-functions-regenerate:
-	mkdir -p build/docs resources/json/
-	cp resources/views/functions.html build/docs/
+	mkdir -p resources/json/
 	./generate-functions > resources/json/functions.json
 	webpack --mode=development
 
