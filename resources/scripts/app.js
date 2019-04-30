@@ -32,6 +32,7 @@ Vue.config.productionTip = false
 
 import BButton from 'bootstrap-vue/es/components/button/button'
 import BCard from 'bootstrap-vue/es/components/card/card'
+import BCardBody from 'bootstrap-vue/es/components/card/card-body'
 import BCardText from 'bootstrap-vue/es/components/card/card-text'
 import BCol from 'bootstrap-vue/es/components/layout/col'
 import BContainer from 'bootstrap-vue/es/components/layout/container'
@@ -47,6 +48,7 @@ Vue.use(Toast)
 
 Vue.component('b-button', BButton)
 Vue.component('b-card', BCard)
+Vue.component('b-card-body', BCardBody)
 Vue.component('b-card-text', BCardText)
 Vue.component('b-col', BCol)
 Vue.component('b-container', BContainer)
