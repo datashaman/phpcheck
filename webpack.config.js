@@ -5,8 +5,9 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin')
 module.exports = {
     entry: './resources/scripts/app.js',
     output: {
+        chunkFilename: '[name].bundle.js',
         path: path.join(__dirname, 'dist'),
-        filename: 'app.js'
+        filename: '[name].bundle.js'
     },
     module: {
         rules: [{
@@ -35,5 +36,9 @@ module.exports = {
     },
     plugins: [
         new VueLoaderPlugin()
-    ]
+    ],
+    stats: {
+        maxModules: Infinity,
+        optimizationBailout: true
+    }
 }

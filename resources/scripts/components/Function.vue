@@ -27,13 +27,13 @@
         <b-card-text v-if="f.example">
             <h5>Example</h5>
 
-            <pre v-highlightjs><code class="php">{{ f.example }}</code></pre>
+            <pre class="lolight">{{ f.example }}</pre>
         </b-card-text>
 
         <b-card-text v-if="f.output">
             <h5>Output</h5>
 
-            <pre v-highlightjs><code class="php">{{ f.output }}</code></pre>
+            <pre>{{ f.output }}</pre>
         </b-card-text>
 
         <b-card-text v-if="f.gist">

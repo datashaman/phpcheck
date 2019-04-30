@@ -1,5 +1,26 @@
-@import '~bootstrap/scss/bootstrap';
-@import '~bootstrap-vue/src/index';
+@import '~bootstrap/scss/functions';
+@import '~bootstrap/scss/variables';
+@import '~bootstrap/scss/mixins';
+@import '~bootstrap/scss/root';
+@import '~bootstrap/scss/reboot';
+@import '~bootstrap/scss/type';
+@import '~bootstrap/scss/code';
+@import '~bootstrap/scss/grid';
+@import '~bootstrap/scss/forms';
+@import '~bootstrap/scss/buttons';
+@import '~bootstrap/scss/input-group';
+@import '~bootstrap/scss/nav';
+@import '~bootstrap/scss/card';
+@import '~bootstrap/scss/toasts';
+@import '~bootstrap/scss/utilities';
+
+@import "~bootstrap-vue/src/variables";
+@import "~bootstrap-vue/src/utilities";
+@import "~bootstrap-vue/src/components/card/index";
+@import "~bootstrap-vue/src/components/form-input/index";
+@import "~bootstrap-vue/src/components/input-group/index";
+@import "~bootstrap-vue/src/components/nav/index";
+@import "~bootstrap-vue/src/components/toast/index";
 
 #menu {
     height: 100vh;
@@ -11,4 +32,46 @@
 }
 
 #main {
+}
+
+pre {
+    font-family: 'ubuntu mono', 'monaco', 'lucida sans typewriter', 'monospace';
+    margin: 0 24px 24px 0;
+    padding: 16px;
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    overflow: auto;
+    display: inline-block;
+    vertical-align: top;
+    width: 100%;
+}
+
+.ll-nam { /* words */
+    color: #2196f3;
+}
+
+.ll-num { /* numbers */
+    color: #ec407a;
+}
+
+.ll-str { /* strings */
+    color: #43a047;
+}
+
+.ll-rex { /* regular expressions */
+    color: #ef6c00;
+}
+
+.ll-pct { /* operators, punctation */
+    color: #666;
+}
+
+.ll-key { /* keywords */
+    color: #555;
+    font-weight: bold;
+}
+
+.ll-com { /* comments */
+    color: #aaa;
+    font-style:italic;
 }

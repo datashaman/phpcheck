@@ -1,7 +1,7 @@
 /build/
 /cache/
 /composer.lock
-/dist/app.js
+/dist/*.bundle.js
 /docs/
 /.env
 /node_modules/
