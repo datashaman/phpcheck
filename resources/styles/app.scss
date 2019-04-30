@@ -34,6 +34,14 @@
 #main {
 }
 
+.card-function {
+    margin-bottom: 12px;
+}
+
+.card-function:last-child() {
+    margin-bottom: 0;
+}
+
 pre {
     font-family: 'ubuntu mono', 'monaco', 'lucida sans typewriter', 'monospace';
     margin: 0 24px 24px 0;
