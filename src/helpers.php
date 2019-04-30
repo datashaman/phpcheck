@@ -357,9 +357,6 @@ function repr($value)
  *
  * print repr(sample(strings(ascii())));
  * </pre>
- *
- * @param Generator $gen the generator that creates the values
- *
  */
 function sample(Generator $gen): array
 {
