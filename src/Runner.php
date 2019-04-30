@@ -71,6 +71,8 @@ class Runner
     {
         $state = app('state');
 
+        $this->totalIterations = 0;
+
         $output = $this->output = $args->output;
 
         if ($args->coverageHtml !== false) {
