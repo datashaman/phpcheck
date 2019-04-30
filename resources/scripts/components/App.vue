@@ -8,13 +8,13 @@
                     <b-nav vertical>
                         <b-nav-item disabled>HELPERS</b-nav-item>
 
-                        <b-nav-item v-for="f in helpers" :key="f.shortName" :to="{ name: 'function', params: { shortName: f.shortName }}">
+                        <b-nav-item v-for="f in helpers" :key="f.shortName" :href="'#' + f.shortName">
                             {{ f.shortName }}
                         </b-nav-item>
 
                         <b-nav-item disabled>GENERATORS</b-nav-item>
 
-                        <b-nav-item v-for="f in generators" :key="f.shortName" :to="{ name: 'function', params: { shortName: f.shortName }}">
+                        <b-nav-item v-for="f in generators" :key="f.shortName" :href="'#' + f.shortName">
                             {{ f.shortName }}
                         </b-nav-item>
                     </b-nav>
