@@ -29,7 +29,7 @@
                                 </code>
                             </dt>
 
-                            <dd v-if="a.description">{{ a.description }}</dd>
+                            <dd v-if="a.description" v-html="a.description"/>
                         </template>
                     </dl>
                 </b-card-text>
