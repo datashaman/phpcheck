@@ -28,13 +28,22 @@
             <b-card-text v-if="f.example">
                 <h5>Example</h5>
 
-                <code><pre>{{ f.example }}</pre></code>
+                <pre v-highlightjs><code class="php">{{ f.example }}</code></pre>
             </b-card-text>
 
             <b-card-text v-if="f.output">
                 <h5>Output</h5>
 
-                <code><pre>{{ f.output }}</pre></code>
+                <pre v-highlightjs><code class="php">{{ f.output }}</code></pre>
+            </b-card-text>
+
+            <b-card-text v-if="f.gist">
+                <b-input-group>
+                    <b-form-input class="flex-grow-1" type="text" :value="'melody run ' + f.gist" readonly />
+                    <b-input-group-append>
+                        <b-button class="btn-copy" v-clipboard:copy="'melody run ' + f.gist">copy</b-button>
+                    </b-input-group-append>
+                </b-input-group>
             </b-card-text>
         </b-card>
     </div>

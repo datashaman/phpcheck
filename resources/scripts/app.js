@@ -1,12 +1,17 @@
 import BootstrapVue from 'bootstrap-vue'
 import FuzzySearch from 'fuzzy-search'
 import Vue from 'vue'
+import VueClipboard from 'vue-clipboard2'
+import VueHighlightJS from 'vue-highlightjs'
 import Vuex from 'vuex'
 
 Vue.use(BootstrapVue)
+Vue.use(VueClipboard)
+Vue.use(VueHighlightJS)
 Vue.use(Vuex)
 
 require('../styles/app.scss')
+require('highlight.js/styles/solarized-light.css')
 
 import router from './router'
 

@@ -1,2 +1,17 @@
 @import 'node_modules/bootstrap/scss/bootstrap';
 @import 'node_modules/bootstrap-vue/src/index';
+
+$fa-font-path: "~font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome";
+
+#menu {
+    height: 100vh;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+#main {
+}
