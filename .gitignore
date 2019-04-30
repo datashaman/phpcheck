@@ -2,6 +2,7 @@
 /cache/
 /composer.lock
 /dist/*.bundle.js
+/dist/*.bundle.js.gz
 /docs/
 /.env
 /node_modules/

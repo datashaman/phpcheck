@@ -1,6 +1,6 @@
 const path = require('path')
+const CompressionPlugin = require('compression-webpack-plugin')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
-
 
 module.exports = {
     entry: './resources/scripts/app.js',
@@ -35,6 +35,7 @@ module.exports = {
         }]
     },
     plugins: [
+        new CompressionPlugin(),
         new VueLoaderPlugin()
     ],
     stats: {
