@@ -29,6 +29,11 @@ const store = new Vuex.Store({
         query: ''
     },
     getters: {
+        func: state => shortName => {
+            let f = functions.generators.find(f => f.shortName == shortName)
+            if (f) return f
+            return functions.helpers.find(f => f.shortName == shortName)
+        },
         generators: state => {
             return generators.search(state.query)
         },

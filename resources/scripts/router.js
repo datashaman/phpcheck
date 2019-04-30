@@ -17,6 +17,12 @@ const routes = [
         name: 'home',
         path: '/',
         component: Vue.component('Home'),
+    },
+    {
+        name: 'function',
+        path: '/:shortName',
+        component: Vue.component('Function'),
+        props: true
     }
 ]
 
