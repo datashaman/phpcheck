@@ -19,6 +19,7 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-mbstring": "*",
+        "ext-redis": "*",
         "ext-sqlite3": "*",
         "ext-xml": "*",
         "ext-xmlwriter": "*",
