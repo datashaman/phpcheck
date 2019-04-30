@@ -1,6 +1,11 @@
 <template>
     <b-card :id="f.shortName" class="card-function">
-        <h4 slot="header">{{ f.shortName }}</h4>
+        <h4 slot="header">
+            <div v-if="f.shortName != 'generate'" class="float-right">
+                <b-button size="sm" href="/"><font-awesome-icon icon="arrow-up"/></b-button>
+            </div>
+            {{ f.shortName }}
+        </h4>
         <b-card-text v-html="f.summary"></b-card-text>
         <b-card-text v-if="f.description" v-html="f.description"></b-card-text>
 

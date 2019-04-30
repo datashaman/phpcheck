@@ -65,7 +65,7 @@ function getArguments($function, $docBlock = null)
                 'name' => $name,
                 'type' => isset($tags[$name]['type'])
                     ? $tags[$name]['type']
-                    : ($param->hasType() ? $param->getType() : false),
+                    : ($param->hasType() ? (string) $param->getType() : false),
                 'variadic' => $param->isVariadic(),
             ];
 

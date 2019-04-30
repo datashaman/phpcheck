@@ -1,11 +1,13 @@
 import FuzzySearch from 'fuzzy-search'
 import Vue from 'vue'
 import VueClipboard from 'vue-clipboard2'
+import VueRouter from 'vue-router'
 import Vuex from 'vuex'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 import {
+    faArrowUp,
     faCopy,
     faQuestion
 } from '@fortawesome/free-solid-svg-icons'
@@ -17,6 +19,7 @@ import {
 } from '@fortawesome/vue-fontawesome'
 
 library.add(
+    faArrowUp,
     faCopy,
     faQuestion
 )
@@ -57,25 +60,42 @@ Vue.component('b-row', BRow)
 require('lolight')
 require('../styles/app.scss')
 
-import router from './router'
 import functions from '../data/functions.json'
 
 Vue.use(VueClipboard)
+Vue.use(VueRouter)
 Vue.use(Vuex)
 
 const generators = new FuzzySearch(functions.generators, ['shortName', 'summary'])
 const helpers = new FuzzySearch(functions.helpers, ['shortName', 'summary'])
+
+const files = require.context('./components', true, /\.vue$/)
+
+files.keys().map(
+    key => Vue.component(
+        key.split('/').pop().split('.')[0],
+        files(key).default
+    )
+)
+
+const routes = [
+    {
+        name: 'home',
+        path: '/',
+        component: Vue.component('Home'),
+    }
+]
+
+const router = new VueRouter({
+    mode: 'history',
+    routes
+})
 
 const store = new Vuex.Store({
     state: {
         query: ''
     },
     getters: {
-        func: state => shortName => {
-            let f = functions.generators.find(f => f.shortName == shortName)
-            if (f) return f
-            return functions.helpers.find(f => f.shortName == shortName)
-        },
         generators: state => {
             return generators.search(state.query)
         },

@@ -40,5 +40,8 @@ module.exports = {
     stats: {
         maxModules: Infinity,
         optimizationBailout: true
+    },
+    devServer: {
+        contentBase: path.join(__dirname, 'dist')
     }
 }

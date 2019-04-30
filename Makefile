@@ -59,6 +59,9 @@ profile:
 	@php -d xdebug.profiler_enable=1 `which phpcheck`
 	sudo phpdismod xdebug
 
+webpack-dev-server:
+	webpack-dev-server
+
 webpack-development:
 	webpack --mode=development
 
