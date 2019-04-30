@@ -63,8 +63,6 @@ const TYPE_GENERATORS = [
  *
  * print repr(generate(arguments('funcB'))) . PHP_EOL;
  * </pre>
- *
- *
  */
 function arguments(callable $f): Generator
 {
@@ -152,7 +150,6 @@ function arrays(): Generator
  * // Generate an ASCII string.
  * print repr(sample(strings(ascii()))) . PHP_EOL;
  * </pre>
- *
  */
 function ascii(): Generator
 {
@@ -175,7 +172,6 @@ function ascii(): Generator
  * // Generate a boolean value with 75% chance true.
  * print repr(generate(booleans(75))) . PHP_EOL;
  * </pre>
- *
  */
 function booleans(int $chanceOfGettingTrue = 50): Generator
 {
@@ -201,7 +197,6 @@ function booleans(int $chanceOfGettingTrue = 50): Generator
  *
  * @param null|int|string $minChar the minimum character to be generated
  * @param null|int|string $maxChar the maximum character to be generated
- *
  */
 function characters(
     $minChar = null,
@@ -316,7 +311,6 @@ function choose($min = \PHP_INT_MIN, $max = \PHP_INT_MAX): Generator
  * </pre>
  *
  * @param string $type The type to be generated. Can be one of: `float`, `int`, `string`.
- *
  */
 function chooseAny(string $type): Generator
 {
@@ -351,7 +345,6 @@ function chooseAny(string $type): Generator
  * @param null|array|DateTime|string $min       The minimum datetime to be generated. If it's an array, it must a `[min, max]` pair.
  * @param null|DateTime|string       $max       the maximum datetime to be generated
  * @param null|Generator             $timezones Optional timezones generator. Default is naive datetimes.
- *
  */
 function datetimes(
     $min = null,
@@ -414,7 +407,6 @@ function datetimes(
  *
  * @param array|DateTime|int|string $min The minimum date to be generated. If it's an array, it must be a `[min, max]` pair.
  * @param DateTime|int|string       $max the maximum date to be generated
- *
  */
 function dates($min = null, $max = null): Generator
 {
@@ -458,7 +450,6 @@ function dates($min = null, $max = null): Generator
  * </pre>
  *
  * @param array $array the array to be generated from
- *
  */
 function elements(array $array): Generator
 {
@@ -489,7 +480,6 @@ function elements(array $array): Generator
  * </pre>
  *
  * @param array $args,... First argument is the factory property or method name. If there is more than 1 argument, it's treated as a method call. If if there is 1 argument, it's treated as a property.
- *
  */
 function faker(...$args): Generator
 {
@@ -524,7 +514,6 @@ function faker(...$args): Generator
  *
  * @param float $min the minimum float value to generate
  * @param float $max the maximum float value to generate
- *
  */
 function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Generator
 {
@@ -561,7 +550,6 @@ function floats(float $min = \PHP_FLOAT_MIN, float $max = \PHP_FLOAT_MAX): Gener
  * </pre>
  *
  * @param array $frequencies a weighted list consisting of pairs of `[weight, generator]`
- *
  */
 function frequency(array $frequencies): Generator
 {
@@ -620,7 +608,6 @@ function frequency(array $frequencies): Generator
  * </pre>
  *
  * @param array $array the array containing the elements to be selected
- *
  */
 function growingElements(array $array): Generator
 {
@@ -653,7 +640,6 @@ function growingElements(array $array): Generator
  *
  * @param array $include an array of intervals to include in selecting the value
  * @param array $exclude an array of intervals to exclude from the selection
- *
  */
 function intervals(
     array $include = [[\PHP_INT_MIN, \PHP_INT_MAX]],
@@ -727,13 +713,10 @@ function intervals(
  * use function Datashaman\PHPCheck\resize;
  * use function Datashaman\PHPCheck\strings;
  *
- * print repr(generate(listOf(strings(faker("emoji"))))) . PHP_EOL;
+ * var_dump(generate(listOf(strings(faker("emoji")))));
  *
  * print repr(generate(resize(2, listOf(faker("ipv4"))))) . PHP_EOL;
  * </pre>
- *
- * @param Generator $gen the generator that creates the values
- *
  */
 function listOf(Generator $gen): Generator
 {
@@ -760,11 +743,8 @@ function listOf(Generator $gen): Generator
  *
  * print repr(generate(listOf1(faker("creditCardNumber")))) . PHP_EOL;
  *
- * print repr(generate(resize(2, listOf1(faker("emoji"))))) . PHP_EOL;
+ * var_dump(generate(resize(2, listOf1(faker("emoji")))));
  * </pre>
- *
- * @param Generator $gen the generator that creates the values
- *
  */
 function listOf1(Generator $gen): Generator
 {
@@ -796,7 +776,6 @@ function listOf1(Generator $gen): Generator
  *
  * print repr(sample(mixed())) . PHP_EOL;
  * </pre>
- *
  */
 function mixed(): Generator
 {
@@ -833,7 +812,6 @@ function mixed(): Generator
  * </pre>
  *
  * @param array $gens the list of generators to be chosen from
- *
  */
 function oneof(array $gens): Generator
 {
@@ -862,8 +840,6 @@ function oneof(array $gens): Generator
  * </pre>
  *
  * @param int       $n   the size to be used by the generator
- * @param Generator $gen the generator that creates the values
- *
  */
 function resize(int $n, Generator $gen): Generator
 {
@@ -893,8 +869,6 @@ function resize(int $n, Generator $gen): Generator
  * </pre>
  *
  * @param callable  $f   the transform function that scales the size
- * @param Generator $gen the generator who's size will be scaled
- *
  */
 function scale(callable $f, Generator $gen): Generator
 {
@@ -923,8 +897,6 @@ function scale(callable $f, Generator $gen): Generator
  * print repr(generate(strings(ascii()))) . PHP_EOL;
  * print repr(generate(strings(characters('a', 'e')))) . PHP_EOL;
  * </pre>
- *
- *
  */
 function strings(Generator $characters = null): Generator
 {
@@ -962,9 +934,7 @@ function strings(Generator $characters = null): Generator
  * }))) . PHP_EOL;
  * </pre>
  *
- * @param Generator $gen the generator that creates the values
  * @param callable  $f   the predicate function that must be satisfied
- *
  */
 function suchThat(Generator $gen, callable $f): Generator
 {
@@ -1004,9 +974,7 @@ function suchThat(Generator $gen, callable $f): Generator
  * }))) . PHP_EOL;
  * </pre>
  *
- * @param Generator $gen the generator that creates the values
  * @param callable  $f   the map function
- *
  */
 function suchThatMap(Generator $gen, callable $f): Generator
 {
@@ -1045,9 +1013,7 @@ function suchThatMap(Generator $gen, callable $f): Generator
  * }))) . PHP_EOL;
  * </pre>
  *
- * @param Generator $gen the generator that creates the values
  * @param callable  $f   the predicate function that must be satisfied
- *
  */
 function suchThatMaybe(Generator $gen, callable $f): Generator
 {
@@ -1084,7 +1050,6 @@ function suchThatMaybe(Generator $gen, callable $f): Generator
  *
  * print repr(generate(timezones())) . PHP_EOL;
  * </pre>
- *
  */
 function timezones(): Generator
 {
@@ -1114,10 +1079,6 @@ function timezones(): Generator
  *
  * print repr(sample(variant("123", strings(ascii())))) . PHP_EOL;
  * </pre>
- *
- * @param string    $seed the seed to be used by the generator
- * @param Generator $gen  the generator to be seeded
- *
  */
 function variant(string $seed, Generator $gen): Generator
 {
@@ -1143,8 +1104,6 @@ function variant(string $seed, Generator $gen): Generator
  * </pre>
  *
  * @param int       $n   the length of the list to be generated
- * @param Generator $gen the generator that produces the values
- *
  */
 function vectorOf(int $n, Generator $gen): Generator
 {

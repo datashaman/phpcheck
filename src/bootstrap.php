@@ -24,7 +24,7 @@ $dotenv->load();
 \mb_regex_encoding('UTF-8');
 \mb_internal_encoding('UTF-8');
 
-Repr::install(new Generator(50, 3, 12));
+Repr::install(new ReprGenerator(50, 3, 12));
 
 app('database', function ($c) {
     if (!\is_dir(RunState::DATABASE_DIR)) {
