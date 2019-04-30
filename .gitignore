@@ -1,6 +1,7 @@
 /build/
 /cache/
 /composer.lock
+/dist/app.js
 /docs/
 /.env
 /node_modules/
@@ -8,7 +9,6 @@
 /.php_cs.cache
 /php_errors.log
 /phpcheck.log
-/public/app.js
 /.phpunit.result.cache
 /report/
 /vendor/

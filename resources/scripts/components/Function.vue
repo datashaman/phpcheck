@@ -41,10 +41,10 @@
                 <b-form-input class="flex-grow-1" type="text" :value="'melody run ' + f.gist" readonly />
                 <b-input-group-append>
                     <b-button variant="success" class="btn-copy" v-clipboard:copy="'melody run ' + f.gist" @click="confirmCopy">
-                        <i class="fas fa-copy"></i>
+                        <font-awesome-icon icon="copy"></font-awesome-icon>
                     </b-button>
                     <b-button variant="outline-info" href="http://melody.sensiolabs.org">
-                        <i class="fas fa-question"></i>
+                        <font-awesome-icon icon="question"></font-awesome-icon>
                     </b-button>
                 </b-input-group-append>
             </b-input-group>

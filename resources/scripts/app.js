@@ -5,10 +5,27 @@ import VueClipboard from 'vue-clipboard2'
 import VueHighlightJS from 'vue-highlightjs'
 import Vuex from 'vuex'
 
-import '@fortawesome/fontawesome-free/js/fontawesome'
-import '@fortawesome/fontawesome-free/js/solid'
-import '@fortawesome/fontawesome-free/js/regular'
-import '@fortawesome/fontawesome-free/js/brands'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import {
+    faCopy,
+    faQuestion
+} from '@fortawesome/free-solid-svg-icons'
+import {
+    FontAwesomeIcon,
+    FontAwesomeLayers,
+    FontAwesomeLayersText
+} from '@fortawesome/vue-fontawesome'
+
+library.add(
+    faCopy,
+    faQuestion
+)
+
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('font-awesome-layers', FontAwesomeLayers)
+Vue.component('font-awesome-layers-text', FontAwesomeLayersText)
+
+Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 Vue.use(VueClipboard)
