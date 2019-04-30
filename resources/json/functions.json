@@ -11,44 +11,41 @@
                 }
             ],
             "file": "generators",
-            "header": "arguments(callable $f)\n",
+            "header": "arguments(callable $f)",
             "name": "Datashaman\\PHPCheck\\arguments",
             "href": "#arguments",
             "shortName": "arguments",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\arguments;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nfunction funcA(int $x, string $s) {\n}\n\nprint repr(generate(arguments('funcA'))) . PHP_EOL;\n\n\/**\n * @param string $s {@gen faker(\"username\")}\n *\/\nfunction funcB(string $s) {\n}\n\nprint repr(generate(arguments('funcB')));\n",
-            "output": "[-5137373217962460672, \"\\xf0\\xa8\\xb6\\xaf\\xf2\\x8e\\xaa\\xa3\\xf2\\x8c\\x85\\x9d\\xf1\\x83\\xa6\\x8a\\xf2\\x8e\\xac\\x98\\xf1\\x83\\xbf\\xb4\\xf1\\x8d\\x9d\\x9c\\xf2\\x9a\\x9d\\xbe\\xf2\\x87\\x9f\\x88\\xf1\\x9f\\xb0\\x88\\xf3\\xad\\xaf\\x9e\\xe1\\x9f\\xbf\\xf0\\x9e\\x91...]\n[\"vmertz\"]",
+            "example": "use function Datashaman\\PHPCheck\\arguments;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nfunction funcA(int $x, string $s) {\n}\n\nprint repr(generate(arguments('funcA'))) . PHP_EOL;\n\n\/**\n * @param string $s {@gen faker(\"username\")}\n *\/\nfunction funcB(string $s) {\n}\n\nprint repr(generate(arguments('funcB'))) . PHP_EOL;\n",
+            "output": "[-4773548036330815488, \"\\xf1\\x88\\xa1\\xa0\\xf0\\x94\\xaa\\x9e\\xf1\\xaf\\x80\\x81\\xf3\\x9a\\xae\\xbd\\xe9\\x9b\\xb2\\xf0\\x9e\\xbb\\x98\\xf1\\xa2\\xb3\\xb1\\xf3\\x8d\\x82\\x90\\xf2\\xa0\\x99\\x8a\\xe8\\x81\\x91\\xf3\\x91\\x9f\\xb6\\xf2\\x8f\\x83\\xb1\\xf2\\xa4\\xb4\\x95...]\n[\"xbarton\"]\n",
             "return": null,
-            "summary": "<p>Generate an array of arguments for the callable function.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/1b0b901ead46935f295f7ae78b38f9d7"
+            "summary": "<p>Generate an array of arguments for the callable function.<\/p>"
         },
         {
             "arguments": [],
             "file": "generators",
-            "header": "arrays()\n",
+            "header": "arrays()",
             "name": "Datashaman\\PHPCheck\\arrays",
             "href": "#arrays",
             "shortName": "arrays",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\arrays;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(arrays()));\n",
-            "output": "[<DateTime @ 000000002c6e9f40000000003a35c05c>, [-392564844929326080, -1356920587729072128, -4036091077845815296, <+20>], <DateTime @ 000000002c6e9f4f000000003a35c05c>, <+15>]",
+            "example": "use function Datashaman\\PHPCheck\\arrays;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(arrays())) . PHP_EOL;\n",
+            "output": "[[\"\\xe8\\xa0\\xa2\", \"\\xf3\\xa9\\x97\\xac\\xf2\\x8f\\xb1\\xae\\xf0\\x95\\xa9\\xb0\\xf3\\x9f\\xa7\\xb9\\xf3\\x82\\x83\\xa4\\xf0\\xaf\\x9d\\x84\\xf3\\xa0\\xb7\\xa6\\xf1\\xb9\\x88\\xbd\\xf2\\xaa\\x8a\\xb6\\xf3\\x94\\x99\\xbb\\xe9\\xb7\\xa8\\xf3\\x94\\x8b\\x82\\xeb\\x97\\x9e\"], -1167004248819138560, []]\n",
             "return": null,
-            "summary": "<p>Generate an array of mixed values.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/cb2fe97d45810bcab20267a482ba1356"
+            "summary": "<p>Generate an array of mixed values.<\/p>"
         },
         {
             "arguments": [],
             "file": "generators",
-            "header": "ascii()\n",
+            "header": "ascii()",
             "name": "Datashaman\\PHPCheck\\ascii",
             "href": "#ascii",
             "shortName": "ascii",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\n\n\/\/ Generate an ASCII character.\nprint repr(sample(ascii())) . PHP_EOL;\n\n\/\/ Generate an ASCII string.\nprint repr(sample(strings(ascii())));\n",
-            "output": "[\"c\", \"x\", \"_\", <+8>]\n[\"\", \"|\", \"}\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\n\n\/\/ Generate an ASCII character.\nprint repr(sample(ascii())) . PHP_EOL;\n\n\/\/ Generate an ASCII string.\nprint repr(sample(strings(ascii()))) . PHP_EOL;\n",
+            "output": "[\"_\", \"T\", \"F\", \"N\", \"Y\", \"F\", \"\\\"\", \"l\", \"n\", \"~\", \"\/\"]\n[\"\", \"~M\", \"3xex\", \"&3Q#\", \"~\", \"KNDq\", \"`FJm6\\$e\", \"*lj\", \"\\\"HH\\\"-@wlp[d\", \"[L\\$<<7V=X3\", \"\"]\n",
             "return": null,
-            "summary": "<p>Generate an ASCII character.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/cd858371a3b93d47a6b80013623a4f0e"
+            "summary": "<p>Generate an ASCII character.<\/p>"
         },
         {
             "arguments": [
@@ -61,16 +58,15 @@
                 }
             ],
             "file": "generators",
-            "header": "booleans(int $chanceOfGettingTrue = 50)\n",
+            "header": "booleans(int $chanceOfGettingTrue = 50)",
             "name": "Datashaman\\PHPCheck\\booleans",
             "href": "#booleans",
             "shortName": "booleans",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\booleans;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\n\/\/ Generate a boolean value with 50% chance true.\nprint repr(generate(booleans())) . PHP_EOL;\n\n\/\/ Generate a boolean value with 75% chance true.\nprint repr(generate(booleans(75)));\n",
-            "output": "true\ntrue",
+            "example": "use function Datashaman\\PHPCheck\\booleans;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\n\/\/ Generate a boolean value with 50% chance true.\nprint repr(generate(booleans())) . PHP_EOL;\n\n\/\/ Generate a boolean value with 75% chance true.\nprint repr(generate(booleans(75))) . PHP_EOL;\n",
+            "output": "false\nfalse\n",
             "return": null,
-            "summary": "<p>Generate a boolean value.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/ffcdbbba858b669b3115c91f473f3257"
+            "summary": "<p>Generate a boolean value.<\/p>"
         },
         {
             "arguments": [
@@ -90,16 +86,15 @@
                 }
             ],
             "file": "generators",
-            "header": "characters($minChar = null, $maxChar = null)\n",
+            "header": "characters($minChar = null, $maxChar = null)",
             "name": "Datashaman\\PHPCheck\\characters",
             "href": "#characters",
             "shortName": "characters",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\characters;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(characters()));\n",
-            "output": "[\"\\xf2\\xa7\\x8c\\x80\", \"\\xf1\\x86\\xa5\\x98\", \"\\xeb\\x8c\\xae\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\characters;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(characters())) . PHP_EOL;\n",
+            "output": "[\"\\xf2\\xa6\\x9e\\xb3\", \"\\xf3\\x8f\\xbf\\x9f\", \"\\xf2\\xa8\\xa0\\xa1\", \"\\xf0\\xbb\\x93\\xab\", \"\\xf3\\xaa\\x94\\xb0\", \"\\xf2\\x91\\x93\\x91\", \"\\xf2\\x9f\\xb9\\xad\", \"\\xe2\\x9e\\x8c\", \"\\xf0\\xb1\\x8f\\xa4\", \"\\xf3\\x83\\x8f\\xa5\", \"\\xf2\\xa5\\xab\\xb9\"]\n",
             "return": null,
-            "summary": "<p>Generate a character. The value is generated from all Unicode characters except control characters, surrogates and private ranges.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/3e9c1b4cc82b64ef8d16d3ebb830459a"
+            "summary": "<p>Generate a character. The value is generated from all Unicode characters except control characters, surrogates and private ranges.<\/p>"
         },
         {
             "arguments": [
@@ -119,16 +114,15 @@
                 }
             ],
             "file": "generators",
-            "header": "choose($min = PHP_INT_MIN, $max = PHP_INT_MAX)\n",
+            "header": "choose($min = PHP_INT_MIN, $max = PHP_INT_MAX)",
             "name": "Datashaman\\PHPCheck\\choose",
             "href": "#choose",
             "shortName": "choose",
             "description": "<p>This is another paragraph.<\/p>",
-            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(choose(0, 10))) . PHP_EOL;\nprint repr(sample(choose(\"a\", \"e\")));\n",
-            "output": "[6, 3, 6, <+8>]\n[\"b\", \"c\", \"d\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(choose(0, 10))) . PHP_EOL;\nprint repr(sample(choose(\"a\", \"e\"))) . PHP_EOL;\n",
+            "output": "[1, 10, 2, 1, 7, 2, 3, 9, 10, 6, 0]\n[\"a\", \"c\", \"a\", \"e\", \"a\", \"b\", \"e\", \"c\", \"d\", \"b\", \"c\"]\n",
             "return": null,
-            "summary": "<p>Generates a random element in the given inclusive range.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/bd17b3519647e7c9f8237e14f9309317"
+            "summary": "<p>Generates a random element in the given inclusive range.<\/p>"
         },
         {
             "arguments": [
@@ -141,16 +135,15 @@
                 }
             ],
             "file": "generators",
-            "header": "chooseAny(string $type)\n",
+            "header": "chooseAny(string $type)",
             "name": "Datashaman\\PHPCheck\\chooseAny",
             "href": "#chooseAny",
             "shortName": "chooseAny",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\chooseAny;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(chooseAny('float')));\n",
-            "output": "[4.1909876576801E+307.0, 4.0106251927735E+307.0, 6.7894207346129E+307.0, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\chooseAny;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(chooseAny('float'))) . PHP_EOL;\n",
+            "output": "[9.7663079897509E+307.0, 9.5384743534306E+307.0, 1.6363636730977E+308.0, 8.2330149756089E+307.0, 4.0560772234123E+307.0, 1.6654573987068E+308.0, 1.1721479031108E+308.0, 9.6590833874251E+307.0, 1.7496255835226E+308.0, 9.3007697203103E+306.0, 7.2187367476534E+305.0]\n",
             "return": null,
-            "summary": "<p>Generate a value by type.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/e691fb4f01ba75c13f9f1aa14d38e097"
+            "summary": "<p>Generate a value by type.<\/p>"
         },
         {
             "arguments": [
@@ -170,16 +163,15 @@
                 }
             ],
             "file": "generators",
-            "header": "dates($min = null, $max = null)\n",
+            "header": "dates($min = null, $max = null)",
             "name": "Datashaman\\PHPCheck\\dates",
             "href": "#dates",
             "shortName": "dates",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\dates;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(dates('2000-01-01', '2300-01-01')));\n",
-            "output": "[<DateTime @ 000000002c6e9f70000000003a35c05c>, <DateTime @ 000000002c6e9f75000000003a35c05c>, <DateTime @ 000000002c6e9f7f000000003a35c05c>, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\dates;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(dates('2000-01-01', '2300-01-01'))) . PHP_EOL;\n",
+            "output": "[<DateTime @ 00000000792d0154000000005af463bc>, <DateTime @ 00000000792d0153000000005af463bc>, <DateTime @ 00000000792d0155000000005af463bc>, <DateTime @ 00000000792d015a000000005af463bc>, <DateTime @ 00000000792d015b000000005af463bc>, <DateTime @ 00000000792d0158000000005af463bc>, <DateTime @ 00000000792d0151000000005af463bc>, <DateTime @ 00000000792d0156000000005af463bc>, <DateTime @ 00000000792d0116000000005af463bc>, <DateTime @ 00000000792d011c000000005af463bc>, <DateTime @ 00000000792d010c000000005af463bc>]\n",
             "return": null,
-            "summary": "<p>Generate dates.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/3106a8a3756b795a4fee4e0179a93e53"
+            "summary": "<p>Generate dates.<\/p>"
         },
         {
             "arguments": [
@@ -206,16 +198,15 @@
                 }
             ],
             "file": "generators",
-            "header": "datetimes($min = null, $max = null, $timezones = null)\n",
+            "header": "datetimes($min = null, $max = null, $timezones = null)",
             "name": "Datashaman\\PHPCheck\\datetimes",
             "href": "#datetimes",
             "shortName": "datetimes",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\datetimes;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\timezones;\n\nprint repr(sample(datetimes())) . PHP_EOL;\n\nprint repr(sample(datetimes('2000-01-01', '2100-01-01', timezones())));\n",
-            "output": "[<DateTime @ 000000002c6e9f75000000003a35c05c>, <DateTime @ 000000002c6e9f49000000003a35c05c>, <DateTime @ 000000002c6e9f74000000003a35c05c>, <+8>]\n[<DateTime @ 000000002c6e9f34000000003a35c05c>, <DateTime @ 000000002c6e9f48000000003a35c05c>, <DateTime @ 000000002c6e9f4a000000003a35c05c>, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\datetimes;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\timezones;\n\nprint repr(sample(datetimes())) . PHP_EOL;\n\nprint repr(sample(datetimes('2000-01-01', '2100-01-01', timezones()))) . PHP_EOL;\n",
+            "output": "[<DateTime @ 00000000792d0153000000005af463bc>, <DateTime @ 00000000792d014e000000005af463bc>, <DateTime @ 00000000792d0150000000005af463bc>, <DateTime @ 00000000792d0151000000005af463bc>, <DateTime @ 00000000792d0156000000005af463bc>, <DateTime @ 00000000792d0157000000005af463bc>, <DateTime @ 00000000792d0154000000005af463bc>, <DateTime @ 00000000792d0155000000005af463bc>, <DateTime @ 00000000792d015a000000005af463bc>, <DateTime @ 00000000792d015b000000005af463bc>, <DateTime @ 00000000792d0158000000005af463bc>]\n[<DateTime @ 00000000792d010f000000005af463bc>, <DateTime @ 00000000792d0146000000005af463bc>, <DateTime @ 00000000792d0145000000005af463bc>, <DateTime @ 00000000792d014d000000005af463bc>, <DateTime @ 00000000792d0152000000005af463bc>, <DateTime @ 00000000792d0159000000005af463bc>, <DateTime @ 00000000792d015e000000005af463bc>, <DateTime @ 00000000792d015f000000005af463bc>, <DateTime @ 00000000792d015c000000005af463bc>, <DateTime @ 00000000792d015d000000005af463bc>, <DateTime @ 00000000792d0162000000005af463bc>]\n",
             "return": null,
-            "summary": "<p>Generate datetimes, optionally with generated timezones.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/de6b873d4b8152c5468f26a7994ff099"
+            "summary": "<p>Generate datetimes, optionally with generated timezones.<\/p>"
         },
         {
             "arguments": [
@@ -228,16 +219,15 @@
                 }
             ],
             "file": "generators",
-            "header": "elements(array $array)\n",
+            "header": "elements(array $array)",
             "name": "Datashaman\\PHPCheck\\elements",
             "href": "#elements",
             "shortName": "elements",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\elements;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\listOf1;\n\nprint repr(generate(listOf1(elements(['abc', 123, 'u&me']))));\n",
-            "output": "[123, 123, \"abc\", <+24>]",
+            "example": "use function Datashaman\\PHPCheck\\elements;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\listOf1;\n\nprint repr(generate(listOf1(elements(['abc', 123, 'u&me'])))) . PHP_EOL;\n",
+            "output": "[\"u&me\", 123, 123, \"abc\", \"u&me\", 123, \"abc\", 123, \"u&me\", \"u&me\", \"abc\", 123, <+12>]\n",
             "return": null,
-            "summary": "<p>Generates one of the given values. The input list must be non-empty.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/16f865ddbdce30f07ffeb07de2d2f1a5"
+            "summary": "<p>Generates one of the given values. The input list must be non-empty.<\/p>"
         },
         {
             "arguments": [
@@ -250,16 +240,15 @@
                 }
             ],
             "file": "generators",
-            "header": "faker(...$args)\n",
+            "header": "faker(...$args)",
             "name": "Datashaman\\PHPCheck\\faker",
             "href": "#faker",
             "shortName": "faker",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(faker(\"creditCardDetails\"))) . PHP_EOL;\nprint repr(generate(faker(\"email\"))) . PHP_EOL;\nprint repr(generate(faker(\"imageUrl\", 400, 300, \"cats\")));\n",
-            "output": "[\"type\" => \"MasterCard\", \"number\" => \"2221019860875219\", \"name\" => \"Reyna Harber\", <+1>]\n\"mjerde@shields.com\"\n\"https:\/\/lorempixel.com\/400\/300\/cats\/?86240\"",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(faker(\"creditCardDetails\"))) . PHP_EOL;\nprint repr(generate(faker(\"email\"))) . PHP_EOL;\nprint repr(generate(faker(\"imageUrl\", 400, 300, \"cats\"))) . PHP_EOL;\n",
+            "output": "[\"type\" => \"Visa\", \"number\" => \"4716798700919802\", \"name\" => \"Prof. Mikel Treutel\", \"expirationDate\" => \"10\/20\"]\n\"johns.birdie@yahoo.com\"\n\"https:\/\/lorempixel.com\/400\/300\/cats\/?31304\"\n",
             "return": null,
-            "summary": "<p>Generates a value from the Faker factory.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/34a97b432dfc259761dd47d94385910e"
+            "summary": "<p>Generates a value from the Faker factory.<\/p>"
         },
         {
             "arguments": [
@@ -279,16 +268,15 @@
                 }
             ],
             "file": "generators",
-            "header": "floats(float $min = PHP_FLOAT_MIN, float $max = PHP_FLOAT_MAX)\n",
+            "header": "floats(float $min = PHP_FLOAT_MIN, float $max = PHP_FLOAT_MAX)",
             "name": "Datashaman\\PHPCheck\\floats",
             "href": "#floats",
             "shortName": "floats",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\floats;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(floats(-1000, 1000)));\n",
-            "output": "-633.66189116317",
+            "example": "use function Datashaman\\PHPCheck\\floats;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\n\nprint repr(generate(floats(-1000, 1000))) . PHP_EOL;\n",
+            "output": "372.32346803524\n",
             "return": null,
-            "summary": "<p>Generate floats optionally within a specific range.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/ab1933dc739d2e9160ed8f16bfe999ac"
+            "summary": "<p>Generate floats optionally within a specific range.<\/p>"
         },
         {
             "arguments": [
@@ -301,16 +289,15 @@
                 }
             ],
             "file": "generators",
-            "header": "frequency(array $frequencies)\n",
+            "header": "frequency(array $frequencies)",
             "name": "Datashaman\\PHPCheck\\frequency",
             "href": "#frequency",
             "shortName": "frequency",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\frequency;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(frequency([\n    [1, faker(\"email\")],\n    [4, faker(\"lastName\")],\n])));\n",
-            "output": "[\"drunolfsdottir@auer.com\", \"Reynolds\", \"Conroy\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\frequency;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(frequency([\n    [1, faker(\"email\")],\n    [4, faker(\"lastName\")],\n]))) . PHP_EOL;\n",
+            "output": "[\"Wunsch\", \"Paucek\", \"ivah.eichmann@wiegand.com\", \"Lueilwitz\", \"Trantow\", \"orlo.ortiz@leuschke.com\", \"rau.elyssa@gmail.com\", \"Kovacek\", \"Stark\", \"Kuphal\", \"Cartwright\"]\n",
             "return": null,
-            "summary": "<p>Chooses one of the given generators, with a weighted random distribution. The input list must be non-empty.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/86984615349d64ae81e2b66648c71a40"
+            "summary": "<p>Chooses one of the given generators, with a weighted random distribution. The input list must be non-empty.<\/p>"
         },
         {
             "arguments": [
@@ -323,16 +310,15 @@
                 }
             ],
             "file": "generators",
-            "header": "growingElements(array $array)\n",
+            "header": "growingElements(array $array)",
             "name": "Datashaman\\PHPCheck\\growingElements",
             "href": "#growingElements",
             "shortName": "growingElements",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\growingElements;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(listOf(growingElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]))));\n",
-            "output": "[[], [6, 10], [11, 16, 2, <+1>], <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\growingElements;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(listOf(growingElements([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20])))) . PHP_EOL;\n",
+            "output": "[[], [1], [6, 4, 8], [1, 4, 2], [12, 5, 4, 2, 1], [3], [7], [7, 14], [13, 3, 14, 15, 15, 2, 4, 1], [5, 9, 16, 5, 1, 5], [2, 14, 16, 6, 15, 12, 11, 12, 4, 15, 7, 11, <+4>]]\n",
             "return": null,
-            "summary": "<p>Takes a list of elements of increasing size, and chooses among an initial segment of the list. The size of this initial segment increases with the size parameter. The input list must be non-empty.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/5518db6f4f927c8ca694f87bd4d41271"
+            "summary": "<p>Takes a list of elements of increasing size, and chooses among an initial segment of the list. The size of this initial segment increases with the size parameter. The input list must be non-empty.<\/p>"
         },
         {
             "arguments": [
@@ -352,16 +338,15 @@
                 }
             ],
             "file": "generators",
-            "header": "intervals(array $include = [[-9223372036854775807-1, 9223372036854775807]], array $exclude = [])\n",
+            "header": "intervals(array $include = [[-9223372036854775807-1, 9223372036854775807]], array $exclude = [])",
             "name": "Datashaman\\PHPCheck\\intervals",
             "href": "#intervals",
             "shortName": "intervals",
             "description": "<p>Intervals are defined as a list of <code>[min, max]<\/code> pairs, for example: <code>[[1, 3], [4, 10], [11, 40]]<\/code>.<\/p>",
-            "example": "use function Datashaman\\PHPCheck\\intervals;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(intervals([[1, 10]], [[1, 5]])));\n",
-            "output": "[8, 7, 9, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\intervals;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(intervals([[1, 10]], [[1, 5]]))) . PHP_EOL;\n",
+            "output": "[9, 6, 8, 7, 6, 6, 8, 6, 9, 7, 8]\n",
             "return": null,
-            "summary": "<p>Generate an element within a set of intervals, and excluding another set of intervals.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/8de7a8430baeab77b8815bdacb8e64be"
+            "summary": "<p>Generate an element within a set of intervals, and excluding another set of intervals.<\/p>"
         },
         {
             "arguments": [
@@ -374,16 +359,15 @@
                 }
             ],
             "file": "generators",
-            "header": "listOf(\\Generator $gen)\n",
+            "header": "listOf(\\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\listOf",
             "href": "#listOf",
             "shortName": "listOf",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\resize;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(generate(listOf(strings(faker(\"emoji\"))))) . PHP_EOL;\n\nprint repr(generate(resize(2, listOf(faker(\"ipv4\")))));\n",
-            "output": "[\"\", \"\\xf0\\x9f\\x98\\xa4\\xf0\\x9f\\x98\\xac\\xf0\\x9f\\x98\\xa8\\xf0\\x9f\\x98\\x97\\xf0\\x9f\\x98\\xa7\\xf0\\x9f\\x98\\x86\", \"\\xf0\\x9f\\x98\\xa7\\xf0\\x9f\\x98\\xa9\\xf0\\x9f\\x98\\x82\\xf0\\x9f\\x98\\x81\\xf0\\x9f\\x98\\xb4\\xf0\\x9f\\x98\\xa4\\xf0\\x9f\\x98\\x8d\\xf0\\x9f\\x98\\xa6\\xf0\\x9f\\x98\\x80\\xf0\\x9f\\x98\\xa9\\xf0\\x9f\\x98\\x93\", <+19>]\n[\"181.244.71.93\"]",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\resize;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(generate(listOf(strings(faker(\"emoji\"))))) . PHP_EOL;\n\nprint repr(generate(resize(2, listOf(faker(\"ipv4\"))))) . PHP_EOL;\n",
+            "output": "[\"\\xf0\\x9f\\x98\\x97\\xf0\\x9f\\x98\\x9d\\xf0\\x9f\\x98\\x8f\\xf0\\x9f\\x98\\x9a\\xf0\\x9f\\x98\\xb5\\xf0\\x9f\\x98\\x90\\xf0\\x9f\\x98\\x97\\xf0\\x9f\\x98\\x8e\\xf0\\x9f\\x98\\xaa\\xf0\\x9f\\x98\\x87\\xf0\\x9f\\x98\\xae\\xf0\\x9f\\x98\\xac\", \"\\xf0\\x9f\\x98\\xac\\xf0\\x9f\\x98\\xa0\\xf0\\x9f\\x98\\x85\\xf0\\x9f\\x98\\x8c\\xf0\\x9f\\x98\\x97\", \"\\xf0\\x9f\\x98\\x8a\\xf0\\x9f\\x98\\xa4\\xf0\\x9f\\x98\\x9a\\xf0\\x9f\\x98\\x8c\\xf0\\x9f\\x98\\x95\\xf0\\x9f\\x98\\x9c\\xf0\\x9f\\x98\\x8a\\xf0\\x9f\\x98\\xaa\\xf0\\x9f\\x98\\xb4\\xf0\\x9f\\x98\\x9e\\xf0\\x9f\\x98\\x9d\\xf0\\x9f\\x98\\xaa\\xf0\\x9f..., \"\\xf0\\x9f\\x98\\x8d\\xf0\\x9f\\x98\\x84\\xf0\\x9f\\x98\\x87\\xf0\\x9f\\x98\\xb1\\xf0\\x9f\\x98\\x96\\xf0\\x9f\\x98\\x8b\\xf0\\x9f\\x98\\x98\\xf0\\x9f\\x98\\xa5\\xf0\\x9f\\x98\\xb7\\xf0\\x9f\\x98\\x87\\xf0\\x9f\\x98\\x9c\\xf0\\x9f\\x98\\x8d\\xf0\\x9f..., \"\\xf0\\x9f\\x98\\x9d\\xf0\\x9f\\x98\\xa6\", \"\\xf0\\x9f\\x98\\x9c\\xf0\\x9f\\x98\\x8b\\xf0\\x9f\\x98\\x86\", \"\\xf0\\x9f\\x98\\xb1\\xf0\\x9f\\x98\\x88\\xf0\\x9f\\x98\\xb7\\xf0\\x9f\\x98\\x89\\xf0\\x9f\\x98\\x9f\\xf0\\x9f\\x98\\x93\\xf0\\x9f\\x98\\x83\\xf0\\x9f\\x98\\x9f\\xf0\\x9f\\x98\\xa7\\xf0\\x9f\\x98\\x8b\\xf0\\x9f\\x98\\xb7\\xf0\\x9f\\x98\\xa8\\xf0\\x9f..., \"\\xf0\\x9f\\x98\\x99\\xf0\\x9f\\x98\\xa4\\xf0\\x9f\\x98\\xac\\xf0\\x9f\\x98\\x89\\xf0\\x9f\\x98\\xae\\xf0\\x9f\\x98\\x99\\xf0\\x9f\\x98\\x8c\\xf0\\x9f\\x98\\xac\\xf0\\x9f\\x98\\xb7\\xf0\\x9f\\x98\\x8b\\xf0\\x9f\\x98\\xae\\xf0\\x9f\\x98\\x9d\\xf0\\x9f..., \"\\xf0\\x9f\\x98\\xb4\\xf0\\x9f\\x98\\x99\\xf0\\x9f\\x98\\x9d\\xf0\\x9f\\x98\\x92\\xf0\\x9f\\x98\\xb0\\xf0\\x9f\\x98\\x9d\\xf0\\x9f\\x98\\xac\\xf0\\x9f\\x98\\xb7\\xf0\\x9f\\x98\\xa1\\xf0\\x9f\\x98\\x95\\xf0\\x9f\\x98\\x82\\xf0\\x9f\\x98\\x82\\xf0\\x9f..., \"\\xf0\\x9f\\x98\\x8d\\xf0\\x9f\\x98\\xa7\\xf0\\x9f\\x98\\x9a\\xf0\\x9f\\x98\\xb3\"]\n[]\n",
             "return": null,
-            "summary": "<p>Generates a list of random length. The maximum length depends on the size parameter.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/2eab63ea586093b6c65847474cdf1ccc"
+            "summary": "<p>Generates a list of random length. The maximum length depends on the size parameter.<\/p>"
         },
         {
             "arguments": [
@@ -396,30 +380,28 @@
                 }
             ],
             "file": "generators",
-            "header": "listOf1(\\Generator $gen)\n",
+            "header": "listOf1(\\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\listOf1",
             "href": "#listOf1",
             "shortName": "listOf1",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\listOf1;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\resize;\n\nprint repr(generate(listOf1(faker(\"creditCardNumber\")))) . PHP_EOL;\n\nprint repr(generate(resize(2, listOf1(faker(\"emoji\")))));\n",
-            "output": "[\"4539306689284050\"]\n[\"\\xf0\\x9f\\x98\\x8b\"]",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\listOf1;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\resize;\n\nprint repr(generate(listOf1(faker(\"creditCardNumber\")))) . PHP_EOL;\n\nprint repr(generate(resize(2, listOf1(faker(\"emoji\"))))) . PHP_EOL;\n",
+            "output": "[\"5246711353642312\", \"4539395884270576\", \"4532334129400281\", \"6011910578710182\", \"2584526591415140\", \"5563963466147011\", \"2720116380846906\", \"4024007135976081\", \"5174753786420730\", \"2398213051771512\", \"4716054511731444\", \"5492545244250476\", <+17>]\n[\"\\xf0\\x9f\\x98\\x99\", \"\\xf0\\x9f\\x98\\x96\"]\n",
             "return": null,
-            "summary": "<p>Generates a non-empty list of random length. The maximum length depends on the size parameter.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/9bae5dc1b361d911ba339ac88c277cf9"
+            "summary": "<p>Generates a non-empty list of random length. The maximum length depends on the size parameter.<\/p>"
         },
         {
             "arguments": [],
             "file": "generators",
-            "header": "mixed()\n",
+            "header": "mixed()",
             "name": "Datashaman\\PHPCheck\\mixed",
             "href": "#mixed",
             "shortName": "mixed",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\mixed;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(mixed()));\n",
-            "output": "[false, [\"\\xf3\\x9d\\xa5\\x82\\xf0\\xa9\\xa1\\x83\\xf1\\x8e\\x9a\\xa1\\xf1\\x9f\\x95\\xa2\\xf0\\xbe\\xac\\xb4\\xf0\\x9f\\xaa\\xae\\xf3\\x96\\xb0\\xa4\\xf2\\x9f\\x8b\\x9f\\xf2\\x81\\xb1\\x8c\\xf0\\xa1\\xb7\\xa4\\xf1\\xac\\xb1\\xa0\\xf2\\x99\\x8c\\x94\\xf2\\xa6..., \"\\xf0\\xb7\\xaf\\xac\\xf0\\xb8\\x81\\xaf\\xf0\\x91\\xab\\xb5\\xf1\\xa6\\x89\\x8c\\xf3\\xa5\\x80\\x96\\xf0\\x99\\xa6\\xb5\\xf2\\xb2\\xa6\\xa6\", \"\\xf1\\xa4\\x95\\xb9\\xf0\\x9b\\xad\\x8a\\xf1\\xac\\xb1\\xbb\\xf1\\x98\\x88\\x9c\\xf0\\xa7\\x8b\\xb6\\xf0\\xb5\\x81\\xbf\\xf1\\x82\\xa8\\x9b\", <+2>], false, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\mixed;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(mixed())) . PHP_EOL;\n",
+            "output": "[<DateTime @ 00000000792d01b0000000005af463bc>, -7460472149058646016, [-2699839102669160448, -1693170772786405376, -2013262844079673344, -6831307373847289856, -4629190468436324352, -9146729362137571328, -5674148692031275008, -3406439138461200384, -4440143855934435328, -8930619551888764928, -2773892740223905792, -6285206519871246336, <+11>], false, -6590222974277713920, [-7696427418929618944, -672290191746718720, -2169948645687832576, -1603705586208686080, -6426013889745354752], \"\\xf1\\x87\\xad\\x97\\xf3\\x96\\x8d\\xab\\xf3\\x8c\\x81\\xad\\xf2\\xa3\\x87\\xa7\\xf2\\x99\\xab\\x8f\\xf0\\xa8\\xb0\\x95\\xf3\\x80\\x8a\\x9b\\xf3\\x8c\\x87\\xa0\\xf0\\xaa\\x88\\x99\\xf2\\x93\\x98\\x88\", true, true, -8004367962594017280, <DateTime @ 00000000792d01b2000000005af463bc>]\n",
             "return": null,
-            "summary": "<p>Randomly generates from one of the following generators:<\/p>\n<ul>\n<li><a href=\"#strings\">strings()<\/a><\/li>\n<li><a href=\"#choose\">choose()<\/a><\/li>\n<li><a href=\"#booleans\">booleans()<\/a><\/li>\n<li><a href=\"#dates\">dates()<\/a><\/li>\n<li><a href=\"#datetimes\">datetimes()<\/a><\/li>\n<li><a href=\"#listOf\">listOf(strings())<\/a><\/li>\n<li><a href=\"#listOf\">listOf(choose())<\/a><\/li>\n<\/ul>\n",
-            "gist": "https:\/\/gist.github.com\/eede863fe74ef04b0d8df2c5a6923fa7"
+            "summary": "<p>Randomly generates from one of the following generators:<\/p>\n<ul>\n<li><a href=\"#strings\">strings()<\/a><\/li>\n<li><a href=\"#choose\">choose()<\/a><\/li>\n<li><a href=\"#booleans\">booleans()<\/a><\/li>\n<li><a href=\"#dates\">dates()<\/a><\/li>\n<li><a href=\"#datetimes\">datetimes()<\/a><\/li>\n<li><a href=\"#listOf\">listOf(strings())<\/a><\/li>\n<li><a href=\"#listOf\">listOf(choose())<\/a><\/li>\n<\/ul>"
         },
         {
             "arguments": [
@@ -432,16 +414,15 @@
                 }
             ],
             "file": "generators",
-            "header": "oneof(array $gens)\n",
+            "header": "oneof(array $gens)",
             "name": "Datashaman\\PHPCheck\\oneof",
             "href": "#oneof",
             "shortName": "oneof",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\oneof;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(oneof(\n    [\n        faker(\"email\"),\n        faker(\"e164PhoneNumber\")\n    ]\n)));\n",
-            "output": "[\"+3498543194346\", \"+9856358190889\", \"+5308740537277\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\oneof;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\n\nprint repr(sample(oneof(\n    [\n        faker(\"email\"),\n        faker(\"e164PhoneNumber\")\n    ]\n))) . PHP_EOL;\n",
+            "output": "[\"grempel@hotmail.com\", \"hboehm@hotmail.com\", \"+3769898962688\", \"ojohns@hackett.net\", \"mrobel@hotmail.com\", \"aurelio.mayer@torphy.net\", \"+7116986706039\", \"+3149162384505\", \"reilly.lucious@yahoo.com\", \"audreanne82@okeefe.org\", \"+1874826296571\"]\n",
             "return": null,
-            "summary": "<p>Randomly uses one of the given generators. The input list must be non-empty.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/39a5f7922fa1b02e1379872c5840bf8e"
+            "summary": "<p>Randomly uses one of the given generators. The input list must be non-empty.<\/p>"
         },
         {
             "arguments": [
@@ -461,16 +442,15 @@
                 }
             ],
             "file": "generators",
-            "header": "resize(int $n, \\Generator $gen)\n",
+            "header": "resize(int $n, \\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\resize",
             "href": "#resize",
             "shortName": "resize",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\resize;\n\nprint repr(sample(resize(3, listOf(faker(\"firstname\")))));\n",
-            "output": "[[], [\"Mollie\", \"Philip\"], [\"Vinnie\", \"Erika\", \"Otha\"], <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\faker;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\resize;\n\nprint repr(sample(resize(3, listOf(faker(\"firstname\"))))) . PHP_EOL;\n",
+            "output": "[[\"Nyasia\"], [\"Stella\", \"Mary\"], [\"Heber\", \"Mohammed\"], [\"Akeem\", \"Edmund\", \"Kaleigh\"], [\"Weston\", \"Merl\", \"Forrest\"], [\"Roxanne\", \"Bert\"], [\"Elenor\"], [\"Fanny\", \"Larry\"], [\"Mireya\", \"Gladys\", \"Ima\"], [\"Trace\", \"Carlos\", \"Rosalinda\"], []]\n",
             "return": null,
-            "summary": "<p>Overrides the size parameter. Returns a generator which uses the given size instead of the runtime-size parameter.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/fe1590a11620ac4d005a8101d049ce15"
+            "summary": "<p>Overrides the size parameter. Returns a generator which uses the given size instead of the runtime-size parameter.<\/p>"
         },
         {
             "arguments": [
@@ -490,16 +470,15 @@
                 }
             ],
             "file": "generators",
-            "header": "scale(callable $f, \\Generator $gen)\n",
+            "header": "scale(callable $f, \\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\scale",
             "href": "#scale",
             "shortName": "scale",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\scale;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(sample(scale(function ($n) {\n    return $n \/ 10;\n}, listOf(strings(ascii())))));\n",
-            "output": "[[], [], [], <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\listOf;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\scale;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(sample(scale(function ($n) {\n    return $n \/ 10;\n}, listOf(strings(ascii()))))) . PHP_EOL;\n",
+            "output": "[[], [], [], [], [], [\"yoKo40:t`tXPT\"], [\"i#5Wg]^mRagSJEN-\"], [\"[k=p'EYS\/HJPXX\\$U~]P-@B'%b`B\"], [\"<Y\"], [], [\"*cDu{<F+~u\/7\\\"ETIxOYiV\", \"(gNIQ[jUi&MfII|\"]]\n",
             "return": null,
-            "summary": "<p>Adjust the size parameter, by transforming it with the given function.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/c2df8b14d0c75422f0a6fff9020fa123"
+            "summary": "<p>Adjust the size parameter, by transforming it with the given function.<\/p>"
         },
         {
             "arguments": [
@@ -512,16 +491,15 @@
                 }
             ],
             "file": "generators",
-            "header": "strings(Generator $characters = null)\n",
+            "header": "strings(Generator $characters = null)",
             "name": "Datashaman\\PHPCheck\\strings",
             "href": "#strings",
             "shortName": "strings",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\characters;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(generate(strings())) . PHP_EOL;\nprint repr(generate(strings(ascii()))) . PHP_EOL;\nprint repr(generate(strings(characters('a', 'e'))));\n",
-            "output": "\"\\xf0\\xa5\\xa1\\x82\\xf0\\xbb\\x96\\x95\\xf2\\xb0\\x91\\xab\\xf2\\xad\\xb4\\xa3\\xf2\\x86\\x9a\\xaa\\xec\\x95\\x88\\xf0\\x92\\x8b\\x9b\\xf1\\x80\\x81\\x8b\\xf3\\x96\\xbc\\x8a\\xf3\\x91\\x9f\\x93\\xf0\\xb1\\xa0\\xb5\\xf2\\xa6\\xb7\\xa6\\xf1\\x86\\x9f...\n\"o|4\"\n\"acadddcdabacbcdbadabccdcca\"",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\characters;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(generate(strings())) . PHP_EOL;\nprint repr(generate(strings(ascii()))) . PHP_EOL;\nprint repr(generate(strings(characters('a', 'e')))) . PHP_EOL;\n",
+            "output": "\"\\xf1\\xb6\\x8a\\x82\\xf2\\xbe\\xaf\\x97\\xf3\\xae\\x8c\\xb7\\xf0\\xa7\\x83\\x87\\xf2\\xba\\xb3\\xba\\xf3\\x88\\x9e\\xad\\xf1\\xb6\\xb8\\x8b\\xf1\\x8d\\xa0\\x98\\xf2\\xa8\\x94\\xa2\\xf2\\xa9\\x8d\\x8c\\xf2\\x87\\xbd\\xa5\\xf1\\xaf\\xa4\\x9d\\xf3\\x8a...\n\"Wh iI{x3oUaN{I\"\n\"abaacbacbabaadbbbadabccbaca\"\n",
             "return": null,
-            "summary": "<p>Generate strings, optionally from a specific character generator.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/4310c209179bbf079737b8b105e5bd16"
+            "summary": "<p>Generate strings, optionally from a specific character generator.<\/p>"
         },
         {
             "arguments": [
@@ -541,16 +519,15 @@
                 }
             ],
             "file": "generators",
-            "header": "suchThat(\\Generator $gen, callable $f)\n",
+            "header": "suchThat(\\Generator $gen, callable $f)",
             "name": "Datashaman\\PHPCheck\\suchThat",
             "href": "#suchThat",
             "shortName": "suchThat",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThat;\n\nprint repr(sample(suchThat(choose(0, 100), function ($value) {\n    return $value < 50;\n})));\n",
-            "output": "[22, 8, 42, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThat;\n\nprint repr(sample(suchThat(choose(0, 100), function ($value) {\n    return $value < 50;\n}))) . PHP_EOL;\n",
+            "output": "[32, 18, 4, 44, 47, 21, 10, 15, 10, 16, 30]\n",
             "return": null,
-            "summary": "<p>Generates a value that satisfies a predicate.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/045fb086689a5fba3855af2425af07d7"
+            "summary": "<p>Generates a value that satisfies a predicate.<\/p>"
         },
         {
             "arguments": [
@@ -570,16 +547,15 @@
                 }
             ],
             "file": "generators",
-            "header": "suchThatMap(\\Generator $gen, callable $f)\n",
+            "header": "suchThatMap(\\Generator $gen, callable $f)",
             "name": "Datashaman\\PHPCheck\\suchThatMap",
             "href": "#suchThatMap",
             "shortName": "suchThatMap",
             "description": "<p>The callable must return a Maybe object.<\/p>",
-            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThatMap;\nuse Datashaman\\PHPCheck\\Types\\Just;\n\nprint repr(sample(suchThatMap(choose(0, 5), function ($value) {\n    return new Just($value + 100);\n})));\n",
-            "output": "[101, 103, 103, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThatMap;\nuse Datashaman\\PHPCheck\\Types\\Just;\n\nprint repr(sample(suchThatMap(choose(0, 5), function ($value) {\n    return new Just($value + 100);\n}))) . PHP_EOL;\n",
+            "output": "[105, 102, 104, 100, 102, 105, 105, 101, 101, 102, 104]\n",
             "return": null,
-            "summary": "<p>Generates a value for which the given function returns a Just, and then applies the function.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/e5c005c59f4d2ab75d9d945118c54060"
+            "summary": "<p>Generates a value for which the given function returns a Just, and then applies the function.<\/p>"
         },
         {
             "arguments": [
@@ -599,30 +575,28 @@
                 }
             ],
             "file": "generators",
-            "header": "suchThatMaybe(\\Generator $gen, callable $f)\n",
+            "header": "suchThatMaybe(\\Generator $gen, callable $f)",
             "name": "Datashaman\\PHPCheck\\suchThatMaybe",
             "href": "#suchThatMaybe",
             "shortName": "suchThatMaybe",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThatMaybe;\n\nprint repr(sample(suchThatMaybe(choose(0, 100), function ($value) {\n    return $value < 99;\n}))) . PHP_EOL;\n\nprint repr(sample(suchThatMaybe(choose(0, 100), function ($value) {\n    return $value > 99;\n})));\n",
-            "output": "[<Just 96>, <Just 7>, <Just 57>, <+8>]\n[<Nothing>, <Nothing>, <Nothing>, <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\suchThatMaybe;\n\nprint repr(sample(suchThatMaybe(choose(0, 100), function ($value) {\n    return $value < 99;\n}))) . PHP_EOL;\n\nprint repr(sample(suchThatMaybe(choose(0, 100), function ($value) {\n    return $value > 99;\n}))) . PHP_EOL;\n",
+            "output": "[\"<Just 87>\", \"<Just 1>\", \"<Just 23>\", \"<Just 9>\", \"<Just 54>\", \"<Just 46>\", \"<Just 72>\", \"<Just 41>\", \"<Just 75>\", \"<Just 20>\", \"<Just 6>\"]\n[\"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Nothing>\", \"<Just 100>\", \"<Nothing>\"]\n",
             "return": null,
-            "summary": "<p>Tries to generate a value that satisfies a predicate. If it fails to do so after enough attempts, returns Nothing.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/9b2df71796d30576d0649e63a9cdf3c3"
+            "summary": "<p>Tries to generate a value that satisfies a predicate. If it fails to do so after enough attempts, returns Nothing.<\/p>"
         },
         {
             "arguments": [],
             "file": "generators",
-            "header": "timezones()\n",
+            "header": "timezones()",
             "name": "Datashaman\\PHPCheck\\timezones",
             "href": "#timezones",
             "shortName": "timezones",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\timezones;\n\nprint repr(generate(timezones()));\n",
-            "output": "\"Europe\/Luxembourg\"",
+            "example": "use function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\timezones;\n\nprint repr(generate(timezones())) . PHP_EOL;\n",
+            "output": "\"America\/Whitehorse\"\n",
             "return": null,
-            "summary": "<p>Generate a timezone.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/63a1bbcc4c2e1b4278240a71052e8753"
+            "summary": "<p>Generate a timezone.<\/p>"
         },
         {
             "arguments": [
@@ -642,16 +616,15 @@
                 }
             ],
             "file": "generators",
-            "header": "variant(string $seed, \\Generator $gen)\n",
+            "header": "variant(string $seed, \\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\variant",
             "href": "#variant",
             "shortName": "variant",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\nuse function Datashaman\\PHPCheck\\variant;\n\nprint repr(sample(variant(\"123\", strings(ascii()))));\n",
-            "output": "[\"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\nuse function Datashaman\\PHPCheck\\variant;\n\nprint repr(sample(variant(\"123\", strings(ascii())))) . PHP_EOL;\n",
+            "output": "[\"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\", \"J5k\\\"7J8WMF1jTQ4\\\"Nouq>3A_xI\"]\n",
             "return": null,
-            "summary": "<p>Modifies a generator using an integer seed so it will always produce the same result.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/f28e641982531e9f88372d5fe4989df7"
+            "summary": "<p>Modifies a generator using an integer seed so it will always produce the same result.<\/p>"
         },
         {
             "arguments": [
@@ -671,16 +644,15 @@
                 }
             ],
             "file": "generators",
-            "header": "vectorOf(int $n, \\Generator $gen)\n",
+            "header": "vectorOf(int $n, \\Generator $gen)",
             "name": "Datashaman\\PHPCheck\\vectorOf",
             "href": "#vectorOf",
             "shortName": "vectorOf",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\vectorOf;\n\nprint repr(generate(vectorOf(5, choose(0, 10))));\n",
-            "output": "[1, 8, 0, <+2>]",
+            "example": "use function Datashaman\\PHPCheck\\choose;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\vectorOf;\n\nprint repr(generate(vectorOf(5, choose(0, 10)))) . PHP_EOL;\n",
+            "output": "[6, 10, 5, 10, 2]\n",
             "return": null,
-            "summary": "<p>Generates a list of the given length.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/7d42fb51bae8854b47ec35bbeb53749a"
+            "summary": "<p>Generates a list of the given length.<\/p>"
         }
     ],
     "helpers": [
@@ -709,16 +681,15 @@
                 }
             ],
             "file": "helpers",
-            "header": "generate(Generator $gen, Datashaman\\PHPCheck\\Random $r = null, int $n = null)\n",
+            "header": "generate(Generator $gen, Datashaman\\PHPCheck\\Random $r = null, int $n = null)",
             "name": "Datashaman\\PHPCheck\\generate",
             "href": "#generate",
             "shortName": "generate",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\strings;\nuse function Datashaman\\PHPCheck\\choose;\n\n\/\/ Generate an integer from 0 to 10.\necho generate(choose(0, 10)) . \"\\n\";\n\n\/\/ Generate an ASCII string.\necho generate(strings(ascii())) . \"\\n\";\n",
-            "output": "8\n)*{~y\n",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\strings;\nuse function Datashaman\\PHPCheck\\choose;\n\n\/\/ Generate an integer from 0 to 10.\necho generate(choose(0, 10)) . PHP_EOL;\n\n\/\/ Generate an ASCII string.\necho generate(strings(ascii())) . PHP_EOL;\n",
+            "output": "4\nEFTWM g;?[3`~ecGU-nEWHiQB|G\"`\n",
             "return": null,
-            "summary": "<p>Run a generator.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/aa3fc9ee0bc1ff47809f054b2837dd7a"
+            "summary": "<p>Run a generator.<\/p>"
         },
         {
             "arguments": [
@@ -731,16 +702,15 @@
                 }
             ],
             "file": "helpers",
-            "header": "makeGen(callable $f)\n",
+            "header": "makeGen(callable $f)",
             "name": "Datashaman\\PHPCheck\\makeGen",
             "href": "#makeGen",
             "shortName": "makeGen",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\makeGen;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse Datashaman\\PHPCheck\\Random;\n\n\/\/ Make a generator that returns a random value from 0 to 9.\n$genA = makeGen(function (Random $r, int $n = null) {\n    return $r->random(0, 9);\n});\n\n\/\/ Generate some integers.\nprint repr(sample($genA)) . PHP_EOL;\n\n\/\/ Make another generator that uses $genA to return a character.\n\/\/ The Random object $r is passed to the generate call.\n$genB = makeGen(function (Random $r, int $n = null) use ($genA) {\n    $index = generate($genA, $r);\n\n    return chr($index + 97);\n});\n\n\/\/ Generate some characters.\nprint repr(sample($genB));\n",
-            "output": "[5, 0, 8, <+8>]\n[\"g\", \"d\", \"b\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\generate;\nuse function Datashaman\\PHPCheck\\makeGen;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse Datashaman\\PHPCheck\\Random;\n\n\/\/ Make a generator that returns a random value from 0 to 9.\n$genA = makeGen(function (Random $r, int $n = null) {\n    return $r->random(0, 9);\n});\n\n\/\/ Generate some integers.\nprint repr(sample($genA)) . PHP_EOL;\n\n\/\/ Make another generator that uses $genA to return a character.\n\/\/ The Random object $r is passed to the generate call.\n$genB = makeGen(function (Random $r, int $n = null) use ($genA) {\n    $index = generate($genA, $r);\n\n    return chr($index + 97);\n});\n\n\/\/ Generate some characters.\nprint repr(sample($genB)) . PHP_EOL;\n",
+            "output": "[4, 2, 8, 2, 2, 8, 9, 5, 0, 2, 1]\n[\"d\", \"h\", \"a\", \"i\", \"e\", \"e\", \"d\", \"i\", \"g\", \"d\", \"f\"]\n",
             "return": null,
-            "summary": "<p>Make a generator from a callable function.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/3646441385cb2182ac27fa10091c959b"
+            "summary": "<p>Make a generator from a callable function.<\/p>"
         },
         {
             "arguments": [
@@ -760,16 +730,15 @@
                 }
             ],
             "file": "helpers",
-            "header": "quickCheck(callable $f, $output = null)\n",
+            "header": "quickCheck(callable $f, $output = null)",
             "name": "Datashaman\\PHPCheck\\quickCheck",
             "href": "#quickCheck",
             "shortName": "quickCheck",
             "description": "<p>A property function (or check) must return a boolean result.<\/p>",
             "example": "use function Datashaman\\PHPCheck\\quickCheck;\n\n\/**\n * @param string $email {@gen faker('email')}\n *\/\nfunction checkEmails(string $email) {\n    return filter_var($email, FILTER_VALIDATE_EMAIL) !== false;\n}\n\nquickCheck('checkEmails');\n\n\/**\n * @param int $i {@gen choose(1, 10)}\n *\/\nfunction checkIntegers(int $i) {\n    return is_int($i) && $i >= 1 && $i <= 10;\n}\n\nquickCheck('checkIntegers');\n",
-            "output": "PHPCheck 0.1.0 by Marlin Forbes and contributors.\n\n.\n\n1 \/ 1 (100%)\n\nTime: 34 ms, Memory: 8.00 MB\n\nOK (Checks: 1, Iterations: 100, Failures: 0, Errors: 0)\nPHPCheck 0.1.0 by Marlin Forbes and contributors.\n\n.\n\n1 \/ 1 (100%)\n\nTime: 4 ms, Memory: 8.00 MB\n\nOK (Checks: 1, Iterations: 100, Failures: 0, Errors: 0)\n",
+            "output": "PHPCheck 0.1.0 by Marlin Forbes and contributors.\n\n.\n\n1 \/ 1 (100%)\n\nTime: 32 ms, Memory: 8.00 MB\n\nOK (Checks: 1, Iterations: 100, Failures: 0, Errors: 0)\nPHPCheck 0.1.0 by Marlin Forbes and contributors.\n\n.\n\n1 \/ 1 (100%)\n\nTime: 8 ms, Memory: 8.00 MB\n\nOK (Checks: 1, Iterations: 100, Failures: 0, Errors: 0)\n",
             "return": null,
-            "summary": "<p>Checks that a so-called property function (or check) holds true for all arguments given.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/b502057cbade9d8ab9c6c2fe5694349e"
+            "summary": "<p>Checks that a so-called property function (or check) holds true for all arguments given.<\/p>"
         },
         {
             "arguments": [
@@ -782,16 +751,15 @@
                 }
             ],
             "file": "helpers",
-            "header": "sample(Generator $gen)\n",
+            "header": "sample(Generator $gen)",
             "name": "Datashaman\\PHPCheck\\sample",
             "href": "#sample",
             "shortName": "sample",
             "description": "",
-            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(sample(strings(ascii())));\n",
-            "output": "[\"\", \"\", \"l\", <+8>]",
+            "example": "use function Datashaman\\PHPCheck\\ascii;\nuse function Datashaman\\PHPCheck\\repr;\nuse function Datashaman\\PHPCheck\\sample;\nuse function Datashaman\\PHPCheck\\strings;\n\nprint repr(sample(strings(ascii()))) . PHP_EOL;\n",
+            "output": "[\"\", \"\", \"6<\", \"\", \". m\", \"%EIc{T{w\", \"hHv3\", \"\/#X\", \"r&yd[\\\"(qu*#F\", \"`x='!r{\", \"sULq28X\"]\n",
             "return": null,
-            "summary": "<p>Generates some example values in increasingly random size.<\/p>\n",
-            "gist": "https:\/\/gist.github.com\/8260b83f6ecd9426cdf1187fa10235c2"
+            "summary": "<p>Generates some example values in increasingly random size.<\/p>"
         }
     ]
 }

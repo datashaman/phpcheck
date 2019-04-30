@@ -17,7 +17,7 @@ class Nothing extends Maybe
 {
     public function stringRepresentation(Generator $generator, $currentDepth = 0)
     {
-        return '<Nothing>';
+        return $generator->generate('<Nothing>');
     }
 
     public static function unit($value = null): Maybe

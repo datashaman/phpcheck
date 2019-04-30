@@ -6,16 +6,16 @@ watch:
 watch-playground:
 	while inotifywait -e close_write -r composer.* ./src ./checks ./functions ./playground ./tests; do php playground/test.php; done
 
-docs-build:
+sami-build:
 	php sami.phar update sami.config.php
 
-docs-clean:
-	rm -rf build/ cache/
-
-docs-functions:
+functions:
 	mkdir -p resources/json/
 	./generate-functions > resources/json/functions.json
-	webpack --mode=development
+
+functions-gists:
+	mkdir -p resources/json/
+	./generate-functions --gists > resources/json/functions.json
 
 phpcheck:
 	@phpcheck

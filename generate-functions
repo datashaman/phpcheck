@@ -11,6 +11,8 @@ use Symfony\Component\Templating\Loader\FilesystemLoader;
 use Symfony\Component\Templating\PhpEngine;
 use Symfony\Component\Templating\TemplateNameParser;
 
+$options = getopt('', ['gists']);
+
 $client = new Redis();
 $client->connect('127.0.0.1', 6379);
 
@@ -21,7 +23,9 @@ $client->addCache($pool);
 
 $client->authenticate(getenv('GITHUB_TOKEN'), null, Client::AUTH_URL_TOKEN);
 
-$gists = $client->api('user')->gists('datashaman');
+if (isset($options['gists'])) {
+    $gists = $client->api('user')->gists('datashaman');
+}
 
 $parser = new Parsedown();
 
@@ -100,7 +104,7 @@ function getDescription($docBlock)
 
 function getSummary($docBlock)
 {
-    return markdown($docBlock->getSummary()) . "\n";
+    return markdown($docBlock->getSummary());
 }
 
 function getExample($docBlock)
@@ -153,7 +157,7 @@ function getHeader($function, $arguments)
         $arguments
     );
 
-    return $function->getShortName() . '(' . implode(', ', $arguments) . ")\n";
+    return $function->getShortName() . '(' . implode(', ', $arguments) . ')';
 }
 
 $filesystemLoader = new FilesystemLoader(__DIR__.'/views/%name%.php');
@@ -219,17 +223,18 @@ usort($functions, function ($a, $b) {
     return $a['shortName'] <=> $b['shortName'];
 });
 
-$indexedGists = [];
+if (isset($options['gists'])) {
+    $indexedGists = [];
 
-foreach ($gists as $gist) {
-    if (preg_match('#^(Datashaman\\\\PHPCheck\\\\.+) Example$#', $gist['description'], $match)) {
-        $indexedGists[$match[1]] = $gist;
+    foreach ($gists as $gist) {
+        if (preg_match('#^(Datashaman\\\\PHPCheck\\\\.+) Example$#', $gist['description'], $match)) {
+            $indexedGists[$match[1]] = $gist;
+        }
     }
-}
 
-foreach ($functions as &$function) {
-    if (isset($function['example'])) {
-        $code = <<<CODE
+    foreach ($functions as &$function) {
+        if (isset($function['example'])) {
+            $code = <<<CODE
 <?php
 <<<CONFIG
 packages:
@@ -238,33 +243,35 @@ CONFIG;
 #
 # This is a Melody script. http://melody.sensiolabs.org/
 #
+
 {$function['example']}
 CODE;
 
-        $description = $function['name'] . ' Example';
+            $description = $function['name'] . ' Example';
 
-        $params = [
-            'description' => $description,
-            'files' => [
-                $description => [
-                    'content' => $code,
+            $params = [
+                'description' => $description,
+                'files' => [
+                    $description => [
+                        'content' => $code,
+                    ],
                 ],
-            ],
-            'public' => true,
-        ];
+                'public' => true,
+            ];
 
-        if (isset($indexedGists[$function['name']])) {
-            $gist = $indexedGists[$function['name']];
-            $contents = file_get_contents($gist['files'][$description]['raw_url']);
+            if (isset($indexedGists[$function['name']])) {
+                $gist = $indexedGists[$function['name']];
+                $contents = file_get_contents($gist['files'][$description]['raw_url']);
 
-            if ($contents !== $code) {
-                $gist = $client->api('gists')->update($gist['id'], $params);
+                if ($contents !== $code) {
+                    $gist = $client->api('gists')->update($gist['id'], $params);
+                }
+            } else {
+                $gist = $client->api('gists')->create($params);
             }
-        } else {
-            $gist = $client->api('gists')->create($params);
-        }
 
-        $function['gist'] = $gist['html_url'];
+            $function['gist'] = $gist['html_url'];
+        }
     }
 }
 
@@ -283,5 +290,3 @@ $functions = array_reduce(
 );
 
 echo json_encode($functions, JSON_PRETTY_PRINT);
-
-// echo $templating->render('functions', compact('functions'));

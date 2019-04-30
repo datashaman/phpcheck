@@ -13,6 +13,8 @@ use Datashaman\PHPCheck\Subscribers\ConsoleReporter;
 use Datashaman\PHPCheck\Subscribers\Tabulator;
 use Dotenv\Dotenv;
 use Faker\Factory;
+use Icecave\Repr\Generator;
+use Icecave\Repr\Repr;
 use SQLite3;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -21,6 +23,8 @@ $dotenv->load();
 
 \mb_regex_encoding('UTF-8');
 \mb_internal_encoding('UTF-8');
+
+Repr::install(new Generator(50, 3, 12));
 
 app('database', function ($c) {
     if (!\is_dir(RunState::DATABASE_DIR)) {

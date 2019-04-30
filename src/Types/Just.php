@@ -15,6 +15,6 @@ class Just extends Maybe
 {
     public function stringRepresentation(Generator $generator, $currentDepth = 0)
     {
-        return '<Just ' . $this->value . '>';
+        return $generator->generate('<Just ' . $this->value . '>');
     }
 }

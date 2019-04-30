@@ -87,7 +87,7 @@ function checkArgs($args)
  * use function Datashaman\PHPCheck\evalWithArgs;
  * use function Datashaman\PHPCheck\repr;
  *
- * print repr(evalWithArgs('strtoupper("Hi $name!")', ['name' => 'Bob']));
+ * print repr(evalWithArgs('strtoupper("Hi $name!")', ['name' => 'Bob'])) . PHP_EOL;
  * </pre>
  *
  * @param string $expression PHP string expression to be evaluated. Must not include semi-colon.
@@ -113,10 +113,10 @@ function evalWithArgs(string $expression, $args = [])
  * use function Datashaman\PHPCheck\choose;
  *
  * // Generate an integer from 0 to 10.
- * echo generate(choose(0, 10)) . "\n";
+ * echo generate(choose(0, 10)) . PHP_EOL;
  *
  * // Generate an ASCII string.
- * echo generate(strings(ascii())) . "\n";
+ * echo generate(strings(ascii())) . PHP_EOL;
  * </pre>
  *
  */
@@ -200,7 +200,7 @@ function logExecution($subject, $method, $values = null): void
  * });
  *
  * // Generate some characters.
- * print repr(sample($genB));
+ * print repr(sample($genB)) . PHP_EOL;
  * </pre>
  *
  * @param callable $f a callable function that returns a value, should accept (Random $r = null, int $n = null), and should pass $r into any generate calls within its body
@@ -287,7 +287,7 @@ function quickCheck(callable $f, $output = null): void
  * print repr(new Ds\Map(['a' => 'A', 'b' => 'B', 'c' => 'C'])) . PHP_EOL;
  * print repr("string") . PHP_EOL;
  * print repr(100) . PHP_EOL;
- * print repr(new DateTime());
+ * print repr(new DateTime()) . PHP_EOL;
  * </pre>
  *
  * @param mixed $value the value to represent
@@ -355,7 +355,7 @@ function repr($value)
  * use function Datashaman\PHPCheck\sample;
  * use function Datashaman\PHPCheck\strings;
  *
- * print repr(sample(strings(ascii())));
+ * print repr(sample(strings(ascii()))) . PHP_EOL;
  * </pre>
  */
 function sample(Generator $gen): array
