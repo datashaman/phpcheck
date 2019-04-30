@@ -60,7 +60,7 @@ Vue.component('b-row', BRow)
 require('lolight')
 require('../styles/app.scss')
 
-import functions from '../data/functions.json'
+import functions from '../json/functions.json'
 
 Vue.use(VueClipboard)
 Vue.use(VueRouter)
