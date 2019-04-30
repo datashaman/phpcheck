@@ -2,7 +2,7 @@
     <b-card :id="f.shortName" class="card-function">
         <h4 slot="header">
             <div v-if="f.shortName != 'generate'" class="float-right">
-                <b-button size="sm" href="/"><font-awesome-icon icon="arrow-up"/></b-button>
+                <b-button size="sm" href="#"><font-awesome-icon icon="arrow-up"/></b-button>
             </div>
             {{ f.shortName }}
         </h4>
