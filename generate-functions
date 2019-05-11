@@ -11,7 +11,7 @@ use Symfony\Component\Templating\Loader\FilesystemLoader;
 use Symfony\Component\Templating\PhpEngine;
 use Symfony\Component\Templating\TemplateNameParser;
 
-$options = getopt('', ['gists']);
+$options = getopt('o', ['gists']);
 
 $client = new Redis();
 $client->connect('127.0.0.1', 6379);
@@ -289,4 +289,10 @@ $functions = array_reduce(
     []
 );
 
-echo json_encode($functions, JSON_PRETTY_PRINT);
+$json = json_encode($functions, JSON_PRETTY_PRINT);
+
+if (isset($options['o'])) {
+    file_put_contents($options['o'], $json);
+} else {
+    echo $json . PHP_EOL;
+}

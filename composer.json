@@ -23,6 +23,7 @@
         "ext-sqlite3": "*",
         "ext-xml": "*",
         "ext-xmlwriter": "*",
+        "datashaman/logic": "dev-master",
         "erusev/parsedown": "^1.7",
         "fzaninotto/faker": "^1.8",
         "icecave/repr": "^1.0",

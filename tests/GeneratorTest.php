@@ -15,7 +15,9 @@ use function Datashaman\PHPCheck\{
     variant
 };
 
-use Datashaman\PHPCheck\Types\Maybe;
+use Datashaman\Logic\Maybe;
+use function Datashaman\Logic\isNothing;
+use function Datashaman\Logic\mkMaybe;
 use Generator;
 use PHPUnit\Framework\TestCase;
 
@@ -188,7 +190,7 @@ class GeneratorTest extends TestCase
                 function (int $value) {
                     $value = $value + 10;
 
-                    return Maybe::unit($value);
+                    return mkMaybe($value);
                 }
             ),
             function (int $current) {
@@ -208,7 +210,7 @@ class GeneratorTest extends TestCase
                 }
             ),
             function (Maybe $current) {
-                $this->assertGreaterThan(5, $current->value());
+                $this->assertGreaterThan(5, $current());
             }
         );
     }
@@ -223,9 +225,9 @@ class GeneratorTest extends TestCase
                 }
             ),
             function (Maybe $current) {
-                $this->assertTrue($current->isNothing());
-        }
-            );
+                $this->assertTrue(isNothing($current));
+            }
+        );
     }
 
     public function testVariant()

@@ -9,9 +9,11 @@
  */
 namespace Datashaman\PHPCheck;
 
-use Datashaman\PHPCheck\Types\Just;
-use Datashaman\PHPCheck\Types\Maybe;
-use Datashaman\PHPCheck\Types\Nothing;
+use Datashaman\Logic\Just;
+use Datashaman\Logic\Maybe;
+use function Datashaman\Logic\isJust;
+use function Datashaman\Logic\isNothing;
+use Datashaman\Logic\Nothing;
 use DateTime;
 use DateTimeZone;
 use Ds\Map;
@@ -944,15 +946,11 @@ function suchThat(Generator $gen, callable $f): Generator
         function (Random $r, $n) use ($gen, $f) {
             $mx = generate(suchThatMaybe($gen, $f), $r);
 
-            if ($mx->isJust()) {
-                return $mx->value();
+            if (isJust($mx)) {
+                return $mx();
             }
 
-            if ($mx->isNothing()) {
-                return generate(suchThat($gen, $f), $r, $n + 1);
-            }
-
-            throw new Exception('This should not be possible');
+            return generate(suchThat($gen, $f), $r, $n + 1);
         }
     );
 }
@@ -967,7 +965,7 @@ function suchThat(Generator $gen, callable $f): Generator
  * use function Datashaman\PHPCheck\repr;
  * use function Datashaman\PHPCheck\sample;
  * use function Datashaman\PHPCheck\suchThatMap;
- * use Datashaman\PHPCheck\Types\Just;
+ * use Datashaman\Logic\Just;
  *
  * print repr(sample(suchThatMap(choose(0, 5), function ($value) {
  *     return new Just($value + 100);
@@ -990,7 +988,7 @@ function suchThatMap(Generator $gen, callable $f): Generator
                 throw new Exception('Callable must return Maybe type');
             }
 
-            return $result->value();
+            return $result();
         }
     );
 }
